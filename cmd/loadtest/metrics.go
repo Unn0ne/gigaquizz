@@ -163,6 +163,7 @@ type report struct {
 	HTTPResponses            int64            `json:"http_response_headers_received"`
 	HTTPCompleteResponses    int64            `json:"http_responses_fully_read"`
 	Statuses                 map[string]int64 `json:"http_statuses"`
+	Recorded202              int64            `json:"recorded_202_responses"`
 	Accepted201              int64            `json:"accepted_201_responses"`
 	Duplicate200             int64            `json:"duplicate_200_responses"`
 	TransportErrors          int64            `json:"transport_errors_unknown_outcome"`
@@ -193,13 +194,13 @@ func (m *metrics) snapshot(c config, elapsed time.Duration, interrupted bool) re
 		HTTPAttempts: m.attempts, HTTPAttemptsDuringWindow: m.duringWindow, HTTPAttemptsAfterWindow: m.attempts - m.duringWindow,
 		AchievedSendRate: float64(m.duringWindow) / c.duration.Seconds(), OverallSendRate: float64(m.attempts) / elapsed.Seconds(),
 		HTTPResponses: m.responses, HTTPCompleteResponses: m.completeResponses, Statuses: m.statuses,
-		Accepted201: m.statuses["201"], Duplicate200: m.statuses["200"], TransportErrors: m.transportErrors, BodyErrors: m.bodyErrors,
+		Recorded202: m.statuses["202"], Accepted201: m.statuses["201"], Duplicate200: m.statuses["200"], TransportErrors: m.transportErrors, BodyErrors: m.bodyErrors,
 		LocalErrors: m.localErrors, Unknown503: m.statuses["503"], LogicalConfirmed: m.confirmed, LogicalUnknown: m.unknown, LogicalRejected: m.rejected,
 		DispatchLag: m.dispatchLag.report(), AttemptLatency: m.attemptElapsed.report(), AttemptEndToEnd: m.attemptFromSchedule.report(), LogicalEndToEnd: m.logicalFromSchedule.report(),
 		Limitations: []string{
 			"POST-only generator; page delivery, TLS population and full voter journey are not represented",
 			"latency percentiles are fixed-bucket upper estimates (approximately 10% bucket width above 1us); skipped slots are reported separately",
-			"201/200 confirm a logical key at most once here; timeout or 503 does not prove the vote was lost; reconcile server records and final results separately",
+			"201/200/202 confirm storage for a logical key at most once here; 202 confirms an attempt, not the final unique choice; timeout or 503 does not prove loss; reconcile server records and final results separately",
 			"successful execution and local throughput do not certify 100 million voters in 60 seconds",
 		},
 	}

@@ -32,6 +32,16 @@ func Scan(ctx context.Context, c Config, visit func(Position, Vote) error) (Scan
 		return result, fmt.Errorf("journal is owned by a live writer: %w", err)
 	}
 	defer syscall.Flock(int(f.Fd()), syscall.LOCK_UN)
+	return scanFile(ctx, c, f, visit)
+}
+
+// scanFile shares the exact parser between read-only audit and recovery. Its
+// caller owns the appropriate flock for the entire scan and any later repair.
+func scanFile(ctx context.Context, c Config, f *os.File, visit func(Position, Vote) error) (ScanResult, error) {
+	var result ScanResult
+	if _, err := f.Seek(0, io.SeekStart); err != nil {
+		return result, err
+	}
 	poll, err := os.Open(filepath.Join(c.Directory, pollName))
 	if err != nil {
 		return result, err

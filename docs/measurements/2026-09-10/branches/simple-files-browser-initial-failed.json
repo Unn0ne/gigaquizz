@@ -1,0 +1,15 @@
+{
+  "mode": "simple-files",
+  "passed": false,
+  "scope": "Installed Chrome, real branch application and storage; five tests including a real 60-second poll.",
+  "exit_code": 1,
+  "stats": {
+    "startTime": "2026-09-10T19:39:10.530Z",
+    "duration": 22377.382999999998,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "duration_seconds": 23.13
+}

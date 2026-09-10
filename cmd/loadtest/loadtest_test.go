@@ -156,3 +156,22 @@ func TestRetryResolvesUnknownWithoutCounting201AsOnlyAcceptedVote(t *testing.T) 
 		t.Fatal("latency populations are incorrect")
 	}
 }
+
+func TestRecordedAttemptAndRetryConfirmOneLogicalKey(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusAccepted)
+	}))
+	defer server.Close()
+	c := testConfig()
+	c.target = server.URL
+	c.duration = time.Millisecond
+	c.duplicateEvery = 1
+	endpoint, err := c.validate()
+	if err != nil {
+		t.Fatal(err)
+	}
+	r := run(context.Background(), c, endpoint)
+	if r.HTTPAttempts != 2 || r.Recorded202 != 2 || r.LogicalConfirmed != 1 || r.Accepted201 != 0 || r.Duplicate200 != 0 || r.LogicalUnknown != 0 {
+		t.Fatalf("stored attempts were misclassified: %+v", r)
+	}
+}

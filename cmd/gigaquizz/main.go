@@ -16,8 +16,9 @@ import (
 	"time"
 
 	"gigaquizz/internal/config"
+	"gigaquizz/internal/filestore"
 	"gigaquizz/internal/httpapi"
-	"gigaquizz/internal/postgres"
+	"gigaquizz/internal/poll"
 	"gigaquizz/internal/web"
 )
 
@@ -30,7 +31,6 @@ func main() {
 
 func run() error {
 	envFile := flag.String("env", ".env", "configuration file")
-	migrateOnly := flag.Bool("migrate-only", false, "apply migrations and exit")
 	flag.Parse()
 	if err := config.LoadEnv(*envFile); err != nil {
 		return errors.New("cannot load environment file")
@@ -39,33 +39,14 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	startup, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	startup, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
-	durability := postgres.DurabilityOptions{RequiredStandbys: cfg.RequiredStandbys, StandbyNames: cfg.StandbyNames}
-	admin, err := postgres.NewWithOptions(startup, cfg.DatabaseURL, 8, durability)
+	store, err := filestore.New(startup, filestore.Config{Directory: cfg.DataDir, MaxUnique: cfg.MaxUnique, BatchSize: cfg.BatchSize, QueueVotes: cfg.QueueVotes, Linger: cfg.Linger})
 	if err != nil {
-		return errors.New("cannot connect to PostgreSQL (connection details suppressed)")
+		return fmt.Errorf("cannot open file storage: %w", err)
 	}
-	defer admin.Close()
-	if err := admin.Migrate(startup); err != nil {
-		return errors.New("database migration failed (query details suppressed)")
-	}
-	if *migrateOnly {
-		slog.Info("migrations applied")
-		return nil
-	}
-	votes, err := postgres.NewWithOptions(startup, cfg.DatabaseURL, cfg.VoteConnections, durability)
-	if err != nil {
-		return errors.New("cannot open vote connection pool")
-	}
-	defer votes.Close()
-	if err := votes.Warm(startup); err != nil {
-		return errors.New("cannot warm vote connection pool before serving traffic")
-	}
-	if err := admin.Warm(startup); err != nil {
-		return errors.New("cannot warm administrative connection pool before serving traffic")
-	}
-	api, err := httpapi.New(votes, admin, web.Files, httpapi.Config{AdminPassword: cfg.AdminPassword, PublicURL: cfg.PublicURL, MaxInflight: cfg.MaxInflight, OperationTimeout: 10 * time.Second})
+	defer store.Close()
+	api, err := httpapi.New(store, store, web.Files, httpapi.Config{AdminPassword: cfg.AdminPassword, PublicURL: cfg.PublicURL, MaxInflight: cfg.MaxInflight, OperationTimeout: 10 * time.Second})
 	if err != nil {
 		return err
 	}
@@ -79,7 +60,7 @@ func run() error {
 	defer stop()
 	workerCtx, stopWorker := context.WithCancel(context.Background())
 	workerDone := make(chan struct{})
-	go func() { defer close(workerDone); maintenance(workerCtx, api, admin) }()
+	go func() { defer close(workerDone); maintenance(workerCtx, api, store) }()
 	serveDone := make(chan error, 1)
 	go func() { serveDone <- server.Serve(listener) }()
 	slog.Info("gigaquizz started", "url", cfg.PublicURL, "admin", cfg.PublicURL+"/admin")
@@ -106,7 +87,7 @@ func run() error {
 	return err
 }
 
-func maintenance(ctx context.Context, api *httpapi.Server, store *postgres.Store) {
+func maintenance(ctx context.Context, api *httpapi.Server, store poll.Repository) {
 	tick := time.NewTicker(time.Second)
 	defer tick.Stop()
 	var ticks int
@@ -116,7 +97,7 @@ func maintenance(ctx context.Context, api *httpapi.Server, store *postgres.Store
 			return
 		case <-tick.C:
 		}
-		work, cancel := context.WithTimeout(ctx, 15*time.Second)
+		work, cancel := context.WithTimeout(ctx, 5*time.Minute)
 		_, err := store.FinalizeDue(work)
 		cancel()
 		ticks++

@@ -5,7 +5,7 @@
 bin/
 /gigaquizz
 coverage.out
-node_modules/
+node_modules
 test-results/
 playwright-report/
 __pycache__/

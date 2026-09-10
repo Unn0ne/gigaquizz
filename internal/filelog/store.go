@@ -36,6 +36,7 @@ type Store struct {
 	queue                                       chan *job
 	done                                        chan struct{}
 	now                                         func() time.Time
+	initialSequence                             int64
 	// Hooks are installed before submissions, never concurrently with work.
 	write                                                    func([]byte) (int, error)
 	syncFile                                                 func() error
@@ -281,7 +282,7 @@ func (s *Store) run() {
 			s.fail(err)
 		}
 	}()
-	var sequence int64
+	sequence := s.initialSequence
 	var batch []*job
 	var votes int
 	var timer *time.Timer

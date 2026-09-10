@@ -1,3 +1,5 @@
+> Архив предыдущего этапа. Актуальный запуск и поведение этой ветки описаны в [README](../README.md) и [сравнении версий](branches.md).
+
 Локальная настройка приёма голосов, 10.09.2026.
 
 На одном компьютере проверены native PostgreSQL primary + два физических standby, затем HTTP POST через Go-приложение. Цель — уменьшить пропуски при 6000 запланированных голосов/с, сохранив подтверждение WAL. Лучшие прогоны обработали все 330 000 запросов, но повтор того же профиля с большой очередью пропустил 12 736. **Устойчивые 6000/с без пропусков не доказаны**; гарантированная производственная мощность не установлена.
@@ -79,7 +81,7 @@ python3 scripts/prepare_event_lab.py
 python3 scripts/profile_http.py --label http_6000_check_55s --rate 6000 --duration 55 --workers 128 --db-connections 64 --queue 4096 --max-lag-ms 1000
 ```
 
-[`prepare_event_lab.py`](../scripts/prepare_event_lab.py) меняет только диагностические timing-настройки и запрашивает checkpoint/restartpoint управляемого стенда; автоматические checkpoint не отключаются. [`profile_http.py`](../scripts/profile_http.py) создаёт изолированную схему и временное HTTP-приложение, сохраняет aggregate/load/telemetry JSON и ждёт настоящей финализации. Узлы PostgreSQL он не переключает. Сохранённые схемы расходуют диск.
+[`prepare_event_lab.py`](https://github.com/Unn0ne/gigaquizz/blob/8f5f3efc63d7cc4638ea673d620822e94c1b97d0/scripts/prepare_event_lab.py) меняет только диагностические timing-настройки и запрашивает checkpoint/restartpoint управляемого стенда; автоматические checkpoint не отключаются. [`profile_http.py`](https://github.com/Unn0ne/gigaquizz/blob/8f5f3efc63d7cc4638ea673d620822e94c1b97d0/scripts/profile_http.py) создаёт изолированную схему и временное HTTP-приложение, сохраняет aggregate/load/telemetry JSON и ждёт настоящей финализации. Узлы PostgreSQL он не переключает. Сохранённые схемы расходуют диск.
 
 Семантика подготовки и диагностических полей проверена по документации PostgreSQL 16: [CHECKPOINT и restartpoint](https://www.postgresql.org/docs/16/sql-checkpoint.html), [checkpoint/FPI и параметры WAL](https://www.postgresql.org/docs/16/wal-configuration.html), [накопительная статистика и ограничения её снимков](https://www.postgresql.org/docs/16/monitoring-stats.html). Выполнение CHECKPOINT перед отдельным экспериментом фиксирует начальное состояние; это не рекомендация вызывать его для каждого опроса в рабочем сервисе без оценки I/O и восстановления.
 

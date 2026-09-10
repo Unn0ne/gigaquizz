@@ -1,6 +1,15 @@
 const { test, expect } = require('@playwright/test');
+const fs = require('node:fs');
+const path = require('node:path');
+test.use({ screenshot: 'off', trace: 'off', video: 'off' });
 
-test('Retry-After delays manual retry without automatic requests, even across closure', async ({ page }) => {
+test('Retry-After delays manual retry; closed refusal preserves uncertainty without automatic requests', async ({ page }) => {
+  const assetRoot = path.resolve(__dirname, '../../internal/web/static');
+  await page.route('**/static/*', route => {
+    const file = path.basename(new URL(route.request().url()).pathname);
+    return route.fulfill({ body: fs.readFileSync(path.join(assetRoot, file)), contentType: file.endsWith('.js') ? 'text/javascript' : 'text/css' });
+  });
+  await page.route('**/p/*', route => route.fulfill({ body: fs.readFileSync(path.join(assetRoot, 'poll.html')), contentType: 'text/html' }));
   const id = '00112233-4455-6677-8899-aabbccddeeff';
   const now = Date.now();
   const bodies = [];
@@ -13,7 +22,7 @@ test('Retry-After delays manual retry without automatic requests, even across cl
     bodies.push(route.request().postDataJSON());
     return bodies.length === 1
       ? route.fulfill({ status: 503, headers: { 'Retry-After': '4' }, json: { error: 'Temporary failure', outcome: 'unknown' } })
-      : route.fulfill({ status: 200, json: { status: 'duplicate', choices: [1], accepted_at: new Date(now).toISOString() } });
+      : route.fulfill({ status: 410, json: { status: 'closed' } });
   });
   await page.goto(`/p/${id}`);
   await page.getByLabel('Да', { exact: true }).check();
@@ -24,7 +33,9 @@ test('Retry-After delays manual retry without automatic requests, even across cl
   await expect(page.locator('#countdown')).toHaveText('Приём ответов закрыт');
   expect(bodies.length).toBe(1);
   await page.locator('#vote-button').click();
-  await expect(page.locator('#receipt-panel')).toBeVisible();
+  await expect(page.locator('#receipt-panel')).toBeHidden();
+  await expect(page.locator('#vote-button')).toBeDisabled();
+  await expect(page.locator('#vote-message')).toContainText('её исход здесь неизвестен');
   expect(bodies.length).toBe(2);
   expect(bodies[0].token === bodies[1].token).toBe(true);
   expect(bodies[0].choices).toEqual(bodies[1].choices);

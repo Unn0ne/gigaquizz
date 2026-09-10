@@ -7,17 +7,19 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Config struct {
-	Addr             string
-	PublicURL        string
-	DatabaseURL      string
-	AdminPassword    string
-	VoteConnections  int32
-	MaxInflight      int
-	RequiredStandbys int
-	StandbyNames     []string
+	Addr          string
+	PublicURL     string
+	AdminPassword string
+	DataDir       string
+	MaxInflight   int
+	MaxUnique     uint64
+	BatchSize     int
+	QueueVotes    int
+	Linger        time.Duration
 }
 
 // LoadEnv never evaluates shell syntax or replaces an existing environment value.
@@ -58,41 +60,44 @@ func LoadEnv(path string) error {
 }
 
 func Load() (Config, error) {
-	c := Config{Addr: env("HTTP_ADDR", "127.0.0.1:8080"), PublicURL: env("PUBLIC_URL", "http://127.0.0.1:8080"), DatabaseURL: os.Getenv("DATABASE_URL"), AdminPassword: os.Getenv("ADMIN_PASSWORD"), VoteConnections: 64, MaxInflight: 256}
-	if c.DatabaseURL == "" {
-		return c, errors.New("DATABASE_URL is required; run make dev or configure .env")
-	}
+	c := Config{Addr: env("HTTP_ADDR", "127.0.0.1:8080"), PublicURL: env("PUBLIC_URL", "http://127.0.0.1:8080"), AdminPassword: os.Getenv("ADMIN_PASSWORD"), DataDir: env("DATA_DIR", ".local/files"), MaxInflight: 4096, MaxUnique: 120000000, BatchSize: 4096, QueueVotes: 65536, Linger: 2 * time.Millisecond}
 	if len(c.AdminPassword) < 16 || strings.Contains(c.AdminPassword, "CHANGE_ME") {
 		return c, errors.New("set a unique ADMIN_PASSWORD of at least 16 characters")
 	}
-	if raw := os.Getenv("VOTE_DB_CONNECTIONS"); raw != "" {
-		n, err := strconv.Atoi(raw)
-		if err != nil || n < 1 || n > 10000 {
-			return c, fmt.Errorf("invalid VOTE_DB_CONNECTIONS")
+	for _, field := range []struct {
+		name     string
+		dst      *int
+		min, max int
+	}{
+		{"MAX_INFLIGHT", &c.MaxInflight, 1, 100000},
+		{"FILE_BATCH_VOTES", &c.BatchSize, 1, 131072},
+		{"FILE_QUEUE_VOTES", &c.QueueVotes, 1, 1048576},
+	} {
+		if raw := os.Getenv(field.name); raw != "" {
+			n, err := strconv.Atoi(raw)
+			if err != nil || n < field.min || n > field.max {
+				return c, fmt.Errorf("invalid %s", field.name)
+			}
+			*field.dst = n
 		}
-		c.VoteConnections = int32(n)
 	}
-	if raw := os.Getenv("MAX_INFLIGHT"); raw != "" {
-		n, err := strconv.Atoi(raw)
-		if err != nil || n < 1 || n > 100000 {
-			return c, fmt.Errorf("invalid MAX_INFLIGHT")
+	if raw := os.Getenv("MAX_UNIQUE_VOTERS"); raw != "" {
+		n, err := strconv.ParseUint(raw, 10, 64)
+		if err != nil || n < 1 || n > 200000000 {
+			return c, errors.New("invalid MAX_UNIQUE_VOTERS")
 		}
-		c.MaxInflight = n
+		c.MaxUnique = n
 	}
-	if raw := os.Getenv("DURABILITY_REQUIRED_STANDBYS"); raw != "" {
-		n, err := strconv.Atoi(raw)
-		if err != nil || n < 0 || n > 16 {
-			return c, errors.New("invalid DURABILITY_REQUIRED_STANDBYS")
+	if raw := os.Getenv("FILE_GROUP_LINGER"); raw != "" {
+		d, err := time.ParseDuration(raw)
+		if err != nil || d < 0 || d > time.Second {
+			return c, errors.New("invalid FILE_GROUP_LINGER")
 		}
-		c.RequiredStandbys = n
-	}
-	if raw := strings.TrimSpace(os.Getenv("DURABILITY_STANDBY_NAMES")); raw != "" {
-		for _, name := range strings.Split(raw, ",") {
-			c.StandbyNames = append(c.StandbyNames, strings.TrimSpace(name))
-		}
+		c.Linger = d
 	}
 	return c, nil
 }
+
 func env(key, fallback string) string {
 	if v := os.Getenv(key); v != "" {
 		return v

@@ -1,0 +1,11 @@
+{
+  "mode": "simple-files",
+  "passed": true,
+  "checks": [
+    "fresh_dev_configuration_generated",
+    "configuration_mode_0600",
+    "readyz_200",
+    "existing_dotenv_unchanged",
+    "external_env_overrides_file"
+  ]
+}

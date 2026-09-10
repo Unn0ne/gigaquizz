@@ -6,8 +6,6 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
-
-	"gigaquizz/internal/votelog"
 )
 
 func fixture(t *testing.T, capacity uint64) (*Engine, *atomic.Int64) {
@@ -119,15 +117,11 @@ func TestSealWaitsForAdmittedWriteAcrossDeadline(t *testing.T) {
 
 func TestFullTokenRoutingAndShardCapacity(t *testing.T) {
 	e, _ := fixture(t, 16)
-	journal := votelog.Config{PollID: e.cfg.PollID, Partitions: 8}
 	var tokens [][16]byte
 	for i := uint64(1); len(tokens) < 3; i++ {
 		var token [16]byte
 		token[0] = byte(i)
 		token[1] = byte(i >> 8)
-		if e.Partition(token) != int(journal.Partition(token)) {
-			t.Fatal("routing mismatch")
-		}
 		if e.Partition(token) == 0 {
 			tokens = append(tokens, token)
 		}

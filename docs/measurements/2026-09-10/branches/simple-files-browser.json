@@ -1,0 +1,26 @@
+{
+  "mode": "simple-files",
+  "passed": true,
+  "scope": "Installed Chrome, real branch application and storage; five tests including a real 60-second poll.",
+  "exit_code": 0,
+  "stats": {
+    "startTime": "2026-09-10T19:43:31.661Z",
+    "duration": 103138.14499999999,
+    "expected": 5,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "duration_seconds": 103.65,
+  "verified": {
+    "real_poll_window_seconds": 60,
+    "recorded_attempt_responses": 5,
+    "exact_unique_votes": 3,
+    "lost_responses_after_real_ack": 2,
+    "closed_request_responses": 3,
+    "browser_errors": 0,
+    "same_browser_identity_preserved": true,
+    "pending_then_exact_final": true,
+    "logout_revokes_session": true
+  }
+}

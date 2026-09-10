@@ -163,12 +163,12 @@ func run(parent context.Context, c config, endpoint string) report {
 				}{hex.EncodeToString(token[:]), []int{c.choice}})
 				m.dispatch(time.Since(j.scheduled))
 				status, unknown := attempt(ctx, client, endpoint, body, j, start, c.duration, m)
-				confirmed := status == http.StatusCreated || status == http.StatusOK
+				confirmed := status == http.StatusCreated || status == http.StatusOK || status == http.StatusAccepted
 				// Exactly one intentional retry, after the first attempt completes,
 				// including its timeout. It never creates a new token.
 				if c.duplicateEvery > 0 && (j.sequence+1)%c.duplicateEvery == 0 && ctx.Err() == nil {
 					status2, unknown2 := attempt(ctx, client, endpoint, body, j, start, c.duration, m)
-					confirmed = confirmed || status2 == http.StatusCreated || status2 == http.StatusOK
+					confirmed = confirmed || status2 == http.StatusCreated || status2 == http.StatusOK || status2 == http.StatusAccepted
 					unknown = unknown || unknown2
 				}
 				m.finishLogical(confirmed, unknown, time.Since(j.scheduled))
@@ -208,7 +208,8 @@ func attempt(ctx context.Context, client *http.Client, endpoint string, body []b
 	}
 	done := time.Now()
 	m.finishAttempt(status, err != nil, bodyError, done.Sub(sent), done.Sub(j.scheduled))
-	// 201/200 response headers acknowledge acceptance even if reading the body
+	// 201/200 confirm canonical acceptance; 202 confirms only a stored attempt.
+	// Successful response headers acknowledge storage even if reading the body
 	// fails. A transport error or 5xx leaves the durable outcome uncertain.
 	return status, status == 0 || status >= 500
 }
