@@ -1,0 +1,71 @@
+{
+  "at": "2026-09-10T10:18:04.681067+00:00",
+  "primary": "primary",
+  "epoch": 9,
+  "nodes": {
+    "primary": {
+      "in_recovery": false,
+      "fsync": "on",
+      "synchronous_commit": "on",
+      "synchronous_standby_names": "ANY 1 (gigaquizz_ha_a,gigaquizz_ha_b)",
+      "track_wal_io_timing": "on",
+      "track_io_timing": "on",
+      "checkpoints": {
+        "checkpoints_timed": 17,
+        "checkpoints_req": 10,
+        "checkpoint_write_time": 1080295,
+        "checkpoint_sync_time": 289,
+        "buffers_checkpoint": 89471,
+        "buffers_clean": 15747,
+        "maxwritten_clean": 1,
+        "buffers_backend": 115988,
+        "buffers_backend_fsync": 0,
+        "buffers_alloc": 101305,
+        "stats_reset": "2026-09-10T09:11:20.805119+00:00"
+      }
+    },
+    "standby_a": {
+      "in_recovery": true,
+      "fsync": "on",
+      "synchronous_commit": "on",
+      "synchronous_standby_names": "ANY 1 (gigaquizz_ha_a,gigaquizz_ha_b)",
+      "track_wal_io_timing": "on",
+      "track_io_timing": "on",
+      "checkpoints": {
+        "checkpoints_timed": 82,
+        "checkpoints_req": 8,
+        "checkpoint_write_time": 812397,
+        "checkpoint_sync_time": 261,
+        "buffers_checkpoint": 85827,
+        "buffers_clean": 12061,
+        "maxwritten_clean": 7,
+        "buffers_backend": 123429,
+        "buffers_backend_fsync": 0,
+        "buffers_alloc": 93696,
+        "stats_reset": "2026-09-10T09:18:29.738955+00:00"
+      }
+    },
+    "standby_b": {
+      "in_recovery": true,
+      "fsync": "on",
+      "synchronous_commit": "on",
+      "synchronous_standby_names": "ANY 1 (gigaquizz_ha_a,gigaquizz_ha_b)",
+      "track_wal_io_timing": "on",
+      "track_io_timing": "on",
+      "checkpoints": {
+        "checkpoints_timed": 73,
+        "checkpoints_req": 8,
+        "checkpoint_write_time": 1205035,
+        "checkpoint_sync_time": 338,
+        "buffers_checkpoint": 93707,
+        "buffers_clean": 10935,
+        "maxwritten_clean": 17,
+        "buffers_backend": 132574,
+        "buffers_backend_fsync": 0,
+        "buffers_alloc": 100931,
+        "stats_reset": "2026-09-10T09:11:19.879007+00:00"
+      }
+    }
+  },
+  "action": "enable I/O timings; checkpoint primary, request restartpoints on standbys before workload"
+}

@@ -1,0 +1,150 @@
+{
+  "mode": "vote",
+  "isolated_schema": "gqbench_ee3c36f9356e0cc1",
+  "poll_id": "a86b330d-0c91-4aba-9f32-e9b3b69f4d5b",
+  "configuration": {
+    "HTTP_included": false,
+    "different_choice": true,
+    "logical_rate": 3000,
+    "pool_warmup": "one repository Ping; additional connection establishment may occur during workload",
+    "queue": 256,
+    "repeat_every": 5,
+    "required_standbys": 1,
+    "total_keys": 30000,
+    "workers": 64
+  },
+  "database": {
+    "server_version": "16.3 (Postgres.app)",
+    "synchronous_commit": "on",
+    "synchronous_standby_names": "ANY 1 (gigaquizz_ha_a,gigaquizz_ha_b)",
+    "fsync": "on",
+    "full_page_writes": "on",
+    "in_recovery": false
+  },
+  "workload": {
+    "logical_planned": 30000,
+    "logical_scheduled": 30000,
+    "logical_sent": 30000,
+    "logical_not_sent": 0,
+    "logical_with_client_confirmation": 30000,
+    "logical_unconfirmed_with_unknown_attempt": 0,
+    "attempts_planned": 36000,
+    "attempts_queued": 36000,
+    "attempts_sent": 36000,
+    "attempts_not_scheduled": 0,
+    "attempts_skipped": 0,
+    "skipped_attempts_by_reason": {},
+    "outcomes": {
+      "accepted": 30000,
+      "conflict": 6000
+    },
+    "invalid_receipts": 0,
+    "scheduled_window_seconds": 10,
+    "workload_seconds_including_drain": 10.001965791,
+    "attempts_started_during_window": 36000,
+    "attempts_started_during_window_per_scheduled_second": 3600,
+    "attempts_per_workload_second": 3599.2924543286913,
+    "interrupted_or_drain_deadline": false,
+    "dispatch_lag": {
+      "count": 36000,
+      "mean_ms": 0.7471149406388888,
+      "p50_ms": 0.030334,
+      "p95_ms": 0.076917,
+      "p99_ms": 33.3585,
+      "max_ms": 48.869292
+    },
+    "database_call_latency": {
+      "count": 36000,
+      "mean_ms": 1.39022802425,
+      "p50_ms": 0.466708,
+      "p95_ms": 6.732208,
+      "p99_ms": 16.952208,
+      "max_ms": 124.150708
+    },
+    "attempt_end_to_end_from_schedule": {
+      "count": 36000,
+      "mean_ms": 2.1387458330833335,
+      "p50_ms": 0.496917,
+      "p95_ms": 7.292333,
+      "p99_ms": 49.576333,
+      "max_ms": 125.926834
+    },
+    "first_client_confirmation_from_schedule": {
+      "count": 30000,
+      "mean_ms": 2.0828014005,
+      "p50_ms": 0.485542,
+      "p95_ms": 7.308083,
+      "p99_ms": 49.290084,
+      "max_ms": 125.926834
+    }
+  },
+  "wal": {
+    "before_workload": {
+      "insert_lsn": "0/12D79A30",
+      "flush_lsn": "0/12D79A30"
+    },
+    "at_client_drain": {
+      "insert_lsn": "0/139216A8",
+      "flush_lsn": "0/139216A8"
+    },
+    "after_post_drain_marker_and_durability_check": {
+      "insert_lsn": "0/13921768",
+      "flush_lsn": "0/13921768"
+    },
+    "insert_lsn_delta_at_client_drain_bytes": 12221560,
+    "insert_lsn_delta_through_marker_bytes": 12221752,
+    "post_drain_marker_durability_confirmed": true,
+    "method": "pg_current_wal_insert_lsn / pg_current_wal_flush_lsn; pg_wal_lsn_diff. Baseline follows setup and a durable marker. Drain snapshot precedes the second marker; that marker is explicitly included in the later boundary. Finalization and cleanup are excluded."
+  },
+  "physical_sizes": {
+    "before_workload": {
+      "schema_tables_and_indexes_bytes": 647168,
+      "vote_partitions_and_indexes_bytes": 524288
+    },
+    "after_client_drain": {
+      "schema_tables_and_indexes_bytes": 12492800,
+      "vote_partitions_and_indexes_bytes": 12369920
+    },
+    "after_real_close_and_finalization": {
+      "schema_tables_and_indexes_bytes": 12533760,
+      "vote_partitions_and_indexes_bytes": 12394496
+    },
+    "vote_bytes_delta_at_client_drain": 11845632,
+    "vote_bytes_delta_after_finalization": 11870208,
+    "method": "SUM(pg_total_relation_size) for ordinary tables/materialized views in the isolated schema; vote subtotal selects votes_p* leaf tables. Includes their indexes/TOAST; excludes WAL and other schemas. Empty schema allocation is subtracted."
+  },
+  "reconciliation": {
+    "poll_finalized_barrier_visible": true,
+    "per_key_correct": true,
+    "unique_database_rows": 30000,
+    "final_result_total": 30000,
+    "final_choice_counts": {
+      "1": 24732,
+      "2": 5268
+    },
+    "rows_scanned_bounded": 30000,
+    "unexpected_keys": 0,
+    "rows_for_never_dispatched_keys": 0,
+    "key_content_mismatches": 0,
+    "client_confirmed_keys_absent": 0,
+    "dispatched_keys_absent": 0,
+    "persisted_keys_without_client_confirmation": 0,
+    "unknown_unconfirmed_keys_found": 0,
+    "unknown_unconfirmed_keys_absent_after_barrier": 0,
+    "keys_with_multiple_accepted_responses": 0,
+    "final_aggregate_matches_rows_and_choices": true,
+    "method": "Read-only repeatable-read snapshot after the real close/finalization barrier; compare every bounded submitted key and receipt choice against rows, then compare final aggregate totals and option counts. Unknown absence is not loss of a confirmed vote."
+  },
+  "explicit_replication_durability_checked": true,
+  "private_key_ledger_file": ".local/storagebench/gqbench_ee3c36f9356e0cc1.json",
+  "schema_cleanup": "retained",
+  "total_wall_seconds": 60.485153,
+  "errors": [],
+  "limitations": [
+    "Database-only experiment: HTTP parsing, authentication, browser delivery and external TLS are excluded.",
+    "Latency quantiles are exact nearest-rank quantiles for bounded retained observations; do not average quantiles across runs.",
+    "WAL LSNs are global to this PostgreSQL primary; concurrent activity and boundary markers contaminate attribution. Physical size deltas are allocated relation bytes, not bytes written or storage latency.",
+    "Unknown responses are reconciled after the genuine close barrier, not classified as lost confirmations.",
+    "One loopback replication lab does not model separate failure zones or establish production throughput."
+  ]
+}

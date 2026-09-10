@@ -1,0 +1,221 @@
+{
+  "kind": "capacity planning sensitivity; NOT measured production capacity",
+  "workload": {
+    "unique_voters": 100000000,
+    "seconds": 60,
+    "repeat_fraction": 0.2,
+    "attempts_per_event": 120000000,
+    "attempts_per_second": 2000000,
+    "availability_zones": 3,
+    "replication_factor": 3,
+    "utilization_target_normal_and_after_one_az_loss": 0.7
+  },
+  "ingress": {
+    "basis": "assumed",
+    "source": "planning assumption; no HTTP instance capacity measured",
+    "candidate_instance_shape": {
+      "vcpu": 32,
+      "memory_gib": 64
+    },
+    "shape_note": "Shape does not establish throughput; sensitivity capacities require measurement on the intended instance.",
+    "sensitivity": [
+      {
+        "per_node_attempts_s": 100000,
+        "nodes": 45,
+        "nodes_per_az": 15,
+        "remaining_after_one_az_loss": 30,
+        "normal_utilization": 0.4444444444444444,
+        "one_az_loss_utilization": 0.6666666666666666,
+        "formula": "3 * ceil(attempt_rate / (2 * utilization_target * per_node_attempt_throughput))"
+      },
+      {
+        "per_node_attempts_s": 200000,
+        "nodes": 24,
+        "nodes_per_az": 8,
+        "remaining_after_one_az_loss": 16,
+        "normal_utilization": 0.4166666666666667,
+        "one_az_loss_utilization": 0.625,
+        "formula": "3 * ceil(attempt_rate / (2 * utilization_target * per_node_attempt_throughput))"
+      },
+      {
+        "per_node_attempts_s": 250000,
+        "nodes": 18,
+        "nodes_per_az": 6,
+        "remaining_after_one_az_loss": 12,
+        "normal_utilization": 0.4444444444444444,
+        "one_az_loss_utilization": 0.6666666666666666,
+        "formula": "3 * ceil(attempt_rate / (2 * utilization_target * per_node_attempt_throughput))"
+      },
+      {
+        "per_node_attempts_s": 300000,
+        "nodes": 15,
+        "nodes_per_az": 5,
+        "remaining_after_one_az_loss": 10,
+        "normal_utilization": 0.4444444444444444,
+        "one_az_loss_utilization": 0.6666666666666666,
+        "formula": "3 * ceil(attempt_rate / (2 * utilization_target * per_node_attempt_throughput))"
+      }
+    ],
+    "candidate": {
+      "per_node_attempts_s": 250000,
+      "nodes": 18,
+      "nodes_per_az": 6,
+      "remaining_after_one_az_loss": 12,
+      "normal_utilization": 0.4444444444444444,
+      "one_az_loss_utilization": 0.6666666666666666,
+      "formula": "3 * ceil(attempt_rate / (2 * utilization_target * per_node_attempt_throughput))"
+    }
+  },
+  "broker_capacity_inputs": {
+    "basis": "assumed",
+    "source": "planning assumptions; no production broker capacity measured",
+    "instance_shape": {
+      "vcpu": 32,
+      "memory_gib": 128
+    },
+    "leader_mb_s": 200,
+    "replica_disk_mb_s": 600,
+    "network_gbps": 10,
+    "network_mode": "per-direction",
+    "transport_multiplier": 1.15,
+    "disk_write_amplification": 1
+  },
+  "broker_scenarios": [
+    {
+      "record_scenario": "compact_framed",
+      "payload_bytes_per_attempt": 28,
+      "frame_header_bytes": 80,
+      "average_attempts_per_frame_assumed": 512,
+      "amortized_frame_header_bytes_per_attempt": 0.15625,
+      "kafka_record_batch_transaction_overhead_bytes_per_attempt_assumed": 12,
+      "effective_logical_bytes_per_attempt": 40.15625,
+      "logical_input_mb_s": 80.3125,
+      "throughput_minimum_by_constraint": {
+        "leader": 3,
+        "disk": 3,
+        "network": 3
+      },
+      "throughput_minimum_brokers": 3,
+      "storage_minimum_brokers": 3,
+      "capacity_minimum_brokers": 3,
+      "operational_floor_brokers": 6,
+      "candidate_brokers": 6,
+      "normal": {
+        "surviving_nodes": 6,
+        "copies_per_partition": 3,
+        "leader_input_mb_s_per_node": 13.385416666666666,
+        "replica_disk_write_mb_s_per_node": 40.15625,
+        "network_in_mb_s_per_node": 46.1796875,
+        "network_out_mb_s_per_node": 30.786458333333332,
+        "network_capacity_mode": "per-direction",
+        "network_capacity_mb_s_per_direction_or_aggregate": 1250,
+        "utilization": {
+          "leader": 0.06692708333333333,
+          "disk": 0.06692708333333333,
+          "network": 0.03694375
+        }
+      },
+      "one_az_lost": {
+        "surviving_nodes": 4,
+        "copies_per_partition": 2,
+        "leader_input_mb_s_per_node": 20.078125,
+        "replica_disk_write_mb_s_per_node": 40.15625,
+        "network_in_mb_s_per_node": 46.1796875,
+        "network_out_mb_s_per_node": 23.08984375,
+        "network_capacity_mode": "per-direction",
+        "network_capacity_mb_s_per_direction_or_aggregate": 1250,
+        "utilization": {
+          "leader": 0.100390625,
+          "disk": 0.06692708333333333,
+          "network": 0.03694375
+        }
+      },
+      "within_target_in_both_states": true,
+      "retention": {
+        "events": 1,
+        "logical_bytes_per_event": 4818750000,
+        "replication_factor": 3,
+        "storage_overhead_multiplier": 1.5,
+        "physical_stored_bytes_with_overhead": 21684375000,
+        "nvme_tb_per_node_decimal": 1.92,
+        "raw_capacity_bytes": 11520000000000,
+        "maximum_disk_fill": 0.6,
+        "projected_disk_fill": 0.00188232421875,
+        "whole_events_at_fill_limit": 318
+      }
+    },
+    {
+      "record_scenario": "legacy",
+      "payload_bytes_per_attempt": 96,
+      "frame_header_bytes": 0,
+      "average_attempts_per_frame_assumed": 1,
+      "amortized_frame_header_bytes_per_attempt": 0,
+      "kafka_record_batch_transaction_overhead_bytes_per_attempt_assumed": 12,
+      "effective_logical_bytes_per_attempt": 108,
+      "logical_input_mb_s": 216,
+      "throughput_minimum_by_constraint": {
+        "leader": 3,
+        "disk": 3,
+        "network": 3
+      },
+      "throughput_minimum_brokers": 3,
+      "storage_minimum_brokers": 3,
+      "capacity_minimum_brokers": 3,
+      "operational_floor_brokers": 6,
+      "candidate_brokers": 6,
+      "normal": {
+        "surviving_nodes": 6,
+        "copies_per_partition": 3,
+        "leader_input_mb_s_per_node": 36,
+        "replica_disk_write_mb_s_per_node": 108,
+        "network_in_mb_s_per_node": 124.2,
+        "network_out_mb_s_per_node": 82.8,
+        "network_capacity_mode": "per-direction",
+        "network_capacity_mb_s_per_direction_or_aggregate": 1250,
+        "utilization": {
+          "leader": 0.18,
+          "disk": 0.18,
+          "network": 0.09936
+        }
+      },
+      "one_az_lost": {
+        "surviving_nodes": 4,
+        "copies_per_partition": 2,
+        "leader_input_mb_s_per_node": 54,
+        "replica_disk_write_mb_s_per_node": 108,
+        "network_in_mb_s_per_node": 124.2,
+        "network_out_mb_s_per_node": 62.1,
+        "network_capacity_mode": "per-direction",
+        "network_capacity_mb_s_per_direction_or_aggregate": 1250,
+        "utilization": {
+          "leader": 0.27,
+          "disk": 0.18,
+          "network": 0.09936
+        }
+      },
+      "within_target_in_both_states": true,
+      "retention": {
+        "events": 1,
+        "logical_bytes_per_event": 12960000000,
+        "replication_factor": 3,
+        "storage_overhead_multiplier": 1.5,
+        "physical_stored_bytes_with_overhead": 58320000000,
+        "nvme_tb_per_node_decimal": 1.92,
+        "raw_capacity_bytes": 11520000000000,
+        "maximum_disk_fill": 0.6,
+        "projected_disk_fill": 0.0050625,
+        "whole_events_at_fill_limit": 118
+      }
+    }
+  ],
+  "limitations": [
+    "CPU-only in-memory throughput is not used as an HTTP or durable-ingestion node capacity.",
+    "Traffic and leaders are assumed balanced. After one AZ is lost, all new traffic uses the remaining two thirds of nodes; ISR has two surviving copies. Acks require both surviving copies; normal acks=all waits for all current ISR copies.",
+    "The 70% target is a planning utilization bound, not a loss or latency guarantee. A switching pause can miss the one-minute admission deadline despite adequate steady-state capacity.",
+    "Network includes client ingress and replica transfers; normal replication egress is RF-1 streams, degraded RF-2. No replay/consumer result reads or replica rebuilding during the minute is included. Small acknowledgements/control traffic must fit the explicit transport margin; protocol CPU/transaction coordinator limits require separate measurement.",
+    "Frame occupancy and Kafka overhead are explicit assumptions. A maximum frame size does not prove the average occupancy; Kafka transaction rate cannot be inferred without the batching policy.",
+    "Disk throughput, disk write amplification, retention-space overhead and disk-fill reserve are distinct inputs. NVMe capacity does not establish sustained write speed or loss-of-power guarantees.",
+    "Operational broker floor is separate from arithmetic capacity minimum. Controllers, routing/control-plane services, results workers and administrative database require separate sizing.",
+    "No independent-AZ failover or production load is tested by this calculator. No infrastructure is created and no price is estimated."
+  ]
+}

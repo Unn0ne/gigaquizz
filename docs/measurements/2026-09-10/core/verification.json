@@ -1,0 +1,45 @@
+{
+  "at": "2026-09-10T13:51:15.005836+00:00",
+  "source_sha256": {
+    "Makefile": "56bfeb39809e2c06361be16e34de18669f4f92675910fbc1431d1e6ee25fddea",
+    "cmd/corebench/corebench_test.go": "be33bdc9d758695b19bb5e0e9d5726ebde8b8f422d0dfe276db34e5b6d85dbbe",
+    "cmd/corebench/execute.go": "f84cb2fb321684c5a7ad547bcd0bcf93ca2b9e6009a57c74b77fa17012e832f6",
+    "cmd/corebench/main.go": "c4bc1f526564b3b5085ddc0361ad067d9da6b320bd58126be0be8c3406494759",
+    "cmd/corebench/metrics.go": "aed86d7eb329224fcd72d6fdeaaa536c6b391d76fb5506feb9d6a0291673e2dc",
+    "cmd/corebench/workload.go": "10a30ff220eb254b6658577214cb44b54fca8a8d5e5b48ee6a838690520cddaf",
+    "go.mod": "54c645f0574a902392c11d9e5bcf5d0df33ce127e469e99025c678f789ca1268",
+    "go.sum": "22e8c1942d9a490398c0461ea75120b9cd137db4c2e887793a423d7880da97be",
+    "internal/votecore/engine.go": "6552c5a433b76dda0e0b6fea281b04c0c35b2b740df808502973e8983103de07",
+    "internal/votecore/engine_test.go": "96290b265df8d3a89035ba846f1a7d048511168421345b994c89fd34637b09d3",
+    "scripts/profile_core.py": "62db5dfcd7bd2befa0219f10afc10a29e372baf3f20c6ff1de821a920679f002"
+  },
+  "corebench_binary_sha256": "e95b81f74d616bf16ff5a8fe5bc86cec7625449851c25f50fcffb755b47e2798",
+  "binary_matches_final_two_large_profiles": true,
+  "checks": {
+    "go_test_race_all": true,
+    "real_postgres": true,
+    "real_kafka": true,
+    "go_vet_all": true,
+    "build_binaries": [
+      "gigaquizz",
+      "loadtest",
+      "storagebench",
+      "logbench",
+      "corebench"
+    ],
+    "python_syntax": true,
+    "gofmt_clean": true,
+    "browser_rerun": false,
+    "postgres_replication_failover_rerun": false,
+    "ram_load_fault_injection": false
+  },
+  "test_commands": [
+    "GIGAQUIZZ_KAFKA_TEST=1 TEST_DATABASE_URL=<local Unix socket, port55432> go test -race -count=1 ./...",
+    "go vet ./...",
+    "make build",
+    "python3 -m py_compile scripts/profile_core.py",
+    "gofmt -l cmd internal"
+  ],
+  "agent_review": "log_benchmark completed read-only review; kafka_lab and log_correctness agents errored403, reported to user; root completed core correctness tests",
+  "scope": "No durable ACK; no surviving RAM state after process exit; old Kafka data preserved"
+}

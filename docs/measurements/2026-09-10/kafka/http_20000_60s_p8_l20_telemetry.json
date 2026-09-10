@@ -1,0 +1,59 @@
+{
+  "command": [
+    "bin/logbench",
+    "-mode",
+    "http",
+    "-rate",
+    "20000",
+    "-duration",
+    "60s",
+    "-workers",
+    "2048",
+    "-queue",
+    "32768",
+    "-partitions",
+    "8",
+    "-batch-size",
+    "1000",
+    "-linger",
+    "20ms",
+    "-allow-large"
+  ],
+  "started_at": "2026-09-10T11:15:21.560534+00:00",
+  "binary_sha256": "284597c49d140d2560cec9266b0c77878a13ffd7360c849f6f7630cbc1d9e7c2",
+  "environment": {
+    "kafka_version": "4.3.1",
+    "java_version": "openjdk version \"21.0.10\" 2026-01-20\nOpenJDK Runtime Environment Homebrew (build 21.0.10)\nOpenJDK 64-Bit Server VM Homebrew (build 21.0.10, mixed mode, sharing)",
+    "same_host": true
+  },
+  "samples": [
+    {
+      "at": "2026-09-10T11:15:21.615835+00:00",
+      "processes": {
+        "kafka_node_2": {
+          "pid": 38277,
+          "cpu_seconds": 54.53,
+          "rss_bytes": 527548416
+        },
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 54.31,
+          "rss_bytes": 532758528
+        },
+        "kafka_node_1": {
+          "pid": 42373,
+          "cpu_seconds": 46.82,
+          "rss_bytes": 499646464
+        },
+        "go_benchmark_and_service": {
+          "pid": 66291,
+          "cpu_seconds": 0.01,
+          "rss_bytes": 6094848
+        }
+      }
+    }
+  ],
+  "faults": [],
+  "exit_code": 1,
+  "finished_at": "2026-09-10T11:15:22.622038+00:00"
+}

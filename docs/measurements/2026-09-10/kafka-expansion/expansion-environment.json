@@ -1,0 +1,49 @@
+{
+  "recorded_at": "2026-09-10T12:20:06.043125+00:00",
+  "disk": {
+    "total": 494384795648,
+    "used": 467673587712,
+    "free": 26711207936
+  },
+  "memory_pressure": "The system has 34359738368 (2097152 pages with a page size of 16384).\nSystem-wide memory free percentage: 36%\n",
+  "vm_stat": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                     3640.\nPages active:                                 375698.\nPages inactive:                               373453.\nPages speculative:                              1310.\nPages throttled:                                   0.\nPages wired down:                             229434.\nPages purgeable:                                   4.\n\"Translation faults\":                    17629563483.\nPages copy-on-write:                      1660941955.\nPages zero filled:                        3920469893.\nPages reactivated:                         322758482.\nPages purged:                              217094285.\nFile-backed pages:                            261547.\nAnonymous pages:                              488914.\nPages stored in compressor:                  4627740.\nPages occupied by compressor:                1072248.\nDecompressions:                           1785560675.\nCompressions:                             1850497987.\nPageins:                                    62130484.\nPageouts:                                    2240556.\nSwapins:                                     3839827.\nSwapouts:                                    5230774.\n",
+  "retained_ledger_bytes": 1993254264,
+  "planned_profiles": [
+    {
+      "mode": "http",
+      "rate": 100000,
+      "duration_seconds": 60,
+      "cpu_profile": true
+    },
+    {
+      "mode": "http",
+      "rate": 200000,
+      "duration_seconds": 60,
+      "cpu_profile": false
+    },
+    {
+      "mode": "direct",
+      "rate": 200000,
+      "duration_seconds": 60,
+      "cpu_profile": false
+    }
+  ],
+  "planned_maximum_new_ledger_bytes": 2160196608,
+  "ledger_directory_cap_bytes": 4294967296,
+  "shared_host": true,
+  "additional_profile_decision": {
+    "recorded_at": "2026-09-10T12:31:30.037595+00:00",
+    "mode": "direct",
+    "rate": 200000,
+    "duration_seconds": 60,
+    "linger_ms": 5,
+    "workers": 8192,
+    "reason": "Compare shorter batch wait after direct200k linger20 saturated at 157045 confirmed attempts/s.",
+    "ledger_directory_cap_bytes": 5368709120,
+    "retained_ledger_bytes_before": 4153255983,
+    "free_bytes_before": 16566890496,
+    "lab_allocated_bytes_before": 14339948544,
+    "lab_cap_bytes": 19327352832,
+    "minimum_free_bytes_preserved": 8589934592
+  }
+}

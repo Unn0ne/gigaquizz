@@ -1,0 +1,232 @@
+{
+  "primary": "standby_a",
+  "epoch": 10,
+  "database_profiles": [
+    {
+      "label": "cold_6000_repeat",
+      "reconciliation": {
+        "poll_finalized_barrier_visible": true,
+        "per_key_correct": true,
+        "unique_database_rows": 59640,
+        "final_result_total": 59640,
+        "final_choice_counts": {
+          "1": 59640,
+          "2": 0
+        },
+        "rows_scanned_bounded": 59640,
+        "unexpected_keys": 0,
+        "rows_for_never_dispatched_keys": 0,
+        "key_content_mismatches": 0,
+        "client_confirmed_keys_absent": 0,
+        "dispatched_keys_absent": 0,
+        "persisted_keys_without_client_confirmation": 0,
+        "unknown_unconfirmed_keys_found": 0,
+        "unknown_unconfirmed_keys_absent_after_barrier": 0,
+        "keys_with_multiple_accepted_responses": 0,
+        "final_aggregate_matches_rows_and_choices": true,
+        "method": "Read-only repeatable-read snapshot after the real close/finalization barrier; compare every bounded submitted key and receipt choice against rows, then compare final aggregate totals and option counts. Unknown absence is not loss of a confirmed vote."
+      },
+      "replication_proof_checked": true
+    },
+    {
+      "label": "warm_10000_prepared_30s",
+      "reconciliation": {
+        "poll_finalized_barrier_visible": true,
+        "per_key_correct": true,
+        "unique_database_rows": 241261,
+        "final_result_total": 241261,
+        "final_choice_counts": {
+          "1": 241261,
+          "2": 0
+        },
+        "rows_scanned_bounded": 241261,
+        "unexpected_keys": 0,
+        "rows_for_never_dispatched_keys": 0,
+        "key_content_mismatches": 0,
+        "client_confirmed_keys_absent": 0,
+        "dispatched_keys_absent": 0,
+        "persisted_keys_without_client_confirmation": 0,
+        "unknown_unconfirmed_keys_found": 0,
+        "unknown_unconfirmed_keys_absent_after_barrier": 0,
+        "keys_with_multiple_accepted_responses": 0,
+        "final_aggregate_matches_rows_and_choices": true,
+        "method": "Read-only repeatable-read snapshot after the real close/finalization barrier; compare every bounded submitted key and receipt choice against rows, then compare final aggregate totals and option counts. Unknown absence is not loss of a confirmed vote."
+      },
+      "replication_proof_checked": true
+    },
+    {
+      "label": "warm_6000_buffer_55s",
+      "reconciliation": {
+        "poll_finalized_barrier_visible": true,
+        "per_key_correct": true,
+        "unique_database_rows": 330000,
+        "final_result_total": 330000,
+        "final_choice_counts": {
+          "1": 330000,
+          "2": 0
+        },
+        "rows_scanned_bounded": 330000,
+        "unexpected_keys": 0,
+        "rows_for_never_dispatched_keys": 0,
+        "key_content_mismatches": 0,
+        "client_confirmed_keys_absent": 0,
+        "dispatched_keys_absent": 0,
+        "persisted_keys_without_client_confirmation": 0,
+        "unknown_unconfirmed_keys_found": 0,
+        "unknown_unconfirmed_keys_absent_after_barrier": 0,
+        "keys_with_multiple_accepted_responses": 0,
+        "final_aggregate_matches_rows_and_choices": true,
+        "method": "Read-only repeatable-read snapshot after the real close/finalization barrier; compare every bounded submitted key and receipt choice against rows, then compare final aggregate totals and option counts. Unknown absence is not loss of a confirmed vote."
+      },
+      "replication_proof_checked": true
+    },
+    {
+      "label": "warm_6000_small_queue",
+      "reconciliation": {
+        "poll_finalized_barrier_visible": true,
+        "per_key_correct": true,
+        "unique_database_rows": 58411,
+        "final_result_total": 58411,
+        "final_choice_counts": {
+          "1": 58411,
+          "2": 0
+        },
+        "rows_scanned_bounded": 58411,
+        "unexpected_keys": 0,
+        "rows_for_never_dispatched_keys": 0,
+        "key_content_mismatches": 0,
+        "client_confirmed_keys_absent": 0,
+        "dispatched_keys_absent": 0,
+        "persisted_keys_without_client_confirmation": 0,
+        "unknown_unconfirmed_keys_found": 0,
+        "unknown_unconfirmed_keys_absent_after_barrier": 0,
+        "keys_with_multiple_accepted_responses": 0,
+        "final_aggregate_matches_rows_and_choices": true,
+        "method": "Read-only repeatable-read snapshot after the real close/finalization barrier; compare every bounded submitted key and receipt choice against rows, then compare final aggregate totals and option counts. Unknown absence is not loss of a confirmed vote."
+      },
+      "replication_proof_checked": true
+    }
+  ],
+  "http_profiles": [
+    {
+      "label": "http_4000_adaptive_55s",
+      "client_confirmed": 220000,
+      "rows": 220000,
+      "distinct_keys": 220000,
+      "wrong_choices": 0,
+      "final_count": 220000,
+      "aggregate_match": true,
+      "per_key_client_ledger": false
+    },
+    {
+      "label": "http_6000_55s",
+      "client_confirmed": 328116,
+      "rows": 328116,
+      "distinct_keys": 328116,
+      "wrong_choices": 0,
+      "final_count": 328116,
+      "aggregate_match": true,
+      "per_key_client_ledger": false
+    },
+    {
+      "label": "http_6000_adaptive_55s",
+      "client_confirmed": 330000,
+      "rows": 330000,
+      "distinct_keys": 330000,
+      "wrong_choices": 0,
+      "final_count": 330000,
+      "aggregate_match": true,
+      "per_key_client_ledger": false
+    },
+    {
+      "label": "http_6000_adaptive_buffer_55s",
+      "client_confirmed": 330000,
+      "rows": 330000,
+      "distinct_keys": 330000,
+      "wrong_choices": 0,
+      "final_count": 330000,
+      "aggregate_match": true,
+      "per_key_client_ledger": false
+    },
+    {
+      "label": "http_6000_adaptive_buffer_repeat_55s",
+      "client_confirmed": 317264,
+      "rows": 317264,
+      "distinct_keys": 317264,
+      "wrong_choices": 0,
+      "final_count": 317264,
+      "aggregate_match": true,
+      "per_key_client_ledger": false
+    },
+    {
+      "label": "http_6000_adaptive_db32_55s",
+      "client_confirmed": 323404,
+      "rows": 323404,
+      "distinct_keys": 323404,
+      "wrong_choices": 0,
+      "final_count": 323404,
+      "aggregate_match": true,
+      "per_key_client_ledger": false
+    },
+    {
+      "label": "http_6000_adaptive_repeat_55s",
+      "client_confirmed": 328894,
+      "rows": 328894,
+      "distinct_keys": 328894,
+      "wrong_choices": 0,
+      "final_count": 328894,
+      "aggregate_match": true,
+      "per_key_client_ledger": false
+    },
+    {
+      "label": "http_6000_buffer_55s",
+      "client_confirmed": 324451,
+      "rows": 324451,
+      "distinct_keys": 324451,
+      "wrong_choices": 0,
+      "final_count": 324451,
+      "aggregate_match": true,
+      "per_key_client_ledger": false
+    },
+    {
+      "label": "http_6000_db32_55s",
+      "client_confirmed": 327423,
+      "rows": 327423,
+      "distinct_keys": 327423,
+      "wrong_choices": 0,
+      "final_count": 327423,
+      "aggregate_match": true,
+      "per_key_client_ledger": false
+    },
+    {
+      "label": "http_6000_prepared_55s",
+      "client_confirmed": 328872,
+      "rows": 328872,
+      "distinct_keys": 328872,
+      "wrong_choices": 0,
+      "final_count": 328872,
+      "aggregate_match": true,
+      "per_key_client_ledger": false
+    },
+    {
+      "label": "http_6000_two_generators_55s",
+      "client_confirmed": 329453,
+      "rows": 329453,
+      "distinct_keys": 329453,
+      "wrong_choices": 0,
+      "final_count": 329453,
+      "aggregate_match": true,
+      "per_key_client_ledger": false
+    },
+    {
+      "label": "http_8000_adaptive_55s",
+      "client_confirmed": 426507,
+      "rows": 426507,
+      "distinct_keys": 426507,
+      "wrong_choices": 0,
+      "final_count": 426507,
+      "aggregate_match": true,
+      "per_key_client_ledger": false
+    }
+  ]
+}

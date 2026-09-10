@@ -1,0 +1,42 @@
+{
+  "date": "2026-09-10T11:56:16.384421+00:00",
+  "commands": [
+    {
+      "command": "go mod tidy",
+      "exit_code": 0
+    },
+    {
+      "command": "GIGAQUIZZ_KAFKA_TEST=1 TEST_DATABASE_URL=<owned development PostgreSQL Unix socket> go test -race -count=1 ./...",
+      "exit_code": 0,
+      "real_kafka_enabled": true,
+      "real_postgresql_enabled": true,
+      "postgresql_replication_fault_tests_enabled": false
+    },
+    {
+      "command": "go vet ./...",
+      "exit_code": 0
+    },
+    {
+      "command": "make build",
+      "exit_code": 0,
+      "binaries": [
+        "gigaquizz",
+        "loadtest",
+        "storagebench",
+        "logbench"
+      ]
+    },
+    {
+      "command": "gofmt -l cmd internal",
+      "exit_code": 0,
+      "unformatted_files": []
+    },
+    {
+      "command": "ast.parse of scripts/*.py",
+      "exit_code": 0
+    }
+  ],
+  "final_logbench_binary_sha256": "c873ecd84252b1be56a9d9402a429fdef8ca5dd5b2c2a0c0353cea51767dae72",
+  "performance_history_note": "Per-profile telemetry records the binary hash used then. Bounded startup readiness, generator concurrency bounds, diagnostics and timeout configuration evolved during the series. The final binary additionally rechecks wall time after scheduler timer wakeup; published load reports were not altered or rerun to remove the observed early rejection.",
+  "browser_tests_repeated": false
+}

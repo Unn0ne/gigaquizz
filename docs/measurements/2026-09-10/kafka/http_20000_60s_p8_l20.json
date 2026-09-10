@@ -1,0 +1,41 @@
+{
+  "mode": "http",
+  "topic": "gigaquizz_logbench_b948d31035431c84",
+  "configuration": {
+    "attempt_timeout_seconds": 10,
+    "batch_size": 1000,
+    "different_choice": false,
+    "drain_seconds": 15,
+    "duration_seconds": 60,
+    "ends_at": "2026-09-10T11:16:36.598248Z",
+    "generator_queue": 32768,
+    "ledger_encoding": "72-byte fixed entries, JSON configuration header, SHA-256 integrity footer; mode 0600",
+    "linger_ms": 20,
+    "max_lag_ms": 1000,
+    "minimum_in_sync_replicas": 2,
+    "mode": "http",
+    "partitions": 8,
+    "poll_window_seconds": 60,
+    "producer_acks": "all",
+    "queue_per_partition": 8192,
+    "repeat_every": 0,
+    "replication_factor": 3,
+    "starts_at": "2026-09-10T11:15:36.598248Z",
+    "transaction_commit_required_before_202": true,
+    "unique_key_rate_per_second": 20000,
+    "workers": 2048
+  },
+  "wall_seconds": 0.33627575,
+  "errors": [
+    "initialize and warm journal writers: NOT_LEADER_FOR_PARTITION: This server is not the leader for that topic-partition."
+  ],
+  "limitations": [
+    "202 records an attempt, not a final unique vote; canonical results are derived after CLOSED.",
+    "Generator, HTTP handler and Kafka brokers share one computer; this is not a 1.7M/s capacity validation or independent failure zones.",
+    "HTTP mode uses the real experimental handler over loopback HTTP, without external routing, TLS, CDN or browser traffic.",
+    "Generator queues and admission queues are bounded; skipped slots were never submitted and are separate from unknown and missing confirmed records.",
+    "Kafka transaction acknowledgements use replicated logs and do not claim simultaneous all-copy power-loss survival or PostgreSQL-style remote physical flush proofs.",
+    "One static writer owner per partition; automatic production ownership assignment is not implemented.",
+    "Latency arrays and the private receipt ledger are bounded at 6000000 attempts; raw ledger tokens are synthetic and never included in this report."
+  ]
+}

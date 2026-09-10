@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#18231f">
+  <title>Опрос — Gigaquizz</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/common.js" defer></script>
+  <script src="/static/poll.js" defer></script>
+</head>
+<body class="poll-page">
+  <header class="site-header wrap"><a class="brand" href="/" aria-label="Gigaquizz — главная"><span class="brand-mark" aria-hidden="true">g.</span>gigaquizz</a><span class="header-caption">Ваше мнение важно</span></header>
+  <main class="poll-main">
+    <div id="loading" class="card loading-card" role="status"><span class="loader" aria-hidden="true"></span><p>Открываем опрос…</p></div>
+    <section id="page-error" class="card empty-state" hidden><span class="empty-symbol" aria-hidden="true">?</span><h1>Не удалось открыть опрос</h1><p id="page-error-message"></p><button id="reload-page" class="button secondary" type="button">Попробовать ещё раз</button></section>
+    <section id="poll-panel" class="card poll-card" hidden>
+      <div class="poll-meta"><span id="poll-state" class="badge"></span><span class="timer" id="countdown"></span></div>
+      <p id="scheduled-note" class="subtle" hidden></p>
+      <h1 id="question"></h1>
+      <p id="selection-hint" class="subtle"></p>
+      <div id="storage-warning" class="notice warning" role="status" hidden>Браузер не сохраняет данные опроса. Вы можете ответить, но после закрытия или перезагрузки страницы мы можем не узнать ваш предыдущий ответ.</div>
+      <form id="vote-form">
+        <fieldset id="choices-fieldset"><legend class="sr-only">Варианты ответа</legend><div id="choices" class="choice-list"></div></fieldset>
+        <div id="vote-message" class="notice" role="status" aria-live="polite" hidden></div>
+        <div id="receipt-panel" class="receipt" hidden><span class="receipt-icon" aria-hidden="true">✓</span><div><h2 id="receipt-title">Ваш голос принят</h2><p id="receipt-description"></p></div></div>
+        <button id="vote-button" class="button primary full-width" type="submit" disabled>Отправить ответ <span aria-hidden="true">→</span></button>
+      </form>
+      <p id="poll-footnote" class="poll-footnote">Выберите ответ один раз. Изменить принятый ответ нельзя.</p>
+    </section>
+    <p class="privacy-note">Без регистрации. Результаты видит организатор.</p>
+    <noscript><p class="notice warning">Для участия включите JavaScript в браузере.</p></noscript>
+  </main>
+  <footer class="site-footer wrap"><span>gigaquizz</span><a href="/">О сервисе</a></footer>
+</body>
+</html>

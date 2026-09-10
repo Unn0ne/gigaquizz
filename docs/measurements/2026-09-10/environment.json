@@ -1,0 +1,119 @@
+{
+  "date_utc": "2026-09-10",
+  "cpu": "Apple M1 Pro",
+  "logical_cpus": 10,
+  "memory_bytes": 34359738368,
+  "os": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "go": "go version go1.26.1 darwin/arm64",
+  "database_version": "16.3 (Postgres.app)",
+  "topology": "one computer; primary and two physical standbys; generator on same host; Unix sockets; no TCP",
+  "durability": {
+    "synchronous_commit": "on",
+    "synchronous_standby_names": "ANY 1 (gigaquizz_ha_a,gigaquizz_ha_b)",
+    "fsync": "on on all nodes",
+    "full_page_writes": "on on all nodes",
+    "ack_proof": "fixed WAL prefix flushed locally and by at least one named physical standby"
+  },
+  "postgres_per_node": {
+    "shared_buffers": "128MB",
+    "max_connections": 200,
+    "max_slot_wal_keep_size": "512MB"
+  },
+  "profiles": [
+    {
+      "HTTP_included": false,
+      "different_choice": false,
+      "logical_rate": 500,
+      "pool_warmup": "one repository Ping; additional connection establishment may occur during workload",
+      "queue": 256,
+      "repeat_every": 0,
+      "required_standbys": 1,
+      "total_keys": 5000,
+      "workers": 32,
+      "label": "sync_unique_500",
+      "started_at": "2026-09-10T09:12:05.291322+00:00",
+      "mode": "vote"
+    },
+    {
+      "HTTP_included": false,
+      "different_choice": false,
+      "logical_rate": 1000,
+      "pool_warmup": "one repository Ping; additional connection establishment may occur during workload",
+      "queue": 256,
+      "repeat_every": 0,
+      "required_standbys": 1,
+      "total_keys": 10000,
+      "workers": 32,
+      "label": "sync_unique_1000",
+      "started_at": "2026-09-10T09:13:08.421441+00:00",
+      "mode": "vote"
+    },
+    {
+      "HTTP_included": false,
+      "different_choice": false,
+      "logical_rate": 1000,
+      "pool_warmup": "one repository Ping; additional connection establishment may occur during workload",
+      "queue": 256,
+      "repeat_every": 5,
+      "required_standbys": 1,
+      "total_keys": 10000,
+      "workers": 32,
+      "label": "sync_duplicates_1000",
+      "started_at": "2026-09-10T09:14:08.910908+00:00",
+      "mode": "vote"
+    },
+    {
+      "HTTP_included": false,
+      "different_choice": true,
+      "logical_rate": 3000,
+      "pool_warmup": "one repository Ping; additional connection establishment may occur during workload",
+      "queue": 256,
+      "repeat_every": 5,
+      "required_standbys": 1,
+      "total_keys": 30000,
+      "workers": 64,
+      "label": "sync_conflicts_3000",
+      "started_at": "2026-09-10T09:15:09.419519+00:00",
+      "mode": "vote"
+    },
+    {
+      "HTTP_included": false,
+      "different_choice": false,
+      "logical_rate": 6000,
+      "pool_warmup": "one repository Ping; additional connection establishment may occur during workload",
+      "queue": 256,
+      "repeat_every": 0,
+      "required_standbys": 1,
+      "total_keys": 60000,
+      "workers": 64,
+      "label": "sync_unique_6000",
+      "started_at": "2026-09-10T09:16:09.953475+00:00",
+      "mode": "vote"
+    },
+    {
+      "HTTP_included": false,
+      "different_choice": false,
+      "logical_rate": 1000,
+      "pool_warmup": "one repository Ping; additional connection establishment may occur during workload",
+      "queue": 256,
+      "repeat_every": 0,
+      "required_standbys": 1,
+      "total_keys": 10000,
+      "workers": 32,
+      "label": "sync_blind_1000",
+      "started_at": "2026-09-10T09:17:10.560986+00:00",
+      "mode": "blind"
+    }
+  ],
+  "fault_audit": "immediate stop of primary after all workloads and finalization; fenced promotion; per-key ledger and final count audit; rebuild retired node",
+  "tests": {
+    "go": "go vet ./...; go test -race ./... with real TEST_DATABASE_URL; earlier uncached full suite also passed",
+    "replication": "GIGAQUIZZ_REPLICATION_TEST=1 go test -race -count=1 -run TestReplicatedDurability ./internal/postgres; 35.07s test, 36.776s package"
+  },
+  "limitations": [
+    "One sample per profile; ten seconds of offered load within a real 60-second poll.",
+    "No HTTP/TLS/CDN or independently failed disk, host, zone or region.",
+    "No CPU/IO/wait-event profile; cannot attribute saturation to one component.",
+    "Private synthetic key ledgers are not included in published aggregate reports."
+  ]
+}

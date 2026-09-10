@@ -1,0 +1,22 @@
+$ go test -race -count=1 ./...
+ok  	gigaquizz/cmd/corebench	1.757s
+?   	gigaquizz/cmd/gigaquizz	[no test files]
+ok  	gigaquizz/cmd/loadtest	2.119s
+ok  	gigaquizz/cmd/logbench	2.545s
+ok  	gigaquizz/cmd/storagebench	3.958s
+?   	gigaquizz/internal/config	[no test files]
+ok  	gigaquizz/internal/httpapi	2.944s
+ok  	gigaquizz/internal/poll	3.931s
+ok  	gigaquizz/internal/postgres	11.831s
+ok  	gigaquizz/internal/votecore	4.912s
+ok  	gigaquizz/internal/votelog	16.037s
+?   	gigaquizz/internal/web	[no test files]
+$ go vet ./...
+$ make build
+go build -o bin/gigaquizz ./cmd/gigaquizz
+go build -o bin/loadtest ./cmd/loadtest
+go build -o bin/storagebench ./cmd/storagebench
+go build -o bin/logbench ./cmd/logbench
+go build -o bin/corebench ./cmd/corebench
+$ python3 -m py_compile scripts/profile_core.py
+$ gofmt -l cmd internal

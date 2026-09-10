@@ -1,0 +1,38 @@
+File: logbench
+Type: cpu
+Time: 2026-09-10 15:23:25 MSK
+Duration: 76.51s, Total samples = 284.58s (371.96%)
+Showing nodes accounting for 267.02s, 93.83% of 284.58s total
+Dropped 876 nodes (cum <= 1.42s)
+Showing top 30 nodes out of 98
+      flat  flat%   sum%        cum   cum%
+   236.65s 83.16% 83.16%    236.66s 83.16%  syscall.rawsyscalln
+     9.26s  3.25% 86.41%      9.26s  3.25%  runtime.kevent
+     7.82s  2.75% 89.16%      7.82s  2.75%  runtime.pthread_cond_wait
+     7.20s  2.53% 91.69%      7.20s  2.53%  runtime.usleep
+     3.29s  1.16% 92.85%      3.29s  1.16%  runtime.pthread_cond_signal
+     0.81s  0.28% 93.13%      2.56s   0.9%  main.runWorkload
+     0.32s  0.11% 93.24%     10.33s  3.63%  runtime.selectgo
+     0.31s  0.11% 93.35%     14.43s  5.07%  runtime.lock2
+     0.26s 0.091% 93.44%      3.43s  1.21%  runtime.unlock2
+     0.22s 0.077% 93.52%      5.48s  1.93%  main.runWorkload.func1
+     0.16s 0.056% 93.58%      1.82s  0.64%  internal/sync.(*Mutex).lockSlow
+     0.07s 0.025% 93.60%      2.05s  0.72%  net/http.(*Transport).tryPutIdleConn
+     0.07s 0.025% 93.63%      3.36s  1.18%  runtime.mallocgc
+     0.07s 0.025% 93.65%      8.24s  2.90%  runtime.sellock
+     0.06s 0.021% 93.67%      1.88s  0.66%  runtime.scanframeworker
+     0.05s 0.018% 93.69%     11.37s  4.00%  runtime.lock (partial-inline)
+     0.04s 0.014% 93.70%      2.15s  0.76%  internal/sync.(*Mutex).Unlock (inline)
+     0.04s 0.014% 93.72%      1.48s  0.52%  main.summarize
+     0.04s 0.014% 93.73%     11.63s  4.09%  runtime.schedule
+     0.04s 0.014% 93.75%      3.10s  1.09%  runtime.unlock2Wake
+     0.03s 0.011% 93.76%    103.57s 36.39%  bufio.(*Reader).Peek
+     0.03s 0.011% 93.77%      2.11s  0.74%  internal/sync.(*Mutex).unlockSlow
+     0.03s 0.011% 93.78%      2.19s  0.77%  runtime.newobject
+     0.03s 0.011% 93.79%      2.09s  0.73%  runtime.semrelease1
+     0.02s 0.007% 93.79%    103.55s 36.39%  bufio.(*Reader).fill
+     0.02s 0.007% 93.80%      9.73s  3.42%  gigaquizz/internal/votelog.(*Store).Handler.func2
+     0.02s 0.007% 93.81%      8.53s  3.00%  gigaquizz/internal/votelog.(*Store).Submit
+     0.02s 0.007% 93.82%    105.06s 36.92%  internal/poll.(*FD).Write
+     0.02s 0.007% 93.82%      1.84s  0.65%  internal/sync.(*Mutex).Lock (inline)
+     0.02s 0.007% 93.83%    131.87s 46.34%  net.(*netFD).Read

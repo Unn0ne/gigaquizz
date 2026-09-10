@@ -1,0 +1,2 @@
+corebench: ready; 60000 unique keys scheduled from 2026-09-10T13:35:19.750001Z for 60s (volatile RAM only)
+corebench: workload complete; accepted=60000 duplicate=12000 skipped=0 closed=0; sealing and auditing full keys

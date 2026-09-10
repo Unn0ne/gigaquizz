@@ -1,0 +1,40 @@
+{
+  "version": "4.3.1",
+  "bootstrap_servers": "127.0.0.1:19092,127.0.0.1:19093,127.0.0.1:19094",
+  "nodes": [
+    {
+      "id": 1,
+      "pid": 60303,
+      "owned_process_running": true,
+      "broker_listening": true,
+      "controller_listening": true
+    },
+    {
+      "id": 2,
+      "pid": 60456,
+      "owned_process_running": true,
+      "broker_listening": true,
+      "controller_listening": true
+    },
+    {
+      "id": 3,
+      "pid": 38292,
+      "owned_process_running": true,
+      "broker_listening": true,
+      "controller_listening": true
+    }
+  ],
+  "ready": true,
+  "health_topic": {
+    "isr": [
+      1,
+      2,
+      3
+    ],
+    "description": "Topic: gigaquizz_lab_health\tTopicId: s--UFXvUSOSce10lJ-Bg_Q\tPartitionCount: 1\tReplicationFactor: 3\tConfigs: min.insync.replicas=2,cleanup.policy=delete,segment.bytes=67108864,retention.ms=86400000,preallocate=false,unclean.leader.election.enable=false,retention.bytes=1073741824,segment.index.bytes=1048576\n\tTopic: gigaquizz_lab_health\tPartition: 0\tLeader: 3\tReplicas: 3,1,2\tIsr: 1,2,3\tElr: \tLastKnownElr:",
+    "query_ok": true
+  },
+  "free_bytes": 25384800256,
+  "lab_allocated_bytes": 8686112768,
+  "guarantee": "replicated Kafka ACK; no per-record fsync guarantee; shared host and disk"
+}

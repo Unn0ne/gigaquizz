@@ -1,0 +1,44 @@
+[
+  {
+    "profile": "http_6000_duplicates_broker1_crash",
+    "guaranteed_down_interval_start_ns": 1789039939527981000,
+    "guaranteed_down_interval_end_ns": 1789039949833451000,
+    "interval_from_poll_start_seconds": [
+      28.02789,
+      38.33336
+    ],
+    "202_replies_in_interval": 0,
+    "202_replies_for_admission_within_interval": 0,
+    "last_202_before_interval_from_poll_start_seconds": 25.849652,
+    "first_202_after_interval_start_from_poll_start_seconds": null,
+    "interval_definition": "All targeted stop-node commands completed; no targeted start-node command has begun. Client completions are not broker commit timestamps."
+  },
+  {
+    "profile": "http_6000_duplicates_broker1_wait30",
+    "guaranteed_down_interval_start_ns": 1789040806493687000,
+    "guaranteed_down_interval_end_ns": 1789040816812677000,
+    "interval_from_poll_start_seconds": [
+      26.998704,
+      37.317694
+    ],
+    "202_replies_in_interval": 88410,
+    "202_replies_for_admission_within_interval": 80218,
+    "last_202_before_interval_from_poll_start_seconds": 25.025893,
+    "first_202_after_interval_start_from_poll_start_seconds": 33.409214,
+    "interval_definition": "All targeted stop-node commands completed; no targeted start-node command has begun. Client completions are not broker commit timestamps."
+  },
+  {
+    "profile": "http_1000_quorum_loss",
+    "guaranteed_down_interval_start_ns": 1789040901489893000,
+    "guaranteed_down_interval_end_ns": 1789040914032833000,
+    "interval_from_poll_start_seconds": [
+      28.051037,
+      40.593977
+    ],
+    "202_replies_in_interval": 0,
+    "202_replies_for_admission_within_interval": 0,
+    "last_202_before_interval_from_poll_start_seconds": 25.703627,
+    "first_202_after_interval_start_from_poll_start_seconds": null,
+    "interval_definition": "All targeted stop-node commands completed; no targeted start-node command has begun. Client completions are not broker commit timestamps."
+  }
+]

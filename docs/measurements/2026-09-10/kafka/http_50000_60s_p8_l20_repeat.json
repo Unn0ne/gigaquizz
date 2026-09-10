@@ -1,0 +1,937 @@
+{
+  "mode": "http",
+  "topic": "gigaquizz_logbench_531334f756d71fc1",
+  "configuration": {
+    "attempt_timeout_seconds": 10,
+    "batch_size": 1000,
+    "different_choice": false,
+    "drain_seconds": 15,
+    "duration_seconds": 60,
+    "ends_at": "2026-09-10T11:30:10.023528Z",
+    "generator_queue": 65536,
+    "ledger_encoding": "72-byte fixed entries, JSON configuration header, SHA-256 integrity footer; mode 0600",
+    "linger_ms": 20,
+    "max_lag_ms": 1000,
+    "minimum_in_sync_replicas": 2,
+    "mode": "http",
+    "partitions": 8,
+    "poll_window_seconds": 60,
+    "producer_acks": "all",
+    "queue_per_partition": 8192,
+    "repeat_every": 0,
+    "replication_factor": 3,
+    "starts_at": "2026-09-10T11:29:10.023528Z",
+    "transaction_commit_required_before_202": true,
+    "unique_key_rate_per_second": 50000,
+    "workers": 4096
+  },
+  "workload": {
+    "starts_at": "2026-09-10T11:29:10.023528Z",
+    "finished_at": "2026-09-10T11:30:10.097059Z",
+    "counts": {
+      "planned_attempts": 3000000,
+      "dispatched_attempts": 2804134,
+      "generator_skipped_attempts": 195866,
+      "recorded_attempts_202": 2804071,
+      "not_open": 0,
+      "closed": 63,
+      "busy": 0,
+      "rejected": 0,
+      "unknown": 0
+    },
+    "planned_unique_keys": 3000000,
+    "keys_with_at_least_one_202": 2804071,
+    "keys_without_202": 195929,
+    "generator_skip_reasons": {
+      "generator_lag": 195866
+    },
+    "latency_all_dispatched": {
+      "from_original_schedule": {
+        "samples": 2804134,
+        "mean_ms": 573.0241067919721,
+        "p95_ms": 1131.438,
+        "p99_ms": 1251.828,
+        "max_ms": 1669.173
+      },
+      "from_dispatch": {
+        "samples": 2804134,
+        "mean_ms": 76.40377553711771,
+        "p95_ms": 175.095,
+        "p99_ms": 310.278,
+        "max_ms": 1281.124
+      }
+    },
+    "latency_recorded_attempts": {
+      "from_original_schedule": {
+        "samples": 2804071,
+        "mean_ms": 573.0369070583448,
+        "p95_ms": 1131.44,
+        "p99_ms": 1251.832,
+        "max_ms": 1669.173
+      },
+      "from_dispatch": {
+        "samples": 2804071,
+        "mean_ms": 76.40544410252095,
+        "p95_ms": 175.096,
+        "p99_ms": 310.279,
+        "max_ms": 1281.124
+      }
+    },
+    "one_second_buckets": [
+      {
+        "second": 0,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 49696,
+        "recorded_by_completion_second": 47954,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 1,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 49460,
+        "recorded_by_completion_second": 47106,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 2,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 50602,
+        "recorded_by_completion_second": 52833,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 3,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 50241,
+        "recorded_by_completion_second": 48849,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 4,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 49997,
+        "recorded_by_completion_second": 51909,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 5,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 50004,
+        "recorded_by_completion_second": 48764,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 6,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 49998,
+        "recorded_by_completion_second": 50385,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 7,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 49907,
+        "recorded_by_completion_second": 49457,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 8,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 44759,
+        "recorded_by_completion_second": 43316,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 9,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 55278,
+        "recorded_by_completion_second": 57697,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 10,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 49915,
+        "recorded_by_completion_second": 48034,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 11,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 50125,
+        "recorded_by_completion_second": 52384,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 12,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 9344,
+        "dispatched_by_actual_second": 31864,
+        "recorded_by_completion_second": 29062,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 13,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 27887,
+        "dispatched_by_actual_second": 8810,
+        "recorded_by_completion_second": 8812,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 14,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 5863,
+        "dispatched_by_actual_second": 22113,
+        "recorded_by_completion_second": 22111,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 15,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 4276,
+        "dispatched_by_actual_second": 44133,
+        "recorded_by_completion_second": 44140,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 16,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 46276,
+        "recorded_by_completion_second": 46272,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 17,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 2699,
+        "dispatched_by_actual_second": 50672,
+        "recorded_by_completion_second": 50671,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 18,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 11210,
+        "dispatched_by_actual_second": 46281,
+        "recorded_by_completion_second": 46279,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 19,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 16820,
+        "dispatched_by_actual_second": 38654,
+        "recorded_by_completion_second": 38656,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 20,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 13021,
+        "dispatched_by_actual_second": 33116,
+        "recorded_by_completion_second": 33114,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 21,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 28,
+        "dispatched_by_actual_second": 37262,
+        "recorded_by_completion_second": 37262,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 22,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 61646,
+        "recorded_by_completion_second": 61649,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 23,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 53492,
+        "recorded_by_completion_second": 53489,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 24,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 48035,
+        "recorded_by_completion_second": 48041,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 25,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 63239,
+        "recorded_by_completion_second": 63236,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 26,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 64963,
+        "recorded_by_completion_second": 64971,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 27,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 58314,
+        "recorded_by_completion_second": 60885,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 28,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 49981,
+        "recorded_by_completion_second": 49610,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 29,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 1488,
+        "dispatched_by_actual_second": 35089,
+        "recorded_by_completion_second": 32880,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 30,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 5274,
+        "dispatched_by_actual_second": 13442,
+        "recorded_by_completion_second": 13440,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 31,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 5774,
+        "dispatched_by_actual_second": 44818,
+        "recorded_by_completion_second": 44820,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 32,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 16534,
+        "dispatched_by_actual_second": 44363,
+        "recorded_by_completion_second": 44369,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 33,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 22139,
+        "dispatched_by_actual_second": 33324,
+        "recorded_by_completion_second": 33325,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 34,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 26884,
+        "dispatched_by_actual_second": 27774,
+        "recorded_by_completion_second": 27765,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 35,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 12135,
+        "dispatched_by_actual_second": 23116,
+        "recorded_by_completion_second": 23116,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 36,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 2994,
+        "dispatched_by_actual_second": 38690,
+        "recorded_by_completion_second": 38690,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 37,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 3609,
+        "dispatched_by_actual_second": 47145,
+        "recorded_by_completion_second": 47146,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 38,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 3577,
+        "dispatched_by_actual_second": 45441,
+        "recorded_by_completion_second": 45440,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 39,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 4310,
+        "dispatched_by_actual_second": 49166,
+        "recorded_by_completion_second": 49169,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 40,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 45606,
+        "recorded_by_completion_second": 45612,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 41,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 50849,
+        "recorded_by_completion_second": 51017,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 42,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 50806,
+        "recorded_by_completion_second": 50632,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 43,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 52722,
+        "recorded_by_completion_second": 52721,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 44,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 53318,
+        "recorded_by_completion_second": 53322,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 45,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 42770,
+        "recorded_by_completion_second": 42769,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 46,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 51544,
+        "recorded_by_completion_second": 51545,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 47,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 57173,
+        "recorded_by_completion_second": 57167,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 48,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 49319,
+        "recorded_by_completion_second": 49324,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 49,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 59216,
+        "recorded_by_completion_second": 59211,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 50,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 55656,
+        "recorded_by_completion_second": 55830,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 51,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 56561,
+        "recorded_by_completion_second": 56391,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 52,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 58114,
+        "recorded_by_completion_second": 58133,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 53,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 54567,
+        "recorded_by_completion_second": 54547,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 54,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 54712,
+        "recorded_by_completion_second": 56517,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 55,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 49978,
+        "recorded_by_completion_second": 50023,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 56,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 49908,
+        "recorded_by_completion_second": 49356,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 57,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 50114,
+        "recorded_by_completion_second": 51457,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 58,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 49994,
+        "recorded_by_completion_second": 49784,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 59,
+        "scheduled": 50000,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 49972,
+        "recorded_by_completion_second": 50294,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 60,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 34,
+        "recorded_by_completion_second": 1311,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 63,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 61,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 62,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 63,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 64,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 65,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 66,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 67,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 68,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 69,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 70,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 71,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 72,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 73,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 74,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 75,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      },
+      {
+        "second": 76,
+        "scheduled": 0,
+        "skipped_by_scheduled_second": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0,
+        "unknown_by_completion_second": 0,
+        "closed_by_completion_second": 0,
+        "busy_by_completion_second": 0
+      }
+    ],
+    "dispatched_at_or_after_poll_deadline": 34,
+    "recorded_after_deadline_admitted_before_deadline": 1311,
+    "latency_method": "Exact nearest-rank percentiles of completed attempts; schedule includes generator queue, dispatch includes loopback HTTP or direct Submit. No censored/skipped attempts are latency samples. At most two 6000000-element int64 arrays are live for sorting."
+  },
+  "reconciliation": {
+    "read_committed_through_closed": true,
+    "every_202_receipt_matches_partition_offset_token_choice_admission": true,
+    "canonical_matches_first_committed_offset_per_key": true,
+    "correct": true,
+    "confirmed_receipts": 2804071,
+    "confirmed_unique_keys": 2804071,
+    "missing_confirmed_receipts": 0,
+    "mismatched_confirmed_receipts": 0,
+    "committed_journal_attempts": 2804071,
+    "canonical_unique_keys": 2804071,
+    "duplicate_committed_attempts": 0,
+    "keys_with_unknown_attempt_and_committed_record": 0,
+    "keys_without_202_but_present_in_journal": 0,
+    "records_not_explained_by_generated_keys_and_choices": 0,
+    "records_outside_server_admission_window": 0,
+    "tokens_in_multiple_partitions": 0,
+    "canonical_mismatches": 0,
+    "canonical_choice_counts": [
+      2804071,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "closed_partitions": 8,
+    "wall_seconds": 4.479828917
+  },
+  "boundary_checks": {
+    "after_closed_existing_token": "closed",
+    "after_closed_new_token": "closed",
+    "before_start": "not_open"
+  },
+  "store_metrics": {
+    "admitted": 2804071,
+    "committed_attempts": 2804071,
+    "failed_writers": 0,
+    "max_batch_records": 1000,
+    "transaction_ns": 353874707567,
+    "transaction_records": 2804071,
+    "transactions": 15336
+  },
+  "private_receipt_ledger": ".local/logbench/gigaquizz_logbench_531334f756d71fc1.ledger",
+  "wall_seconds": 81.249847958,
+  "errors": [],
+  "limitations": [
+    "202 records an attempt, not a final unique vote; canonical results are derived after CLOSED.",
+    "Generator, HTTP handler and Kafka brokers share one computer; this is not a 1.7M/s capacity validation or independent failure zones.",
+    "HTTP mode uses the real experimental handler over loopback HTTP, without external routing, TLS, CDN or browser traffic.",
+    "Generator queues and admission queues are bounded; skipped slots were never submitted and are separate from unknown and missing confirmed records.",
+    "Kafka transaction acknowledgements use replicated logs and do not claim simultaneous all-copy power-loss survival or PostgreSQL-style remote physical flush proofs.",
+    "One static writer owner per partition; automatic production ownership assignment is not implemented.",
+    "Latency arrays and the private receipt ledger are bounded at 6000000 attempts; raw ledger tokens are synthetic and never included in this report."
+  ]
+}

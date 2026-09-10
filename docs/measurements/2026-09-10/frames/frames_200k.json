@@ -1,0 +1,906 @@
+{
+  "mode": "direct compact-frame replicated journal",
+  "configuration": {
+    "acks": "all, then transaction commit",
+    "client_timeout_seconds": 15,
+    "disk_preflight": {
+      "assumed_protocol_reserve_bytes_per_frame": 256,
+      "estimated_client_ledger_bytes": 13792640,
+      "estimated_new_broker_bytes": 1219108864,
+      "free_bytes": 21082005504,
+      "required_free_bytes": 9822836096,
+      "reserve_bytes": 8589934592,
+      "retained_client_bytes": 1238349
+    },
+    "drain_seconds": 20,
+    "duration_seconds": 60,
+    "ends_at": "2026-09-10T14:35:49.152898Z",
+    "frame_age_ms": 20,
+    "frame_size": 4096,
+    "generator_queue_frames": 128,
+    "max_lag_ms": 100,
+    "maximum_metadata_frames": 26986,
+    "min_insync_replicas": 2,
+    "partitions": 8,
+    "planned_attempts": 12000000,
+    "planned_unique_keys": 12000000,
+    "queue_votes_per_partition": 8192,
+    "rate_unique_keys_per_second": 200000,
+    "record_entry_bytes": 28,
+    "record_header_bytes": 80,
+    "repeat_every": 0,
+    "replication_factor": 3,
+    "starts_at": "2026-09-10T14:34:49.152898Z",
+    "transaction_timeout_seconds": 30,
+    "workers": 64,
+    "writer_linger_ms": 20
+  },
+  "workload": {
+    "starts_at": "2026-09-10T14:34:49.152898Z",
+    "finished_at": "2026-09-10T14:35:49.217589Z",
+    "counts": {
+      "planned_attempts": 12000000,
+      "dispatched_attempts": 12000000,
+      "recorded_attempts": 12000000,
+      "recorded_original_attempts": 12000000,
+      "recorded_repeat_attempts": 0,
+      "unknown": 0,
+      "closed": 0,
+      "not_open": 0,
+      "busy": 0,
+      "rejected": 0,
+      "generator_skipped_attempts": 0,
+      "generator_lag_skips": 0,
+      "generator_queue_skips": 0,
+      "unvisited_or_cancelled": 0,
+      "dispatched_frames": 23304,
+      "recorded_frames": 23304,
+      "invalid_successful_receipts": 0
+    },
+    "planned_unique_keys": 12000000,
+    "one_second_buckets": [
+      {
+        "second": 0,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 198400,
+        "recorded_by_completion_second": 193171
+      },
+      {
+        "second": 1,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 197400,
+        "recorded_by_completion_second": 198543
+      },
+      {
+        "second": 2,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201600,
+        "recorded_by_completion_second": 202164
+      },
+      {
+        "second": 3,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201600,
+        "recorded_by_completion_second": 196494
+      },
+      {
+        "second": 4,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 197800,
+        "recorded_by_completion_second": 202264
+      },
+      {
+        "second": 5,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 200800,
+        "recorded_by_completion_second": 200957
+      },
+      {
+        "second": 6,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 202000,
+        "recorded_by_completion_second": 201008
+      },
+      {
+        "second": 7,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 197800,
+        "recorded_by_completion_second": 199811
+      },
+      {
+        "second": 8,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201600,
+        "recorded_by_completion_second": 198878
+      },
+      {
+        "second": 9,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 198200,
+        "recorded_by_completion_second": 201886
+      },
+      {
+        "second": 10,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201400,
+        "recorded_by_completion_second": 198201
+      },
+      {
+        "second": 11,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 198400,
+        "recorded_by_completion_second": 200419
+      },
+      {
+        "second": 12,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 200600,
+        "recorded_by_completion_second": 198553
+      },
+      {
+        "second": 13,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 200800,
+        "recorded_by_completion_second": 200862
+      },
+      {
+        "second": 14,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 197400,
+        "recorded_by_completion_second": 199964
+      },
+      {
+        "second": 15,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 202400,
+        "recorded_by_completion_second": 201895
+      },
+      {
+        "second": 16,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 200600,
+        "recorded_by_completion_second": 197673
+      },
+      {
+        "second": 17,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 197000,
+        "recorded_by_completion_second": 199977
+      },
+      {
+        "second": 18,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 202200,
+        "recorded_by_completion_second": 204288
+      },
+      {
+        "second": 19,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201200,
+        "recorded_by_completion_second": 195034
+      },
+      {
+        "second": 20,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 197400,
+        "recorded_by_completion_second": 202504
+      },
+      {
+        "second": 21,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 200400,
+        "recorded_by_completion_second": 200424
+      },
+      {
+        "second": 22,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 202400,
+        "recorded_by_completion_second": 199182
+      },
+      {
+        "second": 23,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 197400,
+        "recorded_by_completion_second": 201573
+      },
+      {
+        "second": 24,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201800,
+        "recorded_by_completion_second": 197574
+      },
+      {
+        "second": 25,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 197800,
+        "recorded_by_completion_second": 199874
+      },
+      {
+        "second": 26,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 202200,
+        "recorded_by_completion_second": 199274
+      },
+      {
+        "second": 27,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 197800,
+        "recorded_by_completion_second": 196245
+      },
+      {
+        "second": 28,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 203000,
+        "recorded_by_completion_second": 204611
+      },
+      {
+        "second": 29,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 198400,
+        "recorded_by_completion_second": 201948
+      },
+      {
+        "second": 30,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201200,
+        "recorded_by_completion_second": 196936
+      },
+      {
+        "second": 31,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 197200,
+        "recorded_by_completion_second": 200957
+      },
+      {
+        "second": 32,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 199400,
+        "recorded_by_completion_second": 200988
+      },
+      {
+        "second": 33,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 202000,
+        "recorded_by_completion_second": 201938
+      },
+      {
+        "second": 34,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 198000,
+        "recorded_by_completion_second": 197984
+      },
+      {
+        "second": 35,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201800,
+        "recorded_by_completion_second": 200710
+      },
+      {
+        "second": 36,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 200800,
+        "recorded_by_completion_second": 200838
+      },
+      {
+        "second": 37,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 197800,
+        "recorded_by_completion_second": 196394
+      },
+      {
+        "second": 38,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201800,
+        "recorded_by_completion_second": 202226
+      },
+      {
+        "second": 39,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 199800,
+        "recorded_by_completion_second": 198107
+      },
+      {
+        "second": 40,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 198600,
+        "recorded_by_completion_second": 202370
+      },
+      {
+        "second": 41,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201000,
+        "recorded_by_completion_second": 201980
+      },
+      {
+        "second": 42,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 200800,
+        "recorded_by_completion_second": 198219
+      },
+      {
+        "second": 43,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 198800,
+        "recorded_by_completion_second": 192730
+      },
+      {
+        "second": 44,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201400,
+        "recorded_by_completion_second": 209549
+      },
+      {
+        "second": 45,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 197600,
+        "recorded_by_completion_second": 198160
+      },
+      {
+        "second": 46,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 202000,
+        "recorded_by_completion_second": 201921
+      },
+      {
+        "second": 47,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 198600,
+        "recorded_by_completion_second": 197634
+      },
+      {
+        "second": 48,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 202400,
+        "recorded_by_completion_second": 197294
+      },
+      {
+        "second": 49,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 198800,
+        "recorded_by_completion_second": 198804
+      },
+      {
+        "second": 50,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201400,
+        "recorded_by_completion_second": 199395
+      },
+      {
+        "second": 51,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 198400,
+        "recorded_by_completion_second": 203960
+      },
+      {
+        "second": 52,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 198800,
+        "recorded_by_completion_second": 196271
+      },
+      {
+        "second": 53,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201800,
+        "recorded_by_completion_second": 205806
+      },
+      {
+        "second": 54,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 201600,
+        "recorded_by_completion_second": 197450
+      },
+      {
+        "second": 55,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 197600,
+        "recorded_by_completion_second": 200106
+      },
+      {
+        "second": 56,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 199000,
+        "recorded_by_completion_second": 195036
+      },
+      {
+        "second": 57,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 203000,
+        "recorded_by_completion_second": 203560
+      },
+      {
+        "second": 58,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 198000,
+        "recorded_by_completion_second": 200394
+      },
+      {
+        "second": 59,
+        "planned_by_schedule": 200000,
+        "dispatched_by_schedule": 200000,
+        "recorded_by_schedule": 200000,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 198600,
+        "recorded_by_completion_second": 195972
+      },
+      {
+        "second": 60,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 4200,
+        "recorded_by_completion_second": 11060
+      },
+      {
+        "second": 61,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 62,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 63,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 64,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 65,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 66,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 67,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 68,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 69,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 70,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 71,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 72,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 73,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 74,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 75,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 76,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 77,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 78,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 79,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 80,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      },
+      {
+        "second": 81,
+        "planned_by_schedule": 0,
+        "dispatched_by_schedule": 0,
+        "recorded_by_schedule": 0,
+        "skipped_by_schedule": 0,
+        "dispatched_by_actual_second": 0,
+        "recorded_by_completion_second": 0
+      }
+    ],
+    "sampled_recorded_latency_from_schedule": {
+      "samples": 11751,
+      "sample_mean_ms": 37.4416611384563,
+      "sample_p95_upper_ms": 71.303167,
+      "sample_p99_upper_ms": 79.691775,
+      "sample_max_ms": 114.258958
+    },
+    "sampled_recorded_latency_from_frame_call": {
+      "samples": 11751,
+      "sample_mean_ms": 25.774166629393243,
+      "sample_p95_upper_ms": 54.525951,
+      "sample_p99_upper_ms": 65.011711,
+      "sample_max_ms": 102.763416
+    },
+    "latency_method": "Record ACK latency is sampled independently of outcome by low10 AES-token bits (all attempts if planned<=10000); both repeat choices share selection. Histogram quantiles are upper edges with <6.25% rounding. Skipped/unknown/rejected attempts do not enter ACK latency samples. Frame dispatch includes direct Store.SubmitFrame, not external HTTP/TLS.",
+    "recorded_frame_payload_bytes": 337864320,
+    "mean_recorded_frame_attempts": 514.9330587023687
+  },
+  "reconciliation": {
+    "correct": true,
+    "closed_partitions": 8,
+    "recorded_attempts": 12000000,
+    "recorded_frames": 23304,
+    "confirmed_client_attempts": 12000000,
+    "confirmed_client_frames": 23304,
+    "matched_ack_frames": 23304,
+    "missing_ack_frames": 0,
+    "matched_ack_attempts": 12000000,
+    "missing_ack_attempts": 0,
+    "unknown_attempts_found_committed": 0,
+    "canonical_unique_keys": 12000000,
+    "duplicate_logical_attempts": 0,
+    "canonical_choice_counts": [
+      12000000,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "unexpected_records": 0,
+    "unexpected_duplicate_physical_attempts": 0,
+    "receipt_mismatches": 0,
+    "recorded_frame_payload_bytes": 337864320,
+    "wall_seconds": 1.6434397920000001,
+    "method": "Read committed through every CLOSED. AES decrypt each complete128-bit token to its unique synthetic counter; validate original/repeat eligibility and exact per-attempt state. Match every client ACK frame by partition/offset, ordered index/count/admission and SHA256(token16+choice4) digest. Digest is receipt integrity only, never a deduplication key. Canonical first occurrence uses exact AES-bijection-indexed flags."
+  },
+  "store_metrics": {
+    "admitted": 12000000,
+    "committed_attempts": 12000000,
+    "committed_frames": 23304,
+    "committed_key_bytes": 0,
+    "committed_value_bytes": 337864320,
+    "failed_writers": 0,
+    "max_batch_records": 4,
+    "transaction_ns": 219638718907,
+    "transaction_records": 23304,
+    "transactions": 19675
+  },
+  "runtime_diagnostics": {
+    "allocated_bytes": 3639266768,
+    "allocations": 2737202,
+    "gc_cycles": 201,
+    "gc_stop_the_world_pause_ns": 24459513,
+    "gomaxprocs": 10,
+    "heap_alloc_after_bytes": 26533744,
+    "heap_alloc_before_bytes": 15157808,
+    "scope": "Generator and journal client after setup through workload and drain, excluding replay"
+  },
+  "wall_seconds": 76.781465709,
+  "errors": [],
+  "limitations": [
+    "A successful frame receipt acknowledges committed attempts, not canonical unique choices. It is a direct Go-to-Kafka API test without public HTTP, TLS, CDN, browser identity or external routing.",
+    "Generator, Kafka clients and three broker JVMs share one host. Replicated Kafka ACK is not a remote physical-flush proof and does not establish survival of simultaneous all-copy power loss.",
+    "Synthetic full128-bit keys are an AES permutation of counters. The ordinary report omits the private seed and per-key state. Streaming reconciliation uses the complete keys and exact counters, never probabilistic deduplication.",
+    "Generator and admission queues are bounded. Unsubmitted slots, definitive refusals, unknown outcomes and missing acknowledged attempts are separate categories.",
+    "Private manifests/states/ACK frames are written after workload completion before Seal. Killing the generator during load is not covered by this receipt persistence method.",
+    "Single static writer ownership and prepared poll configuration are experimental; production ownership assignment and fencing orchestration remain separate work."
+  ]
+}

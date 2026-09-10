@@ -1,0 +1,291 @@
+{
+  "profile": {
+    "label": "http_6000_adaptive_buffer_repeat_55s",
+    "rate": 6000,
+    "duration": 55,
+    "workers": 128,
+    "queue": 4096,
+    "generators": 1,
+    "max_lag_ms": 1000,
+    "db_connections": 64,
+    "max_inflight": 256
+  },
+  "schema": "gqhttp_0164938ec8826cb6",
+  "replication_required": 1,
+  "vote_db_connections": 64,
+  "server_max_inflight": 256,
+  "server_pool_warmed": true,
+  "generator_reports": [
+    {
+      "name": "generator",
+      "raw_report_file": ".local/replication-lab/tuning/http_6000_adaptive_buffer_repeat_55s.load.json",
+      "logical_rate": 6000,
+      "workers": 128,
+      "queue": 4096,
+      "duration_seconds": 55,
+      "launch_requested_at": "2026-09-10T10:18:05.263248+00:00",
+      "launch_requested_offset_ms": 0.17508299788460135,
+      "process_started_at": "2026-09-10T10:18:05.268165+00:00",
+      "process_started_offset_ms": 5.139082961250097,
+      "exit_observed_at": "2026-09-10T10:19:00.679617+00:00",
+      "exit_code": 0,
+      "report": {
+        "configured_logical_ops_per_second": 6000,
+        "configured_window_seconds": 55,
+        "elapsed_seconds_including_drain": 55.127906333,
+        "interrupted_or_drain_deadline_reached": false,
+        "logical_planned": 330000,
+        "logical_scheduled": 330000,
+        "logical_not_scheduled": 0,
+        "logical_enqueued": 319628,
+        "logical_dispatched": 317264,
+        "logical_skipped": 12736,
+        "skipped_by_reason": {
+          "queue_full": 10372,
+          "worker_lag": 2364
+        },
+        "http_attempts": 317264,
+        "http_attempts_started_during_window": 316620,
+        "http_attempts_started_after_window": 644,
+        "http_attempts_during_window_per_configured_second": 5756.727272727273,
+        "http_attempts_per_elapsed_second": 5755.052587768661,
+        "http_response_headers_received": 317264,
+        "http_responses_fully_read": 317264,
+        "http_statuses": {
+          "201": 317264
+        },
+        "accepted_201_responses": 317264,
+        "duplicate_200_responses": 0,
+        "transport_errors_unknown_outcome": 0,
+        "response_body_errors": 0,
+        "local_request_errors": 0,
+        "unknown_503_responses": 0,
+        "logical_with_acceptance_confirmation": 317264,
+        "logical_without_confirmation_unknown_outcome": 0,
+        "logical_without_confirmation_only_other_responses": 0,
+        "initial_dispatch_lag": {
+          "count": 317264,
+          "mean_ms": 240.50090001484568,
+          "p50_upper_bound_ms": 7.106872,
+          "p95_upper_bound_ms": 917.710558,
+          "p99_upper_bound_ms": 1009.481614,
+          "max_ms": 1009.931958
+        },
+        "http_attempt_elapsed": {
+          "count": 317264,
+          "mean_ms": 13.026427847001235,
+          "p50_upper_bound_ms": 11.445691,
+          "p95_upper_bound_ms": 39.513643,
+          "p99_upper_bound_ms": 70.000832,
+          "max_ms": 330.374333
+        },
+        "http_attempt_end_to_end_from_logical_schedule": {
+          "count": 317264,
+          "mean_ms": 253.53367793277522,
+          "p50_upper_bound_ms": 29.687183,
+          "p95_upper_bound_ms": 917.710558,
+          "p99_upper_bound_ms": 1110.429776,
+          "max_ms": 1173.329459
+        },
+        "logical_end_to_end_including_optional_retry": {
+          "count": 317264,
+          "mean_ms": 253.54615704209428,
+          "p50_upper_bound_ms": 29.687183,
+          "p95_upper_bound_ms": 917.710558,
+          "p99_upper_bound_ms": 1110.429776,
+          "max_ms": 1173.329667
+        },
+        "limitations": [
+          "POST-only generator; page delivery, TLS population and full voter journey are not represented",
+          "latency percentiles are fixed-bucket upper estimates (approximately 10% bucket width above 1us); skipped slots are reported separately",
+          "201/200 confirm a logical key at most once here; timeout or 503 does not prove the vote was lost; reconcile server records and final results separately",
+          "successful execution and local throughput do not certify 100 million voters in 60 seconds"
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "limitations": [
+    "Single-host HTTP POST path; page delivery, TLS, CDN and geographic distribution excluded.",
+    "HTTP generator checks response status and aggregate reconciliation, not a per-key ledger.",
+    "Latency quantiles in HTTP generator are bucket upper bounds; queues and skipped slots remain visible.",
+    "Generators start independently. Launch timestamps bracket Popen, not the exact internal monotonic schedule start.",
+    "Sampler includes setup/drain/finalization and adds overhead. No power or zone failure is simulated."
+  ],
+  "server_metrics_before": {
+    "accepted_responses": 0,
+    "conflict_responses": 0,
+    "db_pool_acquire_count": 66,
+    "db_pool_acquire_ns": 192355042,
+    "db_pool_acquired_conns": 0,
+    "db_pool_canceled_acquire_count": 0,
+    "db_pool_empty_acquire_count": 64,
+    "db_pool_new_conns_count": 64,
+    "db_pool_total_conns": 64,
+    "db_proof_queries": 1,
+    "db_proof_query_ns": 1704291,
+    "db_proof_retries": 0,
+    "db_proof_wait_ns": 0,
+    "db_vote_sql_calls": 0,
+    "db_vote_sql_ns": 0,
+    "duplicate_responses": 0,
+    "inflight": 0,
+    "rejected_attempts": 0,
+    "storage_errors": 0,
+    "unknown_outcomes": 0,
+    "vote_http_attempts": 0
+  },
+  "server_metrics_before_observed_at": "2026-09-10T10:18:05.261992+00:00",
+  "poll_id": "93f6879f-2acd-4b50-ab68-adfe4e20cbc1",
+  "poll_starts_at": "2026-09-10T13:18:05.257273+03:00",
+  "poll_ends_at": "2026-09-10T13:19:05.257273+03:00",
+  "load_started_at": "2026-09-10T10:18:05.263071+00:00",
+  "generator_launch_spread_ms": 0.0,
+  "load_finished_at": "2026-09-10T10:19:00.679732+00:00",
+  "load_observed_wall_seconds": 55.41675370797748,
+  "server_metrics_after_workload": {
+    "accepted_responses": 317264,
+    "conflict_responses": 0,
+    "db_pool_acquire_count": 317330,
+    "db_pool_acquire_ns": 1516325257956,
+    "db_pool_acquired_conns": 0,
+    "db_pool_canceled_acquire_count": 0,
+    "db_pool_empty_acquire_count": 166565,
+    "db_pool_new_conns_count": 64,
+    "db_pool_total_conns": 64,
+    "db_proof_queries": 515152,
+    "db_proof_query_ns": 823976689783,
+    "db_proof_retries": 197887,
+    "db_proof_wait_ns": 305918612289,
+    "db_vote_sql_calls": 317264,
+    "db_vote_sql_ns": 1008191535020,
+    "duplicate_responses": 0,
+    "inflight": 0,
+    "rejected_attempts": 0,
+    "storage_errors": 0,
+    "unknown_outcomes": 0,
+    "vote_http_attempts": 317264
+  },
+  "server_metrics_after_workload_observed_at": "2026-09-10T10:19:00.789916+00:00",
+  "load": {
+    "configured_logical_ops_per_second": 6000,
+    "configured_window_seconds": 55,
+    "elapsed_seconds_including_drain": 55.127906333,
+    "interrupted_or_drain_deadline_reached": false,
+    "logical_planned": 330000,
+    "logical_scheduled": 330000,
+    "logical_not_scheduled": 0,
+    "logical_enqueued": 319628,
+    "logical_dispatched": 317264,
+    "logical_skipped": 12736,
+    "skipped_by_reason": {
+      "queue_full": 10372,
+      "worker_lag": 2364
+    },
+    "http_attempts": 317264,
+    "http_attempts_started_during_window": 316620,
+    "http_attempts_started_after_window": 644,
+    "http_attempts_during_window_per_configured_second": 5756.727272727273,
+    "http_attempts_per_elapsed_second": 5755.052587768661,
+    "http_response_headers_received": 317264,
+    "http_responses_fully_read": 317264,
+    "http_statuses": {
+      "201": 317264
+    },
+    "accepted_201_responses": 317264,
+    "duplicate_200_responses": 0,
+    "transport_errors_unknown_outcome": 0,
+    "response_body_errors": 0,
+    "local_request_errors": 0,
+    "unknown_503_responses": 0,
+    "logical_with_acceptance_confirmation": 317264,
+    "logical_without_confirmation_unknown_outcome": 0,
+    "logical_without_confirmation_only_other_responses": 0,
+    "initial_dispatch_lag": {
+      "count": 317264,
+      "mean_ms": 240.50090001484568,
+      "p50_upper_bound_ms": 7.106872,
+      "p95_upper_bound_ms": 917.710558,
+      "p99_upper_bound_ms": 1009.481614,
+      "max_ms": 1009.931958
+    },
+    "http_attempt_elapsed": {
+      "count": 317264,
+      "mean_ms": 13.026427847001235,
+      "p50_upper_bound_ms": 11.445691,
+      "p95_upper_bound_ms": 39.513643,
+      "p99_upper_bound_ms": 70.000832,
+      "max_ms": 330.374333
+    },
+    "http_attempt_end_to_end_from_logical_schedule": {
+      "count": 317264,
+      "mean_ms": 253.53367793277522,
+      "p50_upper_bound_ms": 29.687183,
+      "p95_upper_bound_ms": 917.710558,
+      "p99_upper_bound_ms": 1110.429776,
+      "max_ms": 1173.329459
+    },
+    "logical_end_to_end_including_optional_retry": {
+      "count": 317264,
+      "mean_ms": 253.54615704209428,
+      "p50_upper_bound_ms": 29.687183,
+      "p95_upper_bound_ms": 917.710558,
+      "p99_upper_bound_ms": 1110.429776,
+      "max_ms": 1173.329667
+    },
+    "limitations": [
+      "POST-only generator; page delivery, TLS population and full voter journey are not represented",
+      "latency percentiles are fixed-bucket upper estimates (approximately 10% bucket width above 1us); skipped slots are reported separately",
+      "201/200 confirm a logical key at most once here; timeout or 503 does not prove the vote was lost; reconcile server records and final results separately",
+      "successful execution and local throughput do not certify 100 million voters in 60 seconds"
+    ]
+  },
+  "final_results": {
+    "poll_id": "93f6879f-2acd-4b50-ab68-adfe4e20cbc1",
+    "state": "final",
+    "total_votes": 317264,
+    "options": [
+      {
+        "id": 1,
+        "label": "A",
+        "votes": 317264
+      },
+      {
+        "id": 2,
+        "label": "B",
+        "votes": 0
+      }
+    ],
+    "calculated_at": "2026-09-10T13:19:06.243096+03:00"
+  },
+  "server_metrics": {
+    "accepted_responses": 317264,
+    "conflict_responses": 0,
+    "db_pool_acquire_count": 317330,
+    "db_pool_acquire_ns": 1516325257956,
+    "db_pool_acquired_conns": 0,
+    "db_pool_canceled_acquire_count": 0,
+    "db_pool_empty_acquire_count": 166565,
+    "db_pool_new_conns_count": 64,
+    "db_pool_total_conns": 64,
+    "db_proof_queries": 515152,
+    "db_proof_query_ns": 823976689783,
+    "db_proof_retries": 197887,
+    "db_proof_wait_ns": 305918612289,
+    "db_vote_sql_calls": 317264,
+    "db_vote_sql_ns": 1008191535020,
+    "duplicate_responses": 0,
+    "inflight": 0,
+    "rejected_attempts": 0,
+    "storage_errors": 0,
+    "unknown_outcomes": 0,
+    "vote_http_attempts": 317264
+  },
+  "database_counts": {
+    "rows": 317264,
+    "distinct_keys": 317264,
+    "wrong_choices": 0
+  },
+  "aggregate_reconciliation_ok": true,
+  "schema_retained": true
+}

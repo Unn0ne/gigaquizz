@@ -1,0 +1,150 @@
+{
+  "mode": "blind",
+  "isolated_schema": "gqbench_1bcb5348238a3971",
+  "poll_id": "fa335332-2f4f-4d49-b5e1-44e19b4dee6c",
+  "configuration": {
+    "HTTP_included": false,
+    "different_choice": false,
+    "logical_rate": 1000,
+    "pool_warmup": "one repository Ping; additional connection establishment may occur during workload",
+    "queue": 256,
+    "repeat_every": 0,
+    "required_standbys": 1,
+    "total_keys": 10000,
+    "workers": 32
+  },
+  "database": {
+    "server_version": "16.3 (Postgres.app)",
+    "synchronous_commit": "on",
+    "synchronous_standby_names": "ANY 1 (gigaquizz_ha_a,gigaquizz_ha_b)",
+    "fsync": "on",
+    "full_page_writes": "on",
+    "in_recovery": false
+  },
+  "workload": {
+    "logical_planned": 10000,
+    "logical_scheduled": 10000,
+    "logical_sent": 10000,
+    "logical_not_sent": 0,
+    "logical_with_client_confirmation": 10000,
+    "logical_unconfirmed_with_unknown_attempt": 0,
+    "attempts_planned": 10000,
+    "attempts_queued": 10000,
+    "attempts_sent": 10000,
+    "attempts_not_scheduled": 0,
+    "attempts_skipped": 0,
+    "skipped_attempts_by_reason": {},
+    "outcomes": {
+      "accepted": 10000
+    },
+    "invalid_receipts": 0,
+    "scheduled_window_seconds": 10,
+    "workload_seconds_including_drain": 10.000768958,
+    "attempts_started_during_window": 10000,
+    "attempts_started_during_window_per_scheduled_second": 1000,
+    "attempts_per_workload_second": 999.9231101125094,
+    "interrupted_or_drain_deadline": false,
+    "dispatch_lag": {
+      "count": 10000,
+      "mean_ms": 0.35790953940000003,
+      "p50_ms": 0.071167,
+      "p95_ms": 1.111083,
+      "p99_ms": 9.111792,
+      "max_ms": 22.46425
+    },
+    "database_call_latency": {
+      "count": 10000,
+      "mean_ms": 1.6191692338,
+      "p50_ms": 0.51725,
+      "p95_ms": 8.317625,
+      "p99_ms": 16.49175,
+      "max_ms": 61.7085
+    },
+    "attempt_end_to_end_from_schedule": {
+      "count": 10000,
+      "mean_ms": 1.9801049492,
+      "p50_ms": 0.585042,
+      "p95_ms": 9.5085,
+      "p99_ms": 25.784458,
+      "max_ms": 66.602667
+    },
+    "first_client_confirmation_from_schedule": {
+      "count": 10000,
+      "mean_ms": 1.9801049492,
+      "p50_ms": 0.585042,
+      "p95_ms": 9.5085,
+      "p99_ms": 25.784458,
+      "max_ms": 66.602667
+    }
+  },
+  "wal": {
+    "before_workload": {
+      "insert_lsn": "0/154DEF30",
+      "flush_lsn": "0/154DEF30"
+    },
+    "at_client_drain": {
+      "insert_lsn": "0/15817F18",
+      "flush_lsn": "0/15817F18"
+    },
+    "after_post_drain_marker_and_durability_check": {
+      "insert_lsn": "0/15817FD8",
+      "flush_lsn": "0/15817FD8"
+    },
+    "insert_lsn_delta_at_client_drain_bytes": 3379176,
+    "insert_lsn_delta_through_marker_bytes": 3379368,
+    "post_drain_marker_durability_confirmed": true,
+    "method": "pg_current_wal_insert_lsn / pg_current_wal_flush_lsn; pg_wal_lsn_diff. Baseline follows setup and a durable marker. Drain snapshot precedes the second marker; that marker is explicitly included in the later boundary. Finalization and cleanup are excluded."
+  },
+  "physical_sizes": {
+    "before_workload": {
+      "schema_tables_and_indexes_bytes": 647168,
+      "vote_partitions_and_indexes_bytes": 524288
+    },
+    "after_client_drain": {
+      "schema_tables_and_indexes_bytes": 5767168,
+      "vote_partitions_and_indexes_bytes": 5644288
+    },
+    "after_real_close_and_finalization": {
+      "schema_tables_and_indexes_bytes": 5783552,
+      "vote_partitions_and_indexes_bytes": 5644288
+    },
+    "vote_bytes_delta_at_client_drain": 5120000,
+    "vote_bytes_delta_after_finalization": 5120000,
+    "method": "SUM(pg_total_relation_size) for ordinary tables/materialized views in the isolated schema; vote subtotal selects votes_p* leaf tables. Includes their indexes/TOAST; excludes WAL and other schemas. Empty schema allocation is subtracted."
+  },
+  "reconciliation": {
+    "poll_finalized_barrier_visible": true,
+    "per_key_correct": true,
+    "unique_database_rows": 10000,
+    "final_result_total": 10000,
+    "final_choice_counts": {
+      "1": 10000,
+      "2": 0
+    },
+    "rows_scanned_bounded": 10000,
+    "unexpected_keys": 0,
+    "rows_for_never_dispatched_keys": 0,
+    "key_content_mismatches": 0,
+    "client_confirmed_keys_absent": 0,
+    "dispatched_keys_absent": 0,
+    "persisted_keys_without_client_confirmation": 0,
+    "unknown_unconfirmed_keys_found": 0,
+    "unknown_unconfirmed_keys_absent_after_barrier": 0,
+    "keys_with_multiple_accepted_responses": 0,
+    "final_aggregate_matches_rows_and_choices": true,
+    "method": "Read-only repeatable-read snapshot after the real close/finalization barrier; compare every bounded submitted key and receipt choice against rows, then compare final aggregate totals and option counts. Unknown absence is not loss of a confirmed vote."
+  },
+  "explicit_replication_durability_checked": true,
+  "private_key_ledger_file": ".local/storagebench/gqbench_1bcb5348238a3971.json",
+  "schema_cleanup": "retained",
+  "total_wall_seconds": 60.470094417,
+  "errors": [],
+  "limitations": [
+    "Database-only experiment: HTTP parsing, authentication, browser delivery and external TLS are excluded.",
+    "Latency quantiles are exact nearest-rank quantiles for bounded retained observations; do not average quantiles across runs.",
+    "WAL LSNs are global to this PostgreSQL primary; concurrent activity and boundary markers contaminate attribution. Physical size deltas are allocated relation bytes, not bytes written or storage latency.",
+    "Unknown responses are reconciled after the genuine close barrier, not classified as lost confirmations.",
+    "One loopback replication lab does not model separate failure zones or establish production throughput.",
+    "Blind mode preserves fields, unique indexes, the close barrier and requested durability but omits full vote validation and conflict/receipt handling. Its ratio to vote mode is not deduplication overhead; it uses a separate insert pool and the repository durability proof."
+  ]
+}

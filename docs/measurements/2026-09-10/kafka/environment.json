@@ -1,0 +1,15 @@
+{
+  "machdep.cpu.brand_string": "Apple M1 Pro",
+  "hw.logicalcpu": "10",
+  "hw.memsize": "34359738368",
+  "kern.maxfilesperproc": "122880",
+  "kern.maxfiles": "245760",
+  "net.inet.ip.portrange.first": "49152",
+  "net.inet.ip.portrange.last": "65535",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "go_version": "go version go1.26.1 darwin/arm64",
+  "kafka_version": "4.3.1",
+  "java_version": "openjdk version \"21.0.10\" 2026-01-20\nOpenJDK Runtime Environment Homebrew (build 21.0.10)\nOpenJDK 64-Bit Server VM Homebrew (build 21.0.10, mixed mode, sharing)",
+  "heap": "-Xms512m -Xmx768m",
+  "brokers_share_host_and_disk": true
+}

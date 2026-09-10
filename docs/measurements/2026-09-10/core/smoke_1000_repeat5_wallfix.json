@@ -1,0 +1,813 @@
+{
+  "mode": "NON-DURABLE CPU-only",
+  "durable": false,
+  "configuration": {
+    "buffer_inputs_per_worker": 256,
+    "capacity": 262144,
+    "capacity_rule": "max(ceil(planned_unique_keys * 1.05), shards * 1024)",
+    "coalescing_us": 250,
+    "ends_at": "2026-09-10T13:39:16.289308Z",
+    "expected_choice_bitmap_bytes": 15000,
+    "max_lag_ms": 20,
+    "planned_attempts": 72000,
+    "planned_unique_keys": 60000,
+    "poll_window_seconds": 60,
+    "repeat_choice": 2,
+    "repeat_every": 5,
+    "sampling_denominator": 1024,
+    "shards": 256,
+    "starts_at": "2026-09-10T13:38:16.289308Z",
+    "token_generation": "AES-128 permutation of distinct 128-bit counters with a random private key; full 128-bit tokens",
+    "unique_key_rate_per_second": 1000,
+    "workers": 8
+  },
+  "workload": {
+    "starts_at": "2026-09-10T13:38:16.289308Z",
+    "finished_at": "2026-09-10T13:39:16.285454Z",
+    "counts": {
+      "planned_attempts": 72000,
+      "dispatched_attempts": 71926,
+      "accepted_unique_volatile": 59937,
+      "duplicate_attempts": 11989,
+      "closed": 0,
+      "not_open": 0,
+      "invalid": 0,
+      "capacity_exceeded": 0,
+      "generator_skipped_attempts": 74,
+      "generator_lag_skips": 74,
+      "generator_unvisited_or_cancelled": 0
+    },
+    "planned_unique_keys": 60000,
+    "sampled_latency_all_dispatched": {
+      "from_original_schedule": {
+        "samples": 64,
+        "sample_mean_us": 472.506859375,
+        "sample_p95_upper_us": 2883.583,
+        "sample_p99_upper_us": 4980.735,
+        "sample_max_us": 4953.334
+      },
+      "from_submit_call": {
+        "samples": 64,
+        "sample_mean_us": 2.7819375,
+        "sample_p95_upper_us": 6.399,
+        "sample_p99_upper_us": 20.479,
+        "sample_max_us": 20.417
+      }
+    },
+    "sampled_latency_accepted": {
+      "from_original_schedule": {
+        "samples": 56,
+        "sample_mean_us": 491.29946428571424,
+        "sample_p95_upper_us": 3014.655,
+        "sample_p99_upper_us": 4980.735,
+        "sample_max_us": 4953.334
+      },
+      "from_submit_call": {
+        "samples": 56,
+        "sample_mean_us": 3.0900535714285717,
+        "sample_p95_upper_us": 7.167,
+        "sample_p99_upper_us": 20.479,
+        "sample_max_us": 20.417
+      }
+    },
+    "latency_method": "Approximate sampled latency, not exact population p95/p99. Select a key independently of outcome when low AES-token bits are zero; both attempts of a selected repeated key are sampled. Small default runs sample all attempts. Quantiles are histogram upper edges, <6.25% bin rounding above 32ns. Skipped attempts have no latency sample.",
+    "latency_sample_key_probability_denominator": 1024,
+    "generator_coalescing": {
+      "buffer_inputs_per_worker": 256,
+      "configured_interval_us": 250,
+      "group_inputs": 1,
+      "maximum_earliest_slot_delay_us": 0,
+      "method": "Each worker prepares a bounded AES buffer. A group waits until its last slot is due, rechecking monotonic time; no member is sent earlier than its own schedule. Waiting does not extend admission beyond 60 seconds."
+    },
+    "one_second_buckets": [
+      {
+        "second": 0,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 1,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 2,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 3,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 4,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 5,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1193,
+        "skipped_by_original_schedule": 7,
+        "accepted_by_original_schedule": 994,
+        "duplicate_by_original_schedule": 199,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1193
+      },
+      {
+        "second": 6,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 7,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1179,
+        "skipped_by_original_schedule": 21,
+        "accepted_by_original_schedule": 982,
+        "duplicate_by_original_schedule": 197,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1179
+      },
+      {
+        "second": 8,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1174,
+        "skipped_by_original_schedule": 26,
+        "accepted_by_original_schedule": 978,
+        "duplicate_by_original_schedule": 196,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1174
+      },
+      {
+        "second": 9,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 10,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1191
+      },
+      {
+        "second": 11,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1209
+      },
+      {
+        "second": 12,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1182,
+        "skipped_by_original_schedule": 18,
+        "accepted_by_original_schedule": 985,
+        "duplicate_by_original_schedule": 197,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1182
+      },
+      {
+        "second": 13,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 14,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 15,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 16,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 17,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 18,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 19,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 20,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 21,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 22,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 23,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 24,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 25,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 26,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 27,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1198
+      },
+      {
+        "second": 28,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1202
+      },
+      {
+        "second": 29,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 30,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 31,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 32,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 33,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 34,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 35,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 36,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 37,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 38,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 39,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 40,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1194
+      },
+      {
+        "second": 41,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1198,
+        "skipped_by_original_schedule": 2,
+        "accepted_by_original_schedule": 998,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1204
+      },
+      {
+        "second": 42,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 43,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 44,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 45,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 46,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 47,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 48,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 49,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 50,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 51,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 52,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 53,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 54,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 55,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 56,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 57,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1200
+      },
+      {
+        "second": 58,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1195
+      },
+      {
+        "second": 59,
+        "planned_by_original_schedule": 1200,
+        "dispatched_by_original_schedule": 1200,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 1000,
+        "duplicate_by_original_schedule": 200,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 1205
+      },
+      {
+        "second": 60,
+        "planned_by_original_schedule": 0,
+        "dispatched_by_original_schedule": 0,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 0,
+        "duplicate_by_original_schedule": 0,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 0
+      },
+      {
+        "second": 61,
+        "planned_by_original_schedule": 0,
+        "dispatched_by_original_schedule": 0,
+        "skipped_by_original_schedule": 0,
+        "accepted_by_original_schedule": 0,
+        "duplicate_by_original_schedule": 0,
+        "closed_by_original_schedule": 0,
+        "dispatched_by_actual_second": 0
+      }
+    ],
+    "responses_with_wrong_canonical_choice": 0,
+    "repeated_acceptance_of_same_key": 0,
+    "duplicate_for_never_previously_submitted_unique_key": 0
+  },
+  "runtime_diagnostics": {
+    "allocated_bytes": 367568,
+    "allocations": 131,
+    "gc_cycles": 0,
+    "gc_stop_the_world_pause_ns": 0,
+    "gomaxprocs": 10,
+    "heap_alloc_after_bytes": 11868384,
+    "heap_alloc_before_bytes": 11500816,
+    "heap_inuse_after_bytes": 12673024,
+    "scope": "Combined generator and core; counters from after map allocation until workload completion, including start wait and excluding audit"
+  },
+  "reconciliation": {
+    "correct": true,
+    "closed": true,
+    "accepted_responses": 59937,
+    "full_keys_regenerated_and_checked": 59937,
+    "missing_expected_keys": 0,
+    "wrong_choices": 0,
+    "expected_choice_counts": [
+      59937,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "snapshot_total": 59937,
+    "snapshot_choice_counts": [
+      59937,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "wall_seconds": 0.008143417,
+    "method": "After irreversible Seal, regenerate every key marked accepted in a two-bit expected-choice bitmap using the private AES seed; compare the full 128-bit token via Lookup and exact first choice. Independently compare all 32 snapshot counts and total. No probabilistic deduplication and no token sample is used for this audit."
+  },
+  "boundary_checks": {
+    "after_closed_new_token": "closed",
+    "after_closed_previously_scheduled_token": "closed",
+    "before_start": "not_open"
+  },
+  "wall_seconds": 70.022206666,
+  "errors": [],
+  "limitations": [
+    "Accepted means exact deduplication and counting in this Go process's RAM only. This is NOT an HTTP, Kafka, disk or durable acknowledgement benchmark.",
+    "Process or machine failure loses all core votes. Private replay metadata is a synthetic test artifact, not a durable voting log or recovery mechanism.",
+    "The generator, AES token creation, timing, shard routing and vote core share this process and computer; their costs are included together.",
+    "A uniform monotonic schedule is served with bounded coalescing; slots are never intentionally dispatched early. Generator omissions and closed requests remain unserved planned attempts.",
+    "Latency is sampled by random AES-token bits and represented by bounded approximate histograms; reported percentiles are not exact population percentiles.",
+    "Per-shard capacity can reject under skew even if total capacity remains available; capacity_exceeded is reported separately."
+  ]
+}

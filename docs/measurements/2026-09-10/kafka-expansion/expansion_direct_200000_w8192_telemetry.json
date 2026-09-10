@@ -1,0 +1,2563 @@
+{
+  "command": [
+    "bin/logbench",
+    "-mode",
+    "direct",
+    "-rate",
+    "200000",
+    "-duration",
+    "60s",
+    "-workers",
+    "8192",
+    "-queue",
+    "65536",
+    "-partitions",
+    "8",
+    "-batch-size",
+    "1000",
+    "-linger",
+    "20ms",
+    "-allow-large"
+  ],
+  "started_at": "2026-09-10T12:28:08.153566+00:00",
+  "binary_sha256": "dd51cbfc58d06ed9e0486a4bc6900fa37292fb1337baf543d732c39259b9657d",
+  "environment": {
+    "kafka_version": "4.3.1",
+    "java_version": "openjdk version \"21.0.10\" 2026-01-20\nOpenJDK Runtime Environment Homebrew (build 21.0.10)\nOpenJDK 64-Bit Server VM Homebrew (build 21.0.10, mixed mode, sharing)",
+    "same_host": true,
+    "cpu_profile_enabled": false,
+    "GOGC": "default",
+    "GOMEMLIMIT": "default",
+    "GOMAXPROCS": "default"
+  },
+  "samples": [
+    {
+      "at": "2026-09-10T12:28:08.190913+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.23,
+          "rss_bytes": 183189504
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 130.39,
+          "rss_bytes": 164052992
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 135.45,
+          "rss_bytes": 166969344
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.01,
+          "rss_bytes": 6881280
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:09.220025+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.75,
+          "rss_bytes": 235700224
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 130.97,
+          "rss_bytes": 213745664
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 135.88,
+          "rss_bytes": 215859200
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.21,
+          "rss_bytes": 814743552
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:10.254063+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.77,
+          "rss_bytes": 237060096
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 130.99,
+          "rss_bytes": 215613440
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 135.91,
+          "rss_bytes": 218038272
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.22,
+          "rss_bytes": 818184192
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:11.291249+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.78,
+          "rss_bytes": 238288896
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.0,
+          "rss_bytes": 216776704
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 135.92,
+          "rss_bytes": 219365376
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.23,
+          "rss_bytes": 821657600
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:12.328360+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.8,
+          "rss_bytes": 242040832
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.01,
+          "rss_bytes": 217808896
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 135.93,
+          "rss_bytes": 220446720
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.24,
+          "rss_bytes": 825163776
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:13.364259+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.82,
+          "rss_bytes": 243466240
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.03,
+          "rss_bytes": 219250688
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 135.95,
+          "rss_bytes": 221691904
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.25,
+          "rss_bytes": 828653568
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:14.390937+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.84,
+          "rss_bytes": 245383168
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.04,
+          "rss_bytes": 220332032
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 135.96,
+          "rss_bytes": 222756864
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.26,
+          "rss_bytes": 832110592
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:15.431249+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.85,
+          "rss_bytes": 246693888
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.05,
+          "rss_bytes": 221478912
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 135.98,
+          "rss_bytes": 223821824
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.27,
+          "rss_bytes": 835600384
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:16.468148+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.87,
+          "rss_bytes": 248020992
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.07,
+          "rss_bytes": 222494720
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 135.99,
+          "rss_bytes": 224935936
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.28,
+          "rss_bytes": 839057408
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:17.506809+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.89,
+          "rss_bytes": 249987072
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.08,
+          "rss_bytes": 223559680
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 136.01,
+          "rss_bytes": 226066432
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.29,
+          "rss_bytes": 842563584
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:18.550917+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.91,
+          "rss_bytes": 251527168
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.09,
+          "rss_bytes": 224591872
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 136.02,
+          "rss_bytes": 227311616
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.3,
+          "rss_bytes": 846036992
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:19.581430+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.92,
+          "rss_bytes": 251150336
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.11,
+          "rss_bytes": 224968704
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 136.03,
+          "rss_bytes": 227868672
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.31,
+          "rss_bytes": 849559552
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:20.616568+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.94,
+          "rss_bytes": 248709120
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.12,
+          "rss_bytes": 226033664
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 136.05,
+          "rss_bytes": 229146624
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.32,
+          "rss_bytes": 853049344
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:21.656866+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.95,
+          "rss_bytes": 249970688
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.13,
+          "rss_bytes": 227065856
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 136.06,
+          "rss_bytes": 230260736
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.33,
+          "rss_bytes": 856489984
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:22.687597+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 426.97,
+          "rss_bytes": 251265024
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.15,
+          "rss_bytes": 228130816
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 136.07999999999998,
+          "rss_bytes": 231473152
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 0.34,
+          "rss_bytes": 859947008
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:23.732319+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 427.27,
+          "rss_bytes": 323354624
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.39,
+          "rss_bytes": 272449536
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 136.42000000000002,
+          "rss_bytes": 316588032
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 1.13,
+          "rss_bytes": 967229440
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:24.762734+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 428.15,
+          "rss_bytes": 519061504
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 131.98,
+          "rss_bytes": 427376640
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 137.22,
+          "rss_bytes": 486260736
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 3.07,
+          "rss_bytes": 1128579072
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:25.794332+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 428.77,
+          "rss_bytes": 521617408
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 132.59,
+          "rss_bytes": 489275392
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 137.97,
+          "rss_bytes": 512294912
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 5.01,
+          "rss_bytes": 1107148800
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:26.821561+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 429.36,
+          "rss_bytes": 515276800
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 133.07,
+          "rss_bytes": 488620032
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 138.64,
+          "rss_bytes": 514359296
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 7.23,
+          "rss_bytes": 1004699648
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:27.849271+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 429.84,
+          "rss_bytes": 518225920
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 133.46,
+          "rss_bytes": 493027328
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 139.07999999999998,
+          "rss_bytes": 514441216
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 8.84,
+          "rss_bytes": 1072103424
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:28.876629+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 430.52,
+          "rss_bytes": 519684096
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 134.06,
+          "rss_bytes": 494764032
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 139.72,
+          "rss_bytes": 515276800
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 11.09,
+          "rss_bytes": 1073987584
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:29.907112+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 431.09,
+          "rss_bytes": 519684096
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 134.66,
+          "rss_bytes": 517357568
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 140.46,
+          "rss_bytes": 515751936
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 13.16,
+          "rss_bytes": 921878528
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:30.936608+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 431.73,
+          "rss_bytes": 519798784
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 135.15,
+          "rss_bytes": 517357568
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 141.07999999999998,
+          "rss_bytes": 515768320
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 15.48,
+          "rss_bytes": 936132608
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:31.969531+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 432.41,
+          "rss_bytes": 520454144
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 135.69,
+          "rss_bytes": 518504448
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 141.76,
+          "rss_bytes": 517373952
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 17.57,
+          "rss_bytes": 950501376
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:32.999966+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 433.09,
+          "rss_bytes": 520536064
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 136.2,
+          "rss_bytes": 518520832
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 142.38,
+          "rss_bytes": 516947968
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 19.67,
+          "rss_bytes": 1036599296
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:34.039449+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 433.69,
+          "rss_bytes": 520552448
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 136.71,
+          "rss_bytes": 518569984
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 143.09,
+          "rss_bytes": 516882432
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 21.65,
+          "rss_bytes": 1050558464
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:35.068922+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 434.34,
+          "rss_bytes": 520552448
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 137.24,
+          "rss_bytes": 518586368
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 143.74,
+          "rss_bytes": 516898816
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 23.82,
+          "rss_bytes": 1063976960
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:36.097287+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 435.01,
+          "rss_bytes": 520798208
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 137.87,
+          "rss_bytes": 520142848
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 144.42000000000002,
+          "rss_bytes": 517079040
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 26.05,
+          "rss_bytes": 1077755904
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:37.124850+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 435.71,
+          "rss_bytes": 520519680
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 138.37,
+          "rss_bytes": 520126464
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 145.05,
+          "rss_bytes": 516947968
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 28.11,
+          "rss_bytes": 1091256320
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:38.153269+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 436.33,
+          "rss_bytes": 519913472
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 138.82999999999998,
+          "rss_bytes": 519307264
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 145.77,
+          "rss_bytes": 516898816
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 30.14,
+          "rss_bytes": 1106935808
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:39.183577+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 436.95,
+          "rss_bytes": 520110080
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 139.38,
+          "rss_bytes": 519634944
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 146.39,
+          "rss_bytes": 516997120
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 32.14,
+          "rss_bytes": 1120124928
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:40.228049+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 437.55,
+          "rss_bytes": 519421952
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 139.85,
+          "rss_bytes": 519372800
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 147.04,
+          "rss_bytes": 516112384
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 34.4,
+          "rss_bytes": 1133019136
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:41.256834+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 438.26,
+          "rss_bytes": 520257536
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 140.42000000000002,
+          "rss_bytes": 519225344
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 147.65,
+          "rss_bytes": 516014080
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 36.51,
+          "rss_bytes": 1146470400
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:42.291495+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 438.93,
+          "rss_bytes": 520290304
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 140.95,
+          "rss_bytes": 519225344
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 148.42000000000002,
+          "rss_bytes": 516341760
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 38.9,
+          "rss_bytes": 1160658944
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:43.321302+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 439.56,
+          "rss_bytes": 520339456
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 141.45,
+          "rss_bytes": 519225344
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 149.07,
+          "rss_bytes": 516751360
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 41.08,
+          "rss_bytes": 1174929408
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:44.357744+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 440.23,
+          "rss_bytes": 520519680
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 141.89,
+          "rss_bytes": 519225344
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 149.65,
+          "rss_bytes": 516833280
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 43.15,
+          "rss_bytes": 1188216832
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:45.384541+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 440.75,
+          "rss_bytes": 520519680
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 142.36,
+          "rss_bytes": 519274496
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 150.31,
+          "rss_bytes": 516947968
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 45.06,
+          "rss_bytes": 1201602560
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:46.412765+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 441.32,
+          "rss_bytes": 520634368
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 142.82,
+          "rss_bytes": 519274496
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 150.91,
+          "rss_bytes": 516947968
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 47.05,
+          "rss_bytes": 1215152128
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:47.443810+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 441.94,
+          "rss_bytes": 520781824
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 143.41,
+          "rss_bytes": 519618560
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 151.53,
+          "rss_bytes": 516964352
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 49.18,
+          "rss_bytes": 1228734464
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:48.476204+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 442.6,
+          "rss_bytes": 520945664
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 143.82999999999998,
+          "rss_bytes": 519667712
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 152.11,
+          "rss_bytes": 517029888
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 51.14,
+          "rss_bytes": 1242087424
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:49.507575+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 443.15,
+          "rss_bytes": 520781824
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 144.32999999999998,
+          "rss_bytes": 520126464
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 152.8,
+          "rss_bytes": 516997120
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 53.16,
+          "rss_bytes": 1255276544
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:50.536628+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 443.84,
+          "rss_bytes": 521207808
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 144.81,
+          "rss_bytes": 520011776
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 153.44,
+          "rss_bytes": 517046272
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 54.88,
+          "rss_bytes": 1268416512
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:51.564627+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 444.5,
+          "rss_bytes": 522190848
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 145.32,
+          "rss_bytes": 520568832
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 154.05,
+          "rss_bytes": 517046272
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 56.95,
+          "rss_bytes": 1281933312
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:52.602208+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 445.21,
+          "rss_bytes": 522240000
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 145.81,
+          "rss_bytes": 520585216
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 154.69,
+          "rss_bytes": 517062656
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 58.93,
+          "rss_bytes": 1295532032
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:53.641012+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 445.81,
+          "rss_bytes": 522240000
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 146.44,
+          "rss_bytes": 545685504
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 155.43,
+          "rss_bytes": 517079040
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 61.03,
+          "rss_bytes": 1310523392
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:54.672102+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 446.52,
+          "rss_bytes": 522731520
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 147.07,
+          "rss_bytes": 546291712
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 156.18,
+          "rss_bytes": 519815168
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 63.22,
+          "rss_bytes": 1323778048
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:55.713813+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 447.19,
+          "rss_bytes": 516358144
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 147.95,
+          "rss_bytes": 552763392
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 157.03,
+          "rss_bytes": 515817472
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 65.06,
+          "rss_bytes": 1337131008
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:56.743766+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 447.94,
+          "rss_bytes": 509607936
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 148.7,
+          "rss_bytes": 551976960
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 157.72,
+          "rss_bytes": 507068416
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 66.87,
+          "rss_bytes": 1350172672
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:57.777847+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 448.55,
+          "rss_bytes": 509624320
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 149.3,
+          "rss_bytes": 552615936
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 158.54,
+          "rss_bytes": 508542976
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 68.74,
+          "rss_bytes": 1363410944
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:58.805955+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 449.14,
+          "rss_bytes": 509739008
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 149.77,
+          "rss_bytes": 552599552
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 159.15,
+          "rss_bytes": 508624896
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 70.8,
+          "rss_bytes": 1376813056
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:28:59.843167+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 449.77,
+          "rss_bytes": 509657088
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 150.32999999999998,
+          "rss_bytes": 552615936
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 159.74,
+          "rss_bytes": 508624896
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 72.78,
+          "rss_bytes": 1390067712
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:00.871627+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 450.48,
+          "rss_bytes": 503218176
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 150.81,
+          "rss_bytes": 546045952
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 160.39,
+          "rss_bytes": 503709696
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 74.74,
+          "rss_bytes": 1402912768
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:01.902865+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 451.13,
+          "rss_bytes": 499515392
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 151.54,
+          "rss_bytes": 546570240
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 161.14,
+          "rss_bytes": 503005184
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 76.95,
+          "rss_bytes": 1415954432
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:02.933405+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 451.77,
+          "rss_bytes": 499367936
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 152.02,
+          "rss_bytes": 546226176
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 161.79,
+          "rss_bytes": 501596160
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 78.96000000000001,
+          "rss_bytes": 1417658368
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:03.976395+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 452.47,
+          "rss_bytes": 495075328
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 152.57,
+          "rss_bytes": 530284544
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 162.5,
+          "rss_bytes": 489275392
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 81.17,
+          "rss_bytes": 1308016640
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:05.009747+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 453.25,
+          "rss_bytes": 494911488
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 153.09,
+          "rss_bytes": 529301504
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 163.17000000000002,
+          "rss_bytes": 488833024
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 83.19,
+          "rss_bytes": 1307525120
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:06.042058+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 453.89,
+          "rss_bytes": 494747648
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 153.69,
+          "rss_bytes": 542425088
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 163.92000000000002,
+          "rss_bytes": 489947136
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 85.28,
+          "rss_bytes": 1286832128
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:07.076711+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 454.54,
+          "rss_bytes": 496189440
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 154.23,
+          "rss_bytes": 542507008
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 164.59,
+          "rss_bytes": 490176512
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 87.45,
+          "rss_bytes": 1299955712
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:08.108513+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 455.23,
+          "rss_bytes": 493207552
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 154.72,
+          "rss_bytes": 539557888
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 165.32999999999998,
+          "rss_bytes": 497549312
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 89.49,
+          "rss_bytes": 1201700864
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:09.137323+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 455.95,
+          "rss_bytes": 495321088
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 155.26,
+          "rss_bytes": 541540352
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 166.07,
+          "rss_bytes": 498810880
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 91.47,
+          "rss_bytes": 1247477760
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:10.171996+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 456.57,
+          "rss_bytes": 495042560
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 155.79,
+          "rss_bytes": 542769152
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 166.68,
+          "rss_bytes": 499482624
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 93.55,
+          "rss_bytes": 1201750016
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:11.199316+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 457.15999999999997,
+          "rss_bytes": 495042560
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 156.37,
+          "rss_bytes": 542916608
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 167.3,
+          "rss_bytes": 499892224
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 95.49000000000001,
+          "rss_bytes": 1208795136
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:12.236155+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 457.74,
+          "rss_bytes": 494485504
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 156.81,
+          "rss_bytes": 542851072
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 167.89,
+          "rss_bytes": 501186560
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 97.36,
+          "rss_bytes": 1215234048
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:13.267853+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 458.49,
+          "rss_bytes": 494125056
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 157.34,
+          "rss_bytes": 542851072
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 168.63,
+          "rss_bytes": 501317632
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 99.50999999999999,
+          "rss_bytes": 1217904640
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:14.296117+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 459.13,
+          "rss_bytes": 493027328
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 157.82999999999998,
+          "rss_bytes": 517668864
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 169.25,
+          "rss_bytes": 498188288
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 101.65,
+          "rss_bytes": 1172783104
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:15.352956+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 459.72,
+          "rss_bytes": 487620608
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 158.32,
+          "rss_bytes": 485670912
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 169.86,
+          "rss_bytes": 493879296
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 103.58,
+          "rss_bytes": 1167163392
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:16.380808+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 460.39,
+          "rss_bytes": 487047168
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 158.82999999999998,
+          "rss_bytes": 482721792
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 170.57,
+          "rss_bytes": 492896256
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 105.53999999999999,
+          "rss_bytes": 1139654656
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:17.412728+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 461.15999999999997,
+          "rss_bytes": 486817792
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 159.45,
+          "rss_bytes": 482394112
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 171.32,
+          "rss_bytes": 490258432
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 107.35,
+          "rss_bytes": 1141948416
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:18.444973+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 461.82,
+          "rss_bytes": 485818368
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 159.94,
+          "rss_bytes": 422838272
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 171.97,
+          "rss_bytes": 469336064
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 109.47999999999999,
+          "rss_bytes": 1128841216
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:19.484033+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 462.47,
+          "rss_bytes": 485031936
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 160.5,
+          "rss_bytes": 470237184
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 172.68,
+          "rss_bytes": 481886208
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 111.36,
+          "rss_bytes": 1067384832
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:20.517699+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 463.07,
+          "rss_bytes": 485310464
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 160.96,
+          "rss_bytes": 470204416
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 173.31,
+          "rss_bytes": 485834752
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 113.27000000000001,
+          "rss_bytes": 1133199360
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:21.548357+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 463.78,
+          "rss_bytes": 486162432
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 161.49,
+          "rss_bytes": 472399872
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 174.04,
+          "rss_bytes": 489619456
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 115.38,
+          "rss_bytes": 1148370944
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:22.580335+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 464.4,
+          "rss_bytes": 486260736
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 161.99,
+          "rss_bytes": 472334336
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 174.71,
+          "rss_bytes": 489668608
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 117.39,
+          "rss_bytes": 1160855552
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:23.616710+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 464.89,
+          "rss_bytes": 486277120
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.57,
+          "rss_bytes": 490012672
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.23,
+          "rss_bytes": 489684992
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 119.27000000000001,
+          "rss_bytes": 1169489920
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:24.650749+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 464.90999999999997,
+          "rss_bytes": 478478336
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.59,
+          "rss_bytes": 489144320
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.25,
+          "rss_bytes": 486834176
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 120.15,
+          "rss_bytes": 1674018816
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:25.701416+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 464.92,
+          "rss_bytes": 478265344
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.6,
+          "rss_bytes": 489209856
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.26,
+          "rss_bytes": 487456768
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 121.19,
+          "rss_bytes": 1677148160
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:26.733474+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 464.93,
+          "rss_bytes": 461930496
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.61,
+          "rss_bytes": 486326272
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.27,
+          "rss_bytes": 475086848
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 122.28,
+          "rss_bytes": 1721024512
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:27.766587+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 464.94,
+          "rss_bytes": 461930496
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.62,
+          "rss_bytes": 485064704
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.32,
+          "rss_bytes": 478298112
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 123.32,
+          "rss_bytes": 1720434688
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:28.795326+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 464.95,
+          "rss_bytes": 338673664
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.63,
+          "rss_bytes": 394510336
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.32999999999998,
+          "rss_bytes": 359940096
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 124.2,
+          "rss_bytes": 1704869888
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:29.830714+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.03,
+          "rss_bytes": 352731136
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.72,
+          "rss_bytes": 409468928
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.39,
+          "rss_bytes": 365051904
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 125.14,
+          "rss_bytes": 1827815424
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:30.866215+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.09000000000003,
+          "rss_bytes": 328613888
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.78,
+          "rss_bytes": 395526144
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.48,
+          "rss_bytes": 337821696
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 126.54,
+          "rss_bytes": 2235744256
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:31.899483+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.13,
+          "rss_bytes": 138821632
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.81,
+          "rss_bytes": 226934784
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.53,
+          "rss_bytes": 180551680
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 127.91,
+          "rss_bytes": 3051405312
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:32.932059+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.2,
+          "rss_bytes": 133644288
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.85,
+          "rss_bytes": 227049472
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.59,
+          "rss_bytes": 162103296
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 129.3,
+          "rss_bytes": 3148808192
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:33.984445+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.23,
+          "rss_bytes": 128679936
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.89,
+          "rss_bytes": 142213120
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.63,
+          "rss_bytes": 132497408
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 130.5,
+          "rss_bytes": 3972104192
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:35.019386+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.27,
+          "rss_bytes": 131612672
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.93,
+          "rss_bytes": 130072576
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.66,
+          "rss_bytes": 132710400
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 131.72,
+          "rss_bytes": 4035510272
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:36.046918+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.31,
+          "rss_bytes": 129564672
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.98,
+          "rss_bytes": 114573312
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.7,
+          "rss_bytes": 116572160
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 132.84,
+          "rss_bytes": 4400168960
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:37.085936+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.33,
+          "rss_bytes": 120094720
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 162.99,
+          "rss_bytes": 105709568
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.71,
+          "rss_bytes": 108036096
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 133.82,
+          "rss_bytes": 4435099648
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:38.124838+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.34000000000003,
+          "rss_bytes": 100368384
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.0,
+          "rss_bytes": 89276416
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.72,
+          "rss_bytes": 86573056
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 134.75,
+          "rss_bytes": 4425007104
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:39.163237+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.36,
+          "rss_bytes": 103202816
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.01,
+          "rss_bytes": 93356032
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.74,
+          "rss_bytes": 88768512
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 135.76,
+          "rss_bytes": 4398186496
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:40.189900+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.37,
+          "rss_bytes": 104660992
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.03,
+          "rss_bytes": 97828864
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.75,
+          "rss_bytes": 93650944
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 136.72,
+          "rss_bytes": 4202856448
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:41.218725+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.39,
+          "rss_bytes": 109559808
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.04,
+          "rss_bytes": 102809600
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.78,
+          "rss_bytes": 107823104
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 137.7,
+          "rss_bytes": 4384145408
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:42.254406+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.4,
+          "rss_bytes": 108216320
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.05,
+          "rss_bytes": 104480768
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.8,
+          "rss_bytes": 108675072
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 138.72,
+          "rss_bytes": 4257333248
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:43.291098+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.42,
+          "rss_bytes": 109772800
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.07999999999998,
+          "rss_bytes": 112066560
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.81,
+          "rss_bytes": 110067712
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 139.75,
+          "rss_bytes": 4222730240
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:44.327817+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.43,
+          "rss_bytes": 107970560
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.09,
+          "rss_bytes": 106315776
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.82,
+          "rss_bytes": 107659264
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 140.77,
+          "rss_bytes": 4121051136
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:45.359640+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.45,
+          "rss_bytes": 93618176
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.1,
+          "rss_bytes": 97599488
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.82999999999998,
+          "rss_bytes": 101793792
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 141.62,
+          "rss_bytes": 4055105536
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:46.399995+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.47,
+          "rss_bytes": 96632832
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.12,
+          "rss_bytes": 96845824
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.84,
+          "rss_bytes": 100630528
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 142.64,
+          "rss_bytes": 3879157760
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:47.436222+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.48,
+          "rss_bytes": 97550336
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.13,
+          "rss_bytes": 98549760
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.85,
+          "rss_bytes": 102465536
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 143.66,
+          "rss_bytes": 3866722304
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:48.475658+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.51,
+          "rss_bytes": 106102784
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.14,
+          "rss_bytes": 96239616
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.87,
+          "rss_bytes": 99942400
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 144.69,
+          "rss_bytes": 3633627136
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:49.511106+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.52,
+          "rss_bytes": 104988672
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.15,
+          "rss_bytes": 88604672
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.88,
+          "rss_bytes": 93143040
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 145.72,
+          "rss_bytes": 3466018816
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:50.542277+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.54,
+          "rss_bytes": 101974016
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.16,
+          "rss_bytes": 78512128
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.9,
+          "rss_bytes": 84131840
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 146.66,
+          "rss_bytes": 3385966592
+        }
+      }
+    },
+    {
+      "at": "2026-09-10T12:29:51.579613+00:00",
+      "processes": {
+        "kafka_node_3": {
+          "pid": 38292,
+          "cpu_seconds": 465.55,
+          "rss_bytes": 100810752
+        },
+        "kafka_node_1": {
+          "pid": 60303,
+          "cpu_seconds": 163.17000000000002,
+          "rss_bytes": 75972608
+        },
+        "kafka_node_2": {
+          "pid": 60456,
+          "cpu_seconds": 175.91,
+          "rss_bytes": 80363520
+        },
+        "go_benchmark_and_service": {
+          "pid": 80788,
+          "cpu_seconds": 147.63,
+          "rss_bytes": 3395272704
+        }
+      }
+    }
+  ],
+  "faults": [],
+  "exit_code": 0,
+  "finished_at": "2026-09-10T12:29:52.587579+00:00"
+}

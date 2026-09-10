@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+.local/
+bin/
+/gigaquizz
+coverage.out
+node_modules/
+test-results/
+playwright-report/
+__pycache__/
+*.py[cod]

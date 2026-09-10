@@ -1,0 +1,296 @@
+{
+  "mode": "vote",
+  "isolated_schema": "gqbench_bdcef7847e28d4db",
+  "poll_id": "bc3f142c-90cb-4404-9c78-edf15cc1138b",
+  "configuration": {
+    "HTTP_included": false,
+    "different_choice": false,
+    "drain_timeout_ms": 10000,
+    "logical_rate": 6000,
+    "max_lag_ms": 100,
+    "pool_warmup": "Store.Warm opens and validates all configured repository connections before poll creation",
+    "queue": 256,
+    "repeat_every": 0,
+    "required_standbys": 1,
+    "timeout_ms": 3000,
+    "total_keys": 60000,
+    "warm_connections": true,
+    "workers": 64
+  },
+  "database": {
+    "server_version": "16.3 (Postgres.app)",
+    "synchronous_commit": "on",
+    "synchronous_standby_names": "ANY 1 (gigaquizz_ha_a,gigaquizz_ha_b)",
+    "fsync": "on",
+    "full_page_writes": "on",
+    "in_recovery": false
+  },
+  "workload": {
+    "started_at": "2026-09-10T09:37:00.408651Z",
+    "finished_at": "2026-09-10T09:37:10.413966Z",
+    "logical_planned": 60000,
+    "logical_scheduled": 60000,
+    "logical_sent": 58411,
+    "logical_not_sent": 1589,
+    "logical_with_client_confirmation": 58411,
+    "logical_unconfirmed_with_unknown_attempt": 0,
+    "attempts_planned": 60000,
+    "attempts_queued": 58789,
+    "attempts_sent": 58411,
+    "attempts_not_scheduled": 0,
+    "attempts_skipped": 1589,
+    "skipped_attempts_by_reason": {
+      "queue_full": 1211,
+      "worker_lag": 378
+    },
+    "outcomes": {
+      "accepted": 58411
+    },
+    "invalid_receipts": 0,
+    "scheduled_window_seconds": 10,
+    "workload_seconds_including_drain": 10.0054005,
+    "attempts_started_during_window": 58411,
+    "attempts_started_during_window_per_scheduled_second": 5841.1,
+    "attempts_per_workload_second": 5837.947216605672,
+    "interrupted_or_drain_deadline": false,
+    "dispatch_lag": {
+      "count": 58411,
+      "mean_ms": 2.659925223125781,
+      "p50_ms": 0.041001,
+      "p95_ms": 22.030418,
+      "p99_ms": 45.790167,
+      "max_ms": 99.981834
+    },
+    "database_call_latency": {
+      "count": 58411,
+      "mean_ms": 3.604635010049477,
+      "p50_ms": 0.612292,
+      "p95_ms": 11.63425,
+      "p99_ms": 21.594667,
+      "max_ms": 165.752792
+    },
+    "attempt_end_to_end_from_schedule": {
+      "count": 58411,
+      "mean_ms": 6.264560233175258,
+      "p50_ms": 0.657418,
+      "p95_ms": 32.523334,
+      "p99_ms": 67.567625,
+      "max_ms": 177.923334
+    },
+    "first_client_confirmation_from_schedule": {
+      "count": 58411,
+      "mean_ms": 6.264560233175258,
+      "p50_ms": 0.657418,
+      "p95_ms": 32.523334,
+      "p99_ms": 67.567625,
+      "max_ms": 177.923334
+    },
+    "first_confirmation_deadline_counts_from_schedule": {
+      "logical_keys_with_first_confirmation": 58411,
+      "planned_keys_without_confirmation": 1589,
+      "after_100_ms": 253,
+      "after_250_ms": 0,
+      "after_500_ms": 0,
+      "after_1000_ms": 0
+    },
+    "one_second_buckets": [
+      {
+        "start_second": 0,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 5336,
+        "accepted_responses": 5327,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5327,
+        "skipped_by_reason": {
+          "queue_full": 542,
+          "worker_lag": 122
+        }
+      },
+      {
+        "start_second": 1,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 5821,
+        "accepted_responses": 5766,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5766,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 2,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6179,
+        "accepted_responses": 6236,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6236,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 3,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5997,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5997,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 4,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6002,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6002,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 5,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 5075,
+        "accepted_responses": 5054,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5054,
+        "skipped_by_reason": {
+          "queue_full": 669,
+          "worker_lag": 256
+        }
+      },
+      {
+        "start_second": 6,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 5985,
+        "accepted_responses": 5950,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5950,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 7,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6015,
+        "accepted_responses": 6072,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6072,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 8,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5995,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5995,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 9,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6002,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6002,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 10,
+        "includes_later_seconds": false,
+        "logical_scheduled": 0,
+        "attempts_scheduled": 0,
+        "attempts_sent": 0,
+        "accepted_responses": 10,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 10,
+        "skipped_by_reason": null
+      }
+    ],
+    "one_second_bucket_time_basis": "All seconds are relative to the monotonic workload start. Scheduled and skipped counts use each key's original slot; sent uses the timestamp just before send accounting and the repository call; accepted/unknown use the timestamp captured after the call returns. First confirmations use the earliest accepted/duplicate completion for each key. Buckets are [s,s+1); bucket 127 includes all later times."
+  },
+  "wal": {
+    "before_workload": {
+      "insert_lsn": "0/18B86990",
+      "flush_lsn": "0/18B86990"
+    },
+    "at_client_drain": {
+      "insert_lsn": "0/1A40F938",
+      "flush_lsn": "0/1A40F938"
+    },
+    "after_post_drain_marker_and_durability_check": {
+      "insert_lsn": "0/1A40F9F8",
+      "flush_lsn": "0/1A40F9F8"
+    },
+    "insert_lsn_delta_at_client_drain_bytes": 25726888,
+    "insert_lsn_delta_through_marker_bytes": 25727080,
+    "post_drain_marker_durability_confirmed": true,
+    "method": "pg_current_wal_insert_lsn / pg_current_wal_flush_lsn; pg_wal_lsn_diff. Baseline follows setup and a durable marker. Drain snapshot precedes the second marker; that marker is explicitly included in the later boundary. Finalization and cleanup are excluded."
+  },
+  "physical_sizes": {
+    "before_workload": {
+      "schema_tables_and_indexes_bytes": 647168,
+      "vote_partitions_and_indexes_bytes": 524288
+    },
+    "after_client_drain": {
+      "schema_tables_and_indexes_bytes": 20160512,
+      "vote_partitions_and_indexes_bytes": 20037632
+    },
+    "after_real_close_and_finalization": {
+      "schema_tables_and_indexes_bytes": 20439040,
+      "vote_partitions_and_indexes_bytes": 20299776
+    },
+    "vote_bytes_delta_at_client_drain": 19513344,
+    "vote_bytes_delta_after_finalization": 19775488,
+    "method": "SUM(pg_total_relation_size) for ordinary tables/materialized views in the isolated schema; vote subtotal selects votes_p* leaf tables. Includes their indexes/TOAST; excludes WAL and other schemas. Empty schema allocation is subtracted."
+  },
+  "reconciliation": {
+    "poll_finalized_barrier_visible": true,
+    "per_key_correct": true,
+    "unique_database_rows": 58411,
+    "final_result_total": 58411,
+    "final_choice_counts": {
+      "1": 58411,
+      "2": 0
+    },
+    "rows_scanned_bounded": 58411,
+    "unexpected_keys": 0,
+    "rows_for_never_dispatched_keys": 0,
+    "key_content_mismatches": 0,
+    "client_confirmed_keys_absent": 0,
+    "dispatched_keys_absent": 0,
+    "persisted_keys_without_client_confirmation": 0,
+    "unknown_unconfirmed_keys_found": 0,
+    "unknown_unconfirmed_keys_absent_after_barrier": 0,
+    "keys_with_multiple_accepted_responses": 0,
+    "final_aggregate_matches_rows_and_choices": true,
+    "method": "Read-only repeatable-read snapshot after the real close/finalization barrier; compare every bounded submitted key and receipt choice against rows, then compare final aggregate totals and option counts. Unknown absence is not loss of a confirmed vote."
+  },
+  "explicit_replication_durability_checked": true,
+  "private_key_ledger_file": ".local/storagebench/gqbench_bdcef7847e28d4db.json",
+  "schema_cleanup": "retained",
+  "total_wall_seconds": 60.80327225,
+  "errors": [],
+  "limitations": [
+    "Database-only experiment: HTTP parsing, authentication, browser delivery and external TLS are excluded.",
+    "Latency quantiles are exact nearest-rank quantiles for bounded retained observations; do not average quantiles across runs.",
+    "WAL LSNs are global to this PostgreSQL primary; concurrent activity and boundary markers contaminate attribution. Physical size deltas are allocated relation bytes, not bytes written or storage latency.",
+    "Unknown responses are reconciled after the genuine close barrier, not classified as lost confirmations.",
+    "One loopback replication lab does not model separate failure zones or establish production throughput."
+  ]
+}

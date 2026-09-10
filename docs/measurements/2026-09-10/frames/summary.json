@@ -1,0 +1,164 @@
+{
+  "profiles": [
+    {
+      "label": "frames_smoke_1000_repeat5",
+      "counts": {
+        "planned_attempts": 72000,
+        "dispatched_attempts": 72000,
+        "recorded_attempts": 72000,
+        "recorded_original_attempts": 60000,
+        "recorded_repeat_attempts": 12000,
+        "unknown": 0,
+        "closed": 0,
+        "not_open": 0,
+        "busy": 0,
+        "rejected": 0,
+        "generator_skipped_attempts": 0,
+        "generator_lag_skips": 0,
+        "generator_queue_skips": 0,
+        "unvisited_or_cancelled": 0,
+        "dispatched_frames": 17444,
+        "recorded_frames": 17444,
+        "invalid_successful_receipts": 0
+      },
+      "ack_per_60_seconds": 1200.0,
+      "ack_fraction_of_planned": 1.0,
+      "missing_ack_attempts": 0,
+      "canonical_unique_keys": 60000,
+      "payload_bytes_one_copy": 3411520,
+      "mean_transaction_ms": 12.610917347952855,
+      "mean_transaction_attempts": 4.4665012406947895,
+      "sampled_latency_from_schedule": {
+        "samples": 63,
+        "sample_mean_ms": 44.685508285714285,
+        "sample_p95_upper_ms": 75.497471,
+        "sample_p99_upper_ms": 88.080383,
+        "sample_max_ms": 84.892
+      },
+      "process_cpu_cores_during_load": {
+        "kafka_node_1": 0.4576874861332485,
+        "kafka_node_2": 0.5162366894032181,
+        "kafka_node_3": 0.5861611664513536,
+        "go_benchmark_and_service": 0.12479344468399246
+      },
+      "peak_process_rss_bytes_whole_profile": {
+        "kafka_node_1": 577699840,
+        "kafka_node_2": 587137024,
+        "kafka_node_3": 632848384,
+        "go_benchmark_and_service": 31358976
+      },
+      "busy_present_in_seconds": 0
+    },
+    {
+      "label": "frames_200k",
+      "counts": {
+        "planned_attempts": 12000000,
+        "dispatched_attempts": 12000000,
+        "recorded_attempts": 12000000,
+        "recorded_original_attempts": 12000000,
+        "recorded_repeat_attempts": 0,
+        "unknown": 0,
+        "closed": 0,
+        "not_open": 0,
+        "busy": 0,
+        "rejected": 0,
+        "generator_skipped_attempts": 0,
+        "generator_lag_skips": 0,
+        "generator_queue_skips": 0,
+        "unvisited_or_cancelled": 0,
+        "dispatched_frames": 23304,
+        "recorded_frames": 23304,
+        "invalid_successful_receipts": 0
+      },
+      "ack_per_60_seconds": 200000.0,
+      "ack_fraction_of_planned": 1.0,
+      "missing_ack_attempts": 0,
+      "canonical_unique_keys": 12000000,
+      "payload_bytes_one_copy": 337864320,
+      "mean_transaction_ms": 11.163340223989834,
+      "mean_transaction_attempts": 609.9110546378653,
+      "sampled_latency_from_schedule": {
+        "samples": 11751,
+        "sample_mean_ms": 37.4416611384563,
+        "sample_p95_upper_ms": 71.303167,
+        "sample_p99_upper_ms": 79.691775,
+        "sample_max_ms": 114.258958
+      },
+      "process_cpu_cores_during_load": {
+        "kafka_node_1": 0.5330916334248621,
+        "kafka_node_2": 0.4469885884594576,
+        "kafka_node_3": 0.4889362257502957,
+        "go_benchmark_and_service": 0.18545271223317927
+      },
+      "peak_process_rss_bytes_whole_profile": {
+        "kafka_node_1": 561954816,
+        "kafka_node_2": 549945344,
+        "kafka_node_3": 575963136,
+        "go_benchmark_and_service": 240140288
+      },
+      "busy_present_in_seconds": 0,
+      "host_free_disk_bytes": {
+        "first": 21082005504,
+        "last": 19910492160,
+        "minimum": 19910467584
+      }
+    },
+    {
+      "label": "frames_1700k",
+      "counts": {
+        "planned_attempts": 102000000,
+        "dispatched_attempts": 101698378,
+        "recorded_attempts": 70251942,
+        "recorded_original_attempts": 70251942,
+        "recorded_repeat_attempts": 0,
+        "unknown": 0,
+        "closed": 0,
+        "not_open": 0,
+        "busy": 31446436,
+        "rejected": 0,
+        "generator_skipped_attempts": 301622,
+        "generator_lag_skips": 301622,
+        "generator_queue_skips": 0,
+        "unvisited_or_cancelled": 0,
+        "dispatched_frames": 24934,
+        "recorded_frames": 17176,
+        "invalid_successful_receipts": 0
+      },
+      "ack_per_60_seconds": 1170865.7,
+      "ack_fraction_of_planned": 0.6887445294117647,
+      "missing_ack_attempts": 0,
+      "canonical_unique_keys": 70251942,
+      "payload_bytes_one_copy": 1968428456,
+      "mean_transaction_ms": 27.87734013371382,
+      "mean_transaction_attempts": 4091.313377205754,
+      "sampled_latency_from_schedule": {
+        "samples": 68214,
+        "sample_mean_ms": 84.47856767143108,
+        "sample_p95_upper_ms": 113.246207,
+        "sample_p99_upper_ms": 192.937983,
+        "sample_max_ms": 528.886373
+      },
+      "process_cpu_cores_during_load": {
+        "kafka_node_1": 0.5328517606916423,
+        "kafka_node_2": 0.486360187237864,
+        "kafka_node_3": 0.5266757583140189,
+        "go_benchmark_and_service": 0.5506935453381105
+      },
+      "peak_process_rss_bytes_whole_profile": {
+        "kafka_node_1": 534282240,
+        "kafka_node_2": 533053440,
+        "kafka_node_3": 563331072,
+        "go_benchmark_and_service": 683900928
+      },
+      "busy_present_in_seconds": 60,
+      "host_free_disk_bytes": {
+        "first": 18828775424,
+        "last": 12743991296,
+        "minimum": 12738355200
+      }
+    }
+  ],
+  "resource_method": "CPU cores from first/last process CPU counters inside actual60s admission window; RSS maxima over all sampled setup/load/replay. Disk is host free space, not isolated topic size.",
+  "all_confirmed_attempts": 82323942,
+  "all_canonical_keys_by_poll": 82311942
+}

@@ -1,0 +1,620 @@
+{
+  "command": [
+    "bin/corebench",
+    "-rate",
+    "1800000",
+    "-workers",
+    "8",
+    "-shards",
+    "256",
+    "-buffer-size",
+    "256",
+    "-coalesce",
+    "250us",
+    "-max-lag",
+    "100ms",
+    "-allow-large"
+  ],
+  "started_at": "2026-09-10T13:41:41.505817+00:00",
+  "binary_sha256": "e95b81f74d616bf16ff5a8fe5bc86cec7625449851c25f50fcffb755b47e2798",
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "go": {
+      "exit_code": 0,
+      "stdout": "go version go1.26.1 darwin/arm64"
+    },
+    "hardware": {
+      "exit_code": 0,
+      "stdout": "machdep.cpu.brand_string: Apple M1 Pro\nhw.logicalcpu: 10\nhw.memsize: 34359738368"
+    },
+    "GOGC": "default",
+    "GOMEMLIMIT": "10GiB",
+    "GOMAXPROCS": "default"
+  },
+  "memory_before": {
+    "exit_code": 0,
+    "stdout": "The system has 34359738368 (2097152 pages with a page size of 16384).\nSystem-wide memory free percentage: 45%"
+  },
+  "swap_before": {
+    "exit_code": 0,
+    "stdout": "vm.swapusage: total = 14336.00M  used = 13271.69M  free = 1064.31M  (encrypted)"
+  },
+  "samples": [
+    {
+      "at": "2026-09-10T13:41:41.581647+00:00",
+      "disk_free_bytes": 21069541376,
+      "pid": 99676,
+      "cpu_seconds": 0.0,
+      "rss_bytes": 4177920
+    },
+    {
+      "at": "2026-09-10T13:41:42.587766+00:00",
+      "disk_free_bytes": 21069508608,
+      "pid": 99676,
+      "cpu_seconds": 0.39,
+      "rss_bytes": 2888613888
+    },
+    {
+      "at": "2026-09-10T13:41:43.598626+00:00",
+      "disk_free_bytes": 21069500416,
+      "pid": 99676,
+      "cpu_seconds": 0.39,
+      "rss_bytes": 2888613888
+    },
+    {
+      "at": "2026-09-10T13:41:44.608068+00:00",
+      "disk_free_bytes": 21069611008,
+      "pid": 99676,
+      "cpu_seconds": 0.39,
+      "rss_bytes": 2821160960
+    },
+    {
+      "at": "2026-09-10T13:41:45.615665+00:00",
+      "disk_free_bytes": 21069611008,
+      "pid": 99676,
+      "cpu_seconds": 0.39,
+      "rss_bytes": 2798829568
+    },
+    {
+      "at": "2026-09-10T13:41:46.625748+00:00",
+      "disk_free_bytes": 21068529664,
+      "pid": 99676,
+      "cpu_seconds": 0.39,
+      "rss_bytes": 2633564160
+    },
+    {
+      "at": "2026-09-10T13:41:47.639279+00:00",
+      "disk_free_bytes": 21068521472,
+      "pid": 99676,
+      "cpu_seconds": 0.39,
+      "rss_bytes": 2425487360
+    },
+    {
+      "at": "2026-09-10T13:41:48.648254+00:00",
+      "disk_free_bytes": 21068517376,
+      "pid": 99676,
+      "cpu_seconds": 0.39,
+      "rss_bytes": 2425487360
+    },
+    {
+      "at": "2026-09-10T13:41:49.658120+00:00",
+      "disk_free_bytes": 21068505088,
+      "pid": 99676,
+      "cpu_seconds": 0.39,
+      "rss_bytes": 2425487360
+    },
+    {
+      "at": "2026-09-10T13:41:50.668005+00:00",
+      "disk_free_bytes": 21068427264,
+      "pid": 99676,
+      "cpu_seconds": 0.39,
+      "rss_bytes": 2425487360
+    },
+    {
+      "at": "2026-09-10T13:41:51.679965+00:00",
+      "disk_free_bytes": 21068316672,
+      "pid": 99676,
+      "cpu_seconds": 0.85,
+      "rss_bytes": 2687942656
+    },
+    {
+      "at": "2026-09-10T13:41:52.686326+00:00",
+      "disk_free_bytes": 21068308480,
+      "pid": 99676,
+      "cpu_seconds": 2.59,
+      "rss_bytes": 2879537152
+    },
+    {
+      "at": "2026-09-10T13:41:53.695730+00:00",
+      "disk_free_bytes": 21068378112,
+      "pid": 99676,
+      "cpu_seconds": 3.83,
+      "rss_bytes": 2880258048
+    },
+    {
+      "at": "2026-09-10T13:41:54.704920+00:00",
+      "disk_free_bytes": 21068390400,
+      "pid": 99676,
+      "cpu_seconds": 5.11,
+      "rss_bytes": 2880684032
+    },
+    {
+      "at": "2026-09-10T13:41:55.714094+00:00",
+      "disk_free_bytes": 21068386304,
+      "pid": 99676,
+      "cpu_seconds": 6.35,
+      "rss_bytes": 2881142784
+    },
+    {
+      "at": "2026-09-10T13:41:56.720698+00:00",
+      "disk_free_bytes": 21067366400,
+      "pid": 99676,
+      "cpu_seconds": 7.6,
+      "rss_bytes": 2881601536
+    },
+    {
+      "at": "2026-09-10T13:41:57.732849+00:00",
+      "disk_free_bytes": 21067358208,
+      "pid": 99676,
+      "cpu_seconds": 8.92,
+      "rss_bytes": 2882060288
+    },
+    {
+      "at": "2026-09-10T13:41:58.742508+00:00",
+      "disk_free_bytes": 21067354112,
+      "pid": 99676,
+      "cpu_seconds": 10.16,
+      "rss_bytes": 2882519040
+    },
+    {
+      "at": "2026-09-10T13:41:59.748269+00:00",
+      "disk_free_bytes": 21067358208,
+      "pid": 99676,
+      "cpu_seconds": 11.4,
+      "rss_bytes": 2882994176
+    },
+    {
+      "at": "2026-09-10T13:42:00.752870+00:00",
+      "disk_free_bytes": 21067317248,
+      "pid": 99676,
+      "cpu_seconds": 12.65,
+      "rss_bytes": 2883436544
+    },
+    {
+      "at": "2026-09-10T13:42:01.758383+00:00",
+      "disk_free_bytes": 21067313152,
+      "pid": 99676,
+      "cpu_seconds": 13.89,
+      "rss_bytes": 2883895296
+    },
+    {
+      "at": "2026-09-10T13:42:02.762992+00:00",
+      "disk_free_bytes": 21067313152,
+      "pid": 99676,
+      "cpu_seconds": 15.16,
+      "rss_bytes": 2884321280
+    },
+    {
+      "at": "2026-09-10T13:42:03.767979+00:00",
+      "disk_free_bytes": 21067231232,
+      "pid": 99676,
+      "cpu_seconds": 16.45,
+      "rss_bytes": 2884747264
+    },
+    {
+      "at": "2026-09-10T13:42:04.773034+00:00",
+      "disk_free_bytes": 21067296768,
+      "pid": 99676,
+      "cpu_seconds": 17.74,
+      "rss_bytes": 2885206016
+    },
+    {
+      "at": "2026-09-10T13:42:05.779455+00:00",
+      "disk_free_bytes": 21067296768,
+      "pid": 99676,
+      "cpu_seconds": 19.09,
+      "rss_bytes": 2885648384
+    },
+    {
+      "at": "2026-09-10T13:42:06.784199+00:00",
+      "disk_free_bytes": 21067292672,
+      "pid": 99676,
+      "cpu_seconds": 20.4,
+      "rss_bytes": 2886107136
+    },
+    {
+      "at": "2026-09-10T13:42:07.789502+00:00",
+      "disk_free_bytes": 21066829824,
+      "pid": 99676,
+      "cpu_seconds": 21.68,
+      "rss_bytes": 2886565888
+    },
+    {
+      "at": "2026-09-10T13:42:08.796651+00:00",
+      "disk_free_bytes": 21066899456,
+      "pid": 99676,
+      "cpu_seconds": 22.96,
+      "rss_bytes": 2887008256
+    },
+    {
+      "at": "2026-09-10T13:42:09.801144+00:00",
+      "disk_free_bytes": 21066878976,
+      "pid": 99676,
+      "cpu_seconds": 24.24,
+      "rss_bytes": 2887467008
+    },
+    {
+      "at": "2026-09-10T13:42:10.807778+00:00",
+      "disk_free_bytes": 21066854400,
+      "pid": 99676,
+      "cpu_seconds": 25.51,
+      "rss_bytes": 2887925760
+    },
+    {
+      "at": "2026-09-10T13:42:11.817057+00:00",
+      "disk_free_bytes": 21066829824,
+      "pid": 99676,
+      "cpu_seconds": 26.78,
+      "rss_bytes": 2888368128
+    },
+    {
+      "at": "2026-09-10T13:42:12.821632+00:00",
+      "disk_free_bytes": 21066821632,
+      "pid": 99676,
+      "cpu_seconds": 28.05,
+      "rss_bytes": 2888826880
+    },
+    {
+      "at": "2026-09-10T13:42:13.829003+00:00",
+      "disk_free_bytes": 21066641408,
+      "pid": 99676,
+      "cpu_seconds": 29.4,
+      "rss_bytes": 2889285632
+    },
+    {
+      "at": "2026-09-10T13:42:14.838543+00:00",
+      "disk_free_bytes": 21066870784,
+      "pid": 99676,
+      "cpu_seconds": 30.7,
+      "rss_bytes": 2889728000
+    },
+    {
+      "at": "2026-09-10T13:42:15.846704+00:00",
+      "disk_free_bytes": 21066850304,
+      "pid": 99676,
+      "cpu_seconds": 32.0,
+      "rss_bytes": 2890186752
+    },
+    {
+      "at": "2026-09-10T13:42:16.853004+00:00",
+      "disk_free_bytes": 21066903552,
+      "pid": 99676,
+      "cpu_seconds": 33.27,
+      "rss_bytes": 2890645504
+    },
+    {
+      "at": "2026-09-10T13:42:17.857347+00:00",
+      "disk_free_bytes": 21066915840,
+      "pid": 99676,
+      "cpu_seconds": 34.55,
+      "rss_bytes": 2891087872
+    },
+    {
+      "at": "2026-09-10T13:42:18.862285+00:00",
+      "disk_free_bytes": 21066903552,
+      "pid": 99676,
+      "cpu_seconds": 35.85,
+      "rss_bytes": 2891546624
+    },
+    {
+      "at": "2026-09-10T13:42:19.866863+00:00",
+      "disk_free_bytes": 21066883072,
+      "pid": 99676,
+      "cpu_seconds": 37.23,
+      "rss_bytes": 2891988992
+    },
+    {
+      "at": "2026-09-10T13:42:20.873262+00:00",
+      "disk_free_bytes": 21066854400,
+      "pid": 99676,
+      "cpu_seconds": 38.55,
+      "rss_bytes": 2892447744
+    },
+    {
+      "at": "2026-09-10T13:42:21.882966+00:00",
+      "disk_free_bytes": 21066838016,
+      "pid": 99676,
+      "cpu_seconds": 39.86,
+      "rss_bytes": 2892906496
+    },
+    {
+      "at": "2026-09-10T13:42:22.888194+00:00",
+      "disk_free_bytes": 21066661888,
+      "pid": 99676,
+      "cpu_seconds": 41.14,
+      "rss_bytes": 2893348864
+    },
+    {
+      "at": "2026-09-10T13:42:23.893091+00:00",
+      "disk_free_bytes": 21066649600,
+      "pid": 99676,
+      "cpu_seconds": 42.46,
+      "rss_bytes": 2893807616
+    },
+    {
+      "at": "2026-09-10T13:42:24.897479+00:00",
+      "disk_free_bytes": 21066706944,
+      "pid": 99676,
+      "cpu_seconds": 43.77,
+      "rss_bytes": 2894266368
+    },
+    {
+      "at": "2026-09-10T13:42:25.907914+00:00",
+      "disk_free_bytes": 21066719232,
+      "pid": 99676,
+      "cpu_seconds": 45.11,
+      "rss_bytes": 2894725120
+    },
+    {
+      "at": "2026-09-10T13:42:26.913393+00:00",
+      "disk_free_bytes": 21066698752,
+      "pid": 99676,
+      "cpu_seconds": 46.43,
+      "rss_bytes": 2895183872
+    },
+    {
+      "at": "2026-09-10T13:42:27.917732+00:00",
+      "disk_free_bytes": 21066604544,
+      "pid": 99676,
+      "cpu_seconds": 47.79,
+      "rss_bytes": 2895659008
+    },
+    {
+      "at": "2026-09-10T13:42:28.928397+00:00",
+      "disk_free_bytes": 21066588160,
+      "pid": 99676,
+      "cpu_seconds": 49.25,
+      "rss_bytes": 2896101376
+    },
+    {
+      "at": "2026-09-10T13:42:29.937216+00:00",
+      "disk_free_bytes": 21066584064,
+      "pid": 99676,
+      "cpu_seconds": 50.6,
+      "rss_bytes": 2896560128
+    },
+    {
+      "at": "2026-09-10T13:42:30.942823+00:00",
+      "disk_free_bytes": 21066584064,
+      "pid": 99676,
+      "cpu_seconds": 51.93,
+      "rss_bytes": 2897018880
+    },
+    {
+      "at": "2026-09-10T13:42:31.947729+00:00",
+      "disk_free_bytes": 21066584064,
+      "pid": 99676,
+      "cpu_seconds": 53.25,
+      "rss_bytes": 2897461248
+    },
+    {
+      "at": "2026-09-10T13:42:32.952163+00:00",
+      "disk_free_bytes": 21066584064,
+      "pid": 99676,
+      "cpu_seconds": 54.56,
+      "rss_bytes": 2897920000
+    },
+    {
+      "at": "2026-09-10T13:42:33.959729+00:00",
+      "disk_free_bytes": 21066567680,
+      "pid": 99676,
+      "cpu_seconds": 55.9,
+      "rss_bytes": 2898362368
+    },
+    {
+      "at": "2026-09-10T13:42:34.969457+00:00",
+      "disk_free_bytes": 21066608640,
+      "pid": 99676,
+      "cpu_seconds": 57.22,
+      "rss_bytes": 2898821120
+    },
+    {
+      "at": "2026-09-10T13:42:35.974317+00:00",
+      "disk_free_bytes": 21066604544,
+      "pid": 99676,
+      "cpu_seconds": 58.58,
+      "rss_bytes": 2899279872
+    },
+    {
+      "at": "2026-09-10T13:42:36.980267+00:00",
+      "disk_free_bytes": 21066596352,
+      "pid": 99676,
+      "cpu_seconds": 59.91,
+      "rss_bytes": 2899722240
+    },
+    {
+      "at": "2026-09-10T13:42:37.989795+00:00",
+      "disk_free_bytes": 21066575872,
+      "pid": 99676,
+      "cpu_seconds": 61.27,
+      "rss_bytes": 2900180992
+    },
+    {
+      "at": "2026-09-10T13:42:38.995771+00:00",
+      "disk_free_bytes": 21066645504,
+      "pid": 99676,
+      "cpu_seconds": 62.63,
+      "rss_bytes": 2900639744
+    },
+    {
+      "at": "2026-09-10T13:42:40.000994+00:00",
+      "disk_free_bytes": 21066637312,
+      "pid": 99676,
+      "cpu_seconds": 63.99,
+      "rss_bytes": 2901082112
+    },
+    {
+      "at": "2026-09-10T13:42:41.010333+00:00",
+      "disk_free_bytes": 21066629120,
+      "pid": 99676,
+      "cpu_seconds": 65.34,
+      "rss_bytes": 2901540864
+    },
+    {
+      "at": "2026-09-10T13:42:42.015196+00:00",
+      "disk_free_bytes": 21066629120,
+      "pid": 99676,
+      "cpu_seconds": 66.79,
+      "rss_bytes": 2902016000
+    },
+    {
+      "at": "2026-09-10T13:42:43.025271+00:00",
+      "disk_free_bytes": 21066641408,
+      "pid": 99676,
+      "cpu_seconds": 68.18,
+      "rss_bytes": 2902458368
+    },
+    {
+      "at": "2026-09-10T13:42:44.029865+00:00",
+      "disk_free_bytes": 21066534912,
+      "pid": 99676,
+      "cpu_seconds": 69.57,
+      "rss_bytes": 2902917120
+    },
+    {
+      "at": "2026-09-10T13:42:45.038417+00:00",
+      "disk_free_bytes": 21066563584,
+      "pid": 99676,
+      "cpu_seconds": 70.97,
+      "rss_bytes": 2903375872
+    },
+    {
+      "at": "2026-09-10T13:42:46.048319+00:00",
+      "disk_free_bytes": 21065441280,
+      "pid": 99676,
+      "cpu_seconds": 72.39,
+      "rss_bytes": 2903834624
+    },
+    {
+      "at": "2026-09-10T13:42:47.055021+00:00",
+      "disk_free_bytes": 21065461760,
+      "pid": 99676,
+      "cpu_seconds": 73.78999999999999,
+      "rss_bytes": 2904358912
+    },
+    {
+      "at": "2026-09-10T13:42:48.062203+00:00",
+      "disk_free_bytes": 21065441280,
+      "pid": 99676,
+      "cpu_seconds": 75.21000000000001,
+      "rss_bytes": 2904817664
+    },
+    {
+      "at": "2026-09-10T13:42:49.067677+00:00",
+      "disk_free_bytes": 21065433088,
+      "pid": 99676,
+      "cpu_seconds": 76.67,
+      "rss_bytes": 2906537984
+    },
+    {
+      "at": "2026-09-10T13:42:50.072561+00:00",
+      "disk_free_bytes": 21065408512,
+      "pid": 99676,
+      "cpu_seconds": 78.14,
+      "rss_bytes": 2910208000
+    },
+    {
+      "at": "2026-09-10T13:42:51.077946+00:00",
+      "disk_free_bytes": 21065359360,
+      "pid": 99676,
+      "cpu_seconds": 79.63,
+      "rss_bytes": 2926067712
+    },
+    {
+      "at": "2026-09-10T13:42:52.084368+00:00",
+      "disk_free_bytes": 21065338880,
+      "pid": 99676,
+      "cpu_seconds": 84.17,
+      "rss_bytes": 2944581632
+    },
+    {
+      "at": "2026-09-10T13:42:53.090135+00:00",
+      "disk_free_bytes": 21065326592,
+      "pid": 99676,
+      "cpu_seconds": 91.83,
+      "rss_bytes": 2944581632
+    },
+    {
+      "at": "2026-09-10T13:42:54.096779+00:00",
+      "disk_free_bytes": 21065445376,
+      "pid": 99676,
+      "cpu_seconds": 99.19,
+      "rss_bytes": 2944581632
+    },
+    {
+      "at": "2026-09-10T13:42:55.105090+00:00",
+      "disk_free_bytes": 21065445376,
+      "pid": 99676,
+      "cpu_seconds": 106.78,
+      "rss_bytes": 2944581632
+    },
+    {
+      "at": "2026-09-10T13:42:56.111990+00:00",
+      "disk_free_bytes": 21065437184,
+      "pid": 99676,
+      "cpu_seconds": 114.27000000000001,
+      "rss_bytes": 2944548864
+    },
+    {
+      "at": "2026-09-10T13:42:57.119281+00:00",
+      "disk_free_bytes": 21065428992,
+      "pid": 99676,
+      "cpu_seconds": 121.84,
+      "rss_bytes": 2944548864
+    },
+    {
+      "at": "2026-09-10T13:42:58.127005+00:00",
+      "disk_free_bytes": 21065412608,
+      "pid": 99676,
+      "cpu_seconds": 129.11,
+      "rss_bytes": 2944548864
+    },
+    {
+      "at": "2026-09-10T13:42:59.135952+00:00",
+      "disk_free_bytes": 21065265152,
+      "pid": 99676,
+      "cpu_seconds": 136.28,
+      "rss_bytes": 2944548864
+    },
+    {
+      "at": "2026-09-10T13:43:00.140393+00:00",
+      "disk_free_bytes": 21065261056,
+      "pid": 99676,
+      "cpu_seconds": 142.43,
+      "rss_bytes": 2944548864
+    }
+  ],
+  "error": null,
+  "scope": "Generator and volatile core in one Go process; no HTTP, Kafka, disk or durability on admission path.",
+  "owned_kafka_nodes_at_start": {
+    "1": {
+      "pid": null
+    },
+    "2": {
+      "pid": null
+    },
+    "3": {
+      "pid": null
+    }
+  },
+  "exit_code": 0,
+  "finished_at": "2026-09-10T13:43:01.147672+00:00",
+  "memory_after": {
+    "exit_code": 0,
+    "stdout": "The system has 34359738368 (2097152 pages with a page size of 16384).\nSystem-wide memory free percentage: 42%"
+  },
+  "swap_after": {
+    "exit_code": 0,
+    "stdout": "vm.swapusage: total = 14336.00M  used = 13271.69M  free = 1064.31M  (encrypted)"
+  }
+}

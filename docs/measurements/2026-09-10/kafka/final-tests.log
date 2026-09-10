@@ -1,0 +1,10 @@
+?   	gigaquizz/cmd/gigaquizz	[no test files]
+ok  	gigaquizz/cmd/loadtest	2.221s
+ok  	gigaquizz/cmd/logbench	1.753s
+ok  	gigaquizz/cmd/storagebench	2.783s
+?   	gigaquizz/internal/config	[no test files]
+ok  	gigaquizz/internal/httpapi	2.706s
+ok  	gigaquizz/internal/poll	3.136s
+ok  	gigaquizz/internal/postgres	11.122s
+ok  	gigaquizz/internal/votelog	10.483s
+?   	gigaquizz/internal/web	[no test files]

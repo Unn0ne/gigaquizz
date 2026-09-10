@@ -1,0 +1,3 @@
+framebench: ready; 102000000 attempts from 2026-09-10T14:37:54.083789Z for60s
+framebench: workload complete; recorded=70251942 unknown=0 skipped=301622 closed=0; saving client ledger
+framebench: streaming audit complete; records=70251942 canonical=70251942 correct=true

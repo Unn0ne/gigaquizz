@@ -1,0 +1,45 @@
+{
+  "reports": [
+    {
+      "label": "frames_smoke_1000_repeat5",
+      "started_at": "2026-09-10T14:46:32.520488+00:00",
+      "finished_at": "2026-09-10T14:46:32.741881+00:00",
+      "exit_code": 0,
+      "correct": true,
+      "matched_ack_attempts": 72000,
+      "missing_ack_attempts": 0,
+      "canonical_unique_keys": 60000,
+      "wall_seconds": 0.067138209,
+      "errors": [],
+      "stderr": ""
+    },
+    {
+      "label": "frames_200k",
+      "started_at": "2026-09-10T14:46:32.742498+00:00",
+      "finished_at": "2026-09-10T14:46:34.539681+00:00",
+      "exit_code": 0,
+      "correct": true,
+      "matched_ack_attempts": 12000000,
+      "missing_ack_attempts": 0,
+      "canonical_unique_keys": 12000000,
+      "wall_seconds": 1.783593792,
+      "errors": [],
+      "stderr": ""
+    },
+    {
+      "label": "frames_1700k",
+      "started_at": "2026-09-10T14:46:34.540451+00:00",
+      "finished_at": "2026-09-10T14:46:44.735548+00:00",
+      "exit_code": 0,
+      "correct": true,
+      "matched_ack_attempts": 70251942,
+      "missing_ack_attempts": 0,
+      "canonical_unique_keys": 70251942,
+      "wall_seconds": 10.162975124999999,
+      "errors": [],
+      "stderr": ""
+    }
+  ],
+  "all_correct": true,
+  "matched_ack_attempts": 82323942
+}

@@ -1,0 +1,49 @@
+{
+  "mode": "audit-only",
+  "isolated_schema": "gqbench_1bcb5348238a3971",
+  "poll_id": "fa335332-2f4f-4d49-b5e1-44e19b4dee6c",
+  "configuration": {
+    "read_only_audit": true,
+    "required_standbys": 1,
+    "standby_names": "gigaquizz_ha_a,gigaquizz_ha_b"
+  },
+  "database": {
+    "server_version": "16.3 (Postgres.app)",
+    "synchronous_commit": "on",
+    "synchronous_standby_names": "ANY 1 (gigaquizz_ha_a,gigaquizz_ha_b)",
+    "fsync": "on",
+    "full_page_writes": "on",
+    "in_recovery": false
+  },
+  "reconciliation": {
+    "poll_finalized_barrier_visible": true,
+    "per_key_correct": true,
+    "unique_database_rows": 10000,
+    "final_result_total": 10000,
+    "final_choice_counts": {
+      "1": 10000,
+      "2": 0
+    },
+    "rows_scanned_bounded": 10000,
+    "unexpected_keys": 0,
+    "rows_for_never_dispatched_keys": 0,
+    "key_content_mismatches": 0,
+    "client_confirmed_keys_absent": 0,
+    "dispatched_keys_absent": 0,
+    "persisted_keys_without_client_confirmation": 0,
+    "unknown_unconfirmed_keys_found": 0,
+    "unknown_unconfirmed_keys_absent_after_barrier": 0,
+    "keys_with_multiple_accepted_responses": 0,
+    "final_aggregate_matches_rows_and_choices": true,
+    "method": "Read-only repeatable-read snapshot after the real close/finalization barrier; compare every bounded submitted key and receipt choice against rows, then compare final aggregate totals and option counts. Unknown absence is not loss of a confirmed vote."
+  },
+  "explicit_replication_durability_checked": true,
+  "private_key_ledger_file": ".local/storagebench/gqbench_1bcb5348238a3971.json",
+  "schema_cleanup": "not_requested_read_only",
+  "total_wall_seconds": 0.037483625,
+  "errors": [],
+  "limitations": [
+    "Read-only audit of retained artificial keys; does not elect a leader, fence a primary, finalize a poll or certify a failure-zone model.",
+    "Without a positive explicit standby policy this audits only the observed copy. An explicit policy requires a fixed direct primary endpoint and verifies repository Results plus its WAL proof after the per-key snapshot."
+  ]
+}

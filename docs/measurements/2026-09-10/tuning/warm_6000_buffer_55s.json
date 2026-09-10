@@ -1,0 +1,782 @@
+{
+  "mode": "vote",
+  "isolated_schema": "gqbench_8a2e674da097cc86",
+  "poll_id": "7d9a4673-f963-410a-8708-251ae291261d",
+  "configuration": {
+    "HTTP_included": false,
+    "different_choice": false,
+    "drain_timeout_ms": 10000,
+    "logical_rate": 6000,
+    "max_lag_ms": 500,
+    "pool_warmup": "Store.Warm opens and validates all configured repository connections before poll creation",
+    "queue": 2048,
+    "repeat_every": 0,
+    "required_standbys": 1,
+    "timeout_ms": 3000,
+    "total_keys": 330000,
+    "warm_connections": true,
+    "workers": 64
+  },
+  "database": {
+    "server_version": "16.3 (Postgres.app)",
+    "synchronous_commit": "on",
+    "synchronous_standby_names": "ANY 1 (gigaquizz_ha_a,gigaquizz_ha_b)",
+    "fsync": "on",
+    "full_page_writes": "on",
+    "in_recovery": false
+  },
+  "workload": {
+    "started_at": "2026-09-10T09:38:50.595126Z",
+    "finished_at": "2026-09-10T09:39:45.600061Z",
+    "logical_planned": 330000,
+    "logical_scheduled": 330000,
+    "logical_sent": 330000,
+    "logical_not_sent": 0,
+    "logical_with_client_confirmation": 330000,
+    "logical_unconfirmed_with_unknown_attempt": 0,
+    "attempts_planned": 330000,
+    "attempts_queued": 330000,
+    "attempts_sent": 330000,
+    "attempts_not_scheduled": 0,
+    "attempts_skipped": 0,
+    "skipped_attempts_by_reason": {},
+    "outcomes": {
+      "accepted": 330000
+    },
+    "invalid_receipts": 0,
+    "scheduled_window_seconds": 55,
+    "workload_seconds_including_drain": 55.0054045,
+    "attempts_started_during_window": 330000,
+    "attempts_started_during_window_per_scheduled_second": 6000,
+    "attempts_per_workload_second": 5999.41047611058,
+    "interrupted_or_drain_deadline": false,
+    "dispatch_lag": {
+      "count": 330000,
+      "mean_ms": 0.9619102057545454,
+      "p50_ms": 0.034001,
+      "p95_ms": 0.192626,
+      "p99_ms": 32.175917,
+      "max_ms": 99.319334
+    },
+    "database_call_latency": {
+      "count": 330000,
+      "mean_ms": 2.3088958170939393,
+      "p50_ms": 0.53975,
+      "p95_ms": 7.606542,
+      "p99_ms": 12.675,
+      "max_ms": 105.1505
+    },
+    "attempt_end_to_end_from_schedule": {
+      "count": 330000,
+      "mean_ms": 3.270806022848485,
+      "p50_ms": 0.576292,
+      "p95_ms": 9.473001,
+      "p99_ms": 42.935793,
+      "max_ms": 138.938042
+    },
+    "first_client_confirmation_from_schedule": {
+      "count": 330000,
+      "mean_ms": 3.270806022848485,
+      "p50_ms": 0.576292,
+      "p95_ms": 9.473001,
+      "p99_ms": 42.935793,
+      "max_ms": 138.938042
+    },
+    "first_confirmation_deadline_counts_from_schedule": {
+      "logical_keys_with_first_confirmation": 330000,
+      "planned_keys_without_confirmation": 0,
+      "after_100_ms": 621,
+      "after_250_ms": 0,
+      "after_500_ms": 0,
+      "after_1000_ms": 0
+    },
+    "one_second_buckets": [
+      {
+        "start_second": 0,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5993,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5993,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 1,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5999,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5999,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 2,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6000,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6000,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 3,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5995,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5995,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 4,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6006,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6006,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 5,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6000,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6000,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 6,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5993,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5993,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 7,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6003,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6003,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 8,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6005,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6005,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 9,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5998,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5998,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 10,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5994,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5994,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 11,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5995,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5995,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 12,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6008,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6008,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 13,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6000,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6000,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 14,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6002,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6002,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 15,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6003,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6003,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 16,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6000,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6000,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 17,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5963,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5963,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 18,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6036,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6036,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 19,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5997,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5997,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 20,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6001,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6001,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 21,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6001,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6001,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 22,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5997,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5997,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 23,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6001,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6001,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 24,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6006,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6006,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 25,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5994,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5994,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 26,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6000,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6000,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 27,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6000,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6000,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 28,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6001,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6001,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 29,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 5999,
+        "accepted_responses": 5973,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5973,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 30,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 5821,
+        "accepted_responses": 5792,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5792,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 31,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6180,
+        "accepted_responses": 6235,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6235,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 32,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6003,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6003,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 33,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5995,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5995,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 34,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6006,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6006,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 35,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6000,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6000,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 36,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5994,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5994,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 37,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5997,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5997,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 38,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6005,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6005,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 39,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5999,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5999,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 40,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6002,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6002,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 41,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6001,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6001,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 42,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5994,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5994,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 43,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5999,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5999,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 44,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6004,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6004,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 45,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6002,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6002,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 46,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6000,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6000,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 47,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5996,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5996,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 48,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6003,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6003,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 49,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6002,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6002,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 50,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5997,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5997,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 51,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5977,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5977,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 52,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6025,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6025,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 53,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 6003,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6003,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 54,
+        "includes_later_seconds": false,
+        "logical_scheduled": 6000,
+        "attempts_scheduled": 6000,
+        "attempts_sent": 6000,
+        "accepted_responses": 5991,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 5991,
+        "skipped_by_reason": null
+      },
+      {
+        "start_second": 55,
+        "includes_later_seconds": false,
+        "logical_scheduled": 0,
+        "attempts_scheduled": 0,
+        "attempts_sent": 0,
+        "accepted_responses": 14,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 14,
+        "skipped_by_reason": null
+      }
+    ],
+    "one_second_bucket_time_basis": "All seconds are relative to the monotonic workload start. Scheduled and skipped counts use each key's original slot; sent uses the timestamp just before send accounting and the repository call; accepted/unknown use the timestamp captured after the call returns. First confirmations use the earliest accepted/duplicate completion for each key. Buckets are [s,s+1); bucket 127 includes all later times."
+  },
+  "wal": {
+    "before_workload": {
+      "insert_lsn": "0/1A604CF8",
+      "flush_lsn": "0/1A604CF8"
+    },
+    "at_client_drain": {
+      "insert_lsn": "0/22A994F0",
+      "flush_lsn": "0/22A994F0"
+    },
+    "after_post_drain_marker_and_durability_check": {
+      "insert_lsn": "0/22A996C0",
+      "flush_lsn": "0/22A996C0"
+    },
+    "insert_lsn_delta_at_client_drain_bytes": 139020280,
+    "insert_lsn_delta_through_marker_bytes": 139020744,
+    "post_drain_marker_durability_confirmed": true,
+    "method": "pg_current_wal_insert_lsn / pg_current_wal_flush_lsn; pg_wal_lsn_diff. Baseline follows setup and a durable marker. Drain snapshot precedes the second marker; that marker is explicitly included in the later boundary. Finalization and cleanup are excluded."
+  },
+  "physical_sizes": {
+    "before_workload": {
+      "schema_tables_and_indexes_bytes": 647168,
+      "vote_partitions_and_indexes_bytes": 524288
+    },
+    "after_client_drain": {
+      "schema_tables_and_indexes_bytes": 68968448,
+      "vote_partitions_and_indexes_bytes": 68845568
+    },
+    "after_real_close_and_finalization": {
+      "schema_tables_and_indexes_bytes": 68984832,
+      "vote_partitions_and_indexes_bytes": 68845568
+    },
+    "vote_bytes_delta_at_client_drain": 68321280,
+    "vote_bytes_delta_after_finalization": 68321280,
+    "method": "SUM(pg_total_relation_size) for ordinary tables/materialized views in the isolated schema; vote subtotal selects votes_p* leaf tables. Includes their indexes/TOAST; excludes WAL and other schemas. Empty schema allocation is subtracted."
+  },
+  "reconciliation": {
+    "poll_finalized_barrier_visible": true,
+    "per_key_correct": true,
+    "unique_database_rows": 330000,
+    "final_result_total": 330000,
+    "final_choice_counts": {
+      "1": 330000,
+      "2": 0
+    },
+    "rows_scanned_bounded": 330000,
+    "unexpected_keys": 0,
+    "rows_for_never_dispatched_keys": 0,
+    "key_content_mismatches": 0,
+    "client_confirmed_keys_absent": 0,
+    "dispatched_keys_absent": 0,
+    "persisted_keys_without_client_confirmation": 0,
+    "unknown_unconfirmed_keys_found": 0,
+    "unknown_unconfirmed_keys_absent_after_barrier": 0,
+    "keys_with_multiple_accepted_responses": 0,
+    "final_aggregate_matches_rows_and_choices": true,
+    "method": "Read-only repeatable-read snapshot after the real close/finalization barrier; compare every bounded submitted key and receipt choice against rows, then compare final aggregate totals and option counts. Unknown absence is not loss of a confirmed vote."
+  },
+  "explicit_replication_durability_checked": true,
+  "private_key_ledger_file": ".local/storagebench/gqbench_8a2e674da097cc86.json",
+  "schema_cleanup": "retained",
+  "total_wall_seconds": 61.040674,
+  "errors": [],
+  "limitations": [
+    "Database-only experiment: HTTP parsing, authentication, browser delivery and external TLS are excluded.",
+    "Latency quantiles are exact nearest-rank quantiles for bounded retained observations; do not average quantiles across runs.",
+    "WAL LSNs are global to this PostgreSQL primary; concurrent activity and boundary markers contaminate attribution. Physical size deltas are allocated relation bytes, not bytes written or storage latency.",
+    "Unknown responses are reconciled after the genuine close barrier, not classified as lost confirmations.",
+    "One loopback replication lab does not model separate failure zones or establish production throughput."
+  ]
+}

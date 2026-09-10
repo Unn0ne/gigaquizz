@@ -1,0 +1,42 @@
+$ go test -race -count=1 ./...
+ok  	gigaquizz/cmd/corebench	1.658s
+ok  	gigaquizz/cmd/framebench	2.291s
+?   	gigaquizz/cmd/gigaquizz	[no test files]
+ok  	gigaquizz/cmd/loadtest	1.869s
+ok  	gigaquizz/cmd/logbench	2.728s
+ok  	gigaquizz/cmd/storagebench	4.483s
+?   	gigaquizz/internal/config	[no test files]
+ok  	gigaquizz/internal/httpapi	3.454s
+ok  	gigaquizz/internal/poll	3.060s
+ok  	gigaquizz/internal/postgres	12.187s
+ok  	gigaquizz/internal/votecore	4.433s
+ok  	gigaquizz/internal/votelog	41.318s
+?   	gigaquizz/internal/web	[no test files]
+exit_code=0
+
+$ go vet ./...
+exit_code=0
+
+$ make build
+go build -o bin/gigaquizz ./cmd/gigaquizz
+go build -o bin/loadtest ./cmd/loadtest
+go build -o bin/storagebench ./cmd/storagebench
+go build -o bin/logbench ./cmd/logbench
+go build -o bin/corebench ./cmd/corebench
+go build -o bin/framebench ./cmd/framebench
+exit_code=0
+
+$ python3 -m unittest discover -s scripts/tests -p test_production_capacity.py
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.003s
+
+OK
+exit_code=0
+
+$ python3 -m py_compile scripts/profile_log.py scripts/kafka_lab.py scripts/production_capacity.py
+exit_code=0
+
+$ gofmt -l cmd internal
+exit_code=0
+

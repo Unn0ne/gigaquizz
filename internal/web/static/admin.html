@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#18231f">
+  <title>Опросы — Gigaquizz</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/common.js" defer></script>
+  <script src="/static/admin.js" defer></script>
+</head>
+<body class="admin-page">
+  <header class="site-header wrap"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">g.</span>gigaquizz</a><div class="header-actions"><span class="header-caption">Для организаторов</span><button id="logout" class="quiet-button" type="button" hidden>Выйти ↗</button></div></header>
+  <main class="wrap admin-main">
+    <div id="session-loading" class="loading-card" role="status"><span class="loader" aria-hidden="true"></span><p>Проверяем доступ…</p></div>
+    <section id="login-panel" class="card login-card" hidden>
+      <p class="eyebrow">Кабинет организатора</p><h1>Давайте спросим.</h1><p class="subtle">Войдите, чтобы создавать опросы и смотреть результаты.</p>
+      <form id="login-form"><label for="password">Пароль администратора</label><input id="password" name="password" type="password" autocomplete="current-password" required><div id="login-message" class="notice error" role="alert" hidden></div><button id="login-button" class="button primary full-width" type="submit">Войти <span aria-hidden="true">→</span></button></form>
+    </section>
+    <section id="dashboard" hidden>
+      <div class="page-heading"><div><p class="eyebrow">Кабинет организатора</p><h1>Ваши опросы<span class="heading-dot">.</span></h1><p class="subtle">Один вопрос. Минута на ответы.</p></div><button id="show-create" class="button primary" type="button">+ Новый опрос</button></div>
+      <div id="admin-message" class="notice" role="status" hidden></div>
+      <section id="create-panel" class="card create-card" hidden>
+        <div class="section-heading"><div><p class="eyebrow">Новый опрос</p><h2>О чём спросим?</h2></div><button id="hide-create" class="quiet-button" type="button" aria-label="Закрыть создание опроса">Закрыть ×</button></div>
+        <form id="create-form">
+          <label for="new-question">Вопрос</label><input id="new-question" name="question" type="text" maxlength="300" placeholder="Например: когда проведём следующую встречу?" required>
+          <div class="form-grid"><div><label for="new-type">Тип ответа</label><select id="new-type" name="type"><option value="ab">A/B — два варианта</option><option value="single">Один вариант из нескольких</option><option value="multiple">Несколько вариантов</option></select><label for="new-options">Варианты ответа</label><textarea id="new-options" name="options" rows="5" placeholder="Первый вариант&#10;Второй вариант" required></textarea><p id="options-hint" class="field-hint">Два варианта, каждый с новой строки. До 100 символов в каждом.</p></div>
+          <div><label for="start-mode">Когда начнём?</label><select id="start-mode" name="start-mode"><option value="scheduled">В выбранное время</option><option value="now">Сразу после создания</option></select><div id="schedule-fields"><label for="new-start">Дата и время начала</label><input id="new-start" name="starts_at" type="datetime-local"><p class="field-hint">По местному времени этого устройства.</p></div><div class="duration-note"><span class="duration-value">60</span><div><strong>секунд на ответы</strong><p>Заранее отправьте участникам ссылку, чтобы все успели.</p></div></div></div></div>
+          <div id="create-message" class="notice error" role="alert" hidden></div><div class="form-actions"><button id="create-button" class="button primary" type="submit">Создать опрос <span aria-hidden="true">→</span></button></div>
+        </form>
+      </section>
+      <div class="admin-columns"><section class="polls-column" aria-labelledby="polls-heading"><div class="section-heading"><h2 id="polls-heading">Все опросы <span id="poll-count" class="count-tag">0</span></h2><button id="refresh-polls" class="quiet-button" type="button">Обновить ↻</button></div><div id="poll-list" class="poll-list"></div><div id="polls-empty" class="card empty-state" hidden><span class="empty-symbol" aria-hidden="true">+</span><h3>Начните с одного вопроса</h3><p>Созданные опросы и ссылки для участников появятся здесь.</p><button id="empty-create" class="button secondary" type="button">Создать первый опрос</button></div></section>
+      <aside class="results-column"><section id="results-placeholder" class="card results-placeholder"><span class="chart-symbol" aria-hidden="true">▂ ▅ ▇</span><h2>Посмотрим, что думают участники</h2><p>Выберите опрос, чтобы увидеть ссылку и результаты.</p></section><section id="results-panel" class="card results-card" hidden><div class="section-heading"><span id="results-state" class="badge"></span><button id="refresh-results" class="quiet-button" type="button">Обновить ↻</button></div><h2 id="results-question"></h2><p id="results-schedule" class="subtle"></p><label for="share-link">Ссылка для участников</label><div class="copy-row"><input id="share-link" type="url" readonly><button id="copy-link" class="button secondary" type="button">Копировать</button></div><a id="open-poll" class="quiet-link" target="_blank" rel="noopener" href="/">Открыть опрос ↗</a><div class="results-divider"></div><div class="total-stat"><span id="total-votes">—</span><p>принято голосов</p></div><div id="results-options" class="results-options"></div><p id="results-note" class="field-hint"></p><p id="results-updated" class="field-hint"></p><div id="results-message" class="notice" role="status" hidden></div></section></aside></div>
+    </section>
+    <noscript><p class="notice warning">Для работы кабинета включите JavaScript в браузере.</p></noscript>
+  </main>
+  <footer class="site-footer wrap"><span>gigaquizz</span><span>Хороший разговор начинается с вопроса.</span></footer>
+</body>
+</html>

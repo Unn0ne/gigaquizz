@@ -1,0 +1,211 @@
+{
+  "verified_at": "2026-09-10T14:50:13.983698+00:00",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "cpu": "Apple M1 Pro",
+  "logical_cpus": 10,
+  "memory_bytes": 34359738368,
+  "go_version": "go version go1.26.1 darwin/arm64",
+  "current_framebench_binary_sha256": "3c80b833bcd906f09ccdd8a7f0aeaf1ed4027f2149f57c492395f940ecd3c72e",
+  "source_sha256": {
+    "Makefile": "0a12799675ef1d543f7191805cfde0325622cfea2bceae6f09858a1a294e4378",
+    "cmd/corebench/corebench_test.go": "be33bdc9d758695b19bb5e0e9d5726ebde8b8f422d0dfe276db34e5b6d85dbbe",
+    "cmd/corebench/execute.go": "f84cb2fb321684c5a7ad547bcd0bcf93ca2b9e6009a57c74b77fa17012e832f6",
+    "cmd/corebench/main.go": "c4bc1f526564b3b5085ddc0361ad067d9da6b320bd58126be0be8c3406494759",
+    "cmd/corebench/metrics.go": "aed86d7eb329224fcd72d6fdeaaa536c6b391d76fb5506feb9d6a0291673e2dc",
+    "cmd/corebench/workload.go": "10a30ff220eb254b6658577214cb44b54fca8a8d5e5b48ee6a838690520cddaf",
+    "cmd/framebench/audit.go": "cfe87c33023ed61f561ac45d1e0af8ec615c5aabb487173e1a88015d2b66384a",
+    "cmd/framebench/execute.go": "75807afb981c82a575f4f1790601e1bdfa66e79ab67fa85723eb18ad785ece17",
+    "cmd/framebench/framebench_test.go": "6587ee92a4b7ca5d70d6e7eb3ca8b923fa3be53da63f66604d27e8f329744b97",
+    "cmd/framebench/ledger.go": "d3c4db9eb89e90db977458ea13e0e515990e31a5b625e3421fb7feaeb99b4345",
+    "cmd/framebench/main.go": "5df461fffdb6b60f60afcadfda4692e01b50111b284ac712335bb4cb42850981",
+    "cmd/framebench/workload.go": "de8fdc53b501c400858b4f20563b7ab26a973551d6c3db0c10906cbcd7e8c038",
+    "cmd/gigaquizz/main.go": "337d30a7bfac1134ef9a5c3e94fed053c935628f466648551d071a27f5877351",
+    "cmd/loadtest/loadtest_test.go": "47260adf9129aa312078224bb2f29422de7535a48dd578362b3d85dc903bca12",
+    "cmd/loadtest/main.go": "346b7f20d29a9311ead139b6dca309f276ceb7eb2307419277286e71e0c6625e",
+    "cmd/loadtest/metrics.go": "8bfd387b427fa5a3c6a0e88a265f314d43f1711346f67fab61e080f6a610d5a0",
+    "cmd/loadtest/scheduler.go": "dee51f03d9a6d7b37129551aede6ee5267b0afd5c5cb85eab361efd6c3112324",
+    "cmd/logbench/audit.go": "140ccb4d4763e6bb3044ccfcc7bb669bd9a0f27eebbdbef367f6791d662e72e3",
+    "cmd/logbench/audit_integrity_test.go": "b940c02c5566e065b9ae724bd4a849a5ed225dab5486e6b23b671a67d1361691",
+    "cmd/logbench/diagnostics.go": "6d927659fb6c9ec6ae912f79898328ce427c5cd4dad64cbe30f021c0f4643f67",
+    "cmd/logbench/execute.go": "69f240265be2e84c51f14743220bc21b782ac7d3bed68da56006ddf158eb06a6",
+    "cmd/logbench/ledger.go": "e22e5aeb4e45648c58e4fc72c257c8f5e016f9e0ccaa3915681c3346f8255050",
+    "cmd/logbench/logbench_test.go": "781c1919fe89d0777d60934f469eae92a86e62d77ae3b422785e6624fcdee0ec",
+    "cmd/logbench/main.go": "685a05bd8fd17a9e393a6aae7bdf6a39f07ffe6eddf1d7365c6d16f96f8ee6e1",
+    "cmd/logbench/workload.go": "5c1aade9bc00705436da2f6cdf53c11e629f07ceaaf2364baec59c7942f84516",
+    "cmd/storagebench/audit.go": "fdae2512f39b3778032a04dc07cc84dded6ecfe71250898dd1e3df900e04e0f3",
+    "cmd/storagebench/database.go": "ac4d6285a162b0d38e227fb53d6d2a35d8d1b58a1c6ce7a49e2cc552951e0c4f",
+    "cmd/storagebench/main.go": "2d10ea27e0a70bd05364db5208cb3f4a34caec5dfcb2ac7f2946367118f17882",
+    "cmd/storagebench/storagebench_test.go": "a02726a40236220797971d1dba4c68e4c9f44452a3b64d3fc5468ab0a77a93d4",
+    "cmd/storagebench/timeline.go": "31b6c3ca52bae3cfe6a4c6da270d33ff74ad2fa371fe5cbf7d7440786756e978",
+    "cmd/storagebench/timeline_test.go": "61a38be3518582cc3753e53ea9edbc2c343c832f2d82541f166def89b39df96b",
+    "cmd/storagebench/workload.go": "39e49ae0a02f41b3289443e948bff210c64be6345589eb61bb2c8432a6e945a4",
+    "go.mod": "54c645f0574a902392c11d9e5bcf5d0df33ce127e469e99025c678f789ca1268",
+    "go.sum": "22e8c1942d9a490398c0461ea75120b9cd137db4c2e887793a423d7880da97be",
+    "internal/config/config.go": "bf95cb5bbb5f8b6dde0ba66af125214826e4bf252bcdcdc67d33c1599a9e86f4",
+    "internal/httpapi/auth.go": "27bf33194a45ea909c1bc2c3c5f0bff97b6c70b7b3322862f7e39ce26c68db28",
+    "internal/httpapi/server.go": "16ae146b356cf3bafadbf6b72214f064f20d468f296dbd88ea0e22d226e8e7f0",
+    "internal/httpapi/server_test.go": "5f8cffd394947a853a1749e4e956c3b87397d1d183dc3a0582b1e5c2166893e4",
+    "internal/poll/poll.go": "72b00db79fb2df0b1b24bf7e1e9cc5dc7ecc88c2103e0aa970228fe4aba5db83",
+    "internal/poll/poll_test.go": "464157a485d41aed6df007872de94d4930a22d3cfa16e9a274bd8ed9b6e2b0d1",
+    "internal/postgres/diagnostics.go": "3c035260268b0b521111589d76b6020365d4ffca6f494db81e2e7a56a4e5161b",
+    "internal/postgres/durability.go": "35aaa4aeca9d1cb0de5e26f8e7adae56091e8ab5b8def388f0365f12887f6df8",
+    "internal/postgres/durability_test.go": "27f52ca7b86f15ebcf6425d6080c5858e7f4142ac3bafbc37cb2518d4eb8e331",
+    "internal/postgres/migrations/001_initial.sql": "515e3a3b4222011689ae094a168279aa9dd19f6978cf37c00ade44d902f8429c",
+    "internal/postgres/replication_integration_test.go": "74b8e1d7429cb562fe2eb03352719602afda9ddf565e3fc75361b0ba1daadbc5",
+    "internal/postgres/store.go": "e097bb75833028560055cf803de29b66498e3e96161d8da7c782e4eb0644638c",
+    "internal/postgres/store_integration_test.go": "605ff476ed40530c4e145ab3e5c9c576f974862d7b617d271c2ba293533764c4",
+    "internal/postgres/warm_integration_test.go": "ef77348119977df9f9840b89667be133ebfe3bb41e74037b9239727a7e99ee85",
+    "internal/votecore/engine.go": "6552c5a433b76dda0e0b6fea281b04c0c35b2b740df808502973e8983103de07",
+    "internal/votecore/engine_test.go": "96290b265df8d3a89035ba846f1a7d048511168421345b994c89fd34637b09d3",
+    "internal/votelog/audit.go": "6c155088a0a26214ea61ed29e2408a1a0029bccc8a1e6fcdb40c444f120057df",
+    "internal/votelog/codec_test.go": "c6124e86e5e994f71b10c58ce8dbe94b8be51885173051a80455c6256e596562",
+    "internal/votelog/frame.go": "20011a89ee331a7e72d1b159608c67580aa1d97319f6b30d8473043a412241f0",
+    "internal/votelog/frame_failure_test.go": "4e0d744dc1792c11590e83059579be5356d1e8e0ef50ef8aaa10609dbcd6c815",
+    "internal/votelog/frame_integration_test.go": "694de29b7117ebed1f317db978cef6c483cdf3781fff6c11647d39a9d3e9a7f5",
+    "internal/votelog/frame_submit.go": "4e2a62dae09215745f8284aed55a85744cf918f081c6cb5826a9a744cfffacd7",
+    "internal/votelog/frame_test.go": "ce71fd420677e0782d3f83c0c0ea2cb030c344db29a7ed2cb7ba75e9bfaa4011",
+    "internal/votelog/http.go": "dc1db9425d26b913f72fc0c339f4e05b0008c76d1b9d023f1921ee0881d39e3c",
+    "internal/votelog/store.go": "2e0c8cbcef4c95773c755af00fc33d336b1a168968fb0129e003b37f512a2721",
+    "internal/votelog/store_integration_test.go": "7828c80b1a8805f4029296b607a27ef4bac09c241232cc69e4846d2c4cc69b4c",
+    "internal/votelog/types.go": "15baa7f840e6063334ddd113e853a06409f82a97ac723ee9027ef3a4e91ae3d4",
+    "internal/web/assets.go": "8cf97815b991b0c8279f5726002c7392ccc6e6494690c5147b95d63c2c441924",
+    "internal/web/static/admin.html": "099439ce2f8bbd9290d5354485bcb640c450c5a195a56e4f9c85e2b87715cb9f",
+    "internal/web/static/admin.js": "962cf52bf94058f113ff05f5111f30f7bd2a717fb95a618dd9cdeecbcb82e7f6",
+    "internal/web/static/app.css": "ed5379e5fee0bcca1cb4ca6dd167456ebe4d6ac60b1c854dc54a8686521a9b31",
+    "internal/web/static/common.js": "de05bb1d5c003a20294e81a7800e60f620b43e2ac4abdd456f827e1a6f0de62e",
+    "internal/web/static/index.html": "b802f4e7e6684bfc3a349362f6399948f0db1f29e060ad73fbc6d98280e8044d",
+    "internal/web/static/poll.html": "0ac5d725666d041d5d4d1c5afb9032902fb0e6c97d480619d287ab92db2f71ea",
+    "internal/web/static/poll.js": "a8a504b42fd83e1b450e7e7e2d781307d77c8c1b018bc20c1631408e45d72c30",
+    "scripts/capacity_model.py": "5eee10cd4088b2dbb7e0aed458907ecaec19048801d433acf7940c1ed19728f5",
+    "scripts/dev.sh": "14e9d364b2a3c8d9e286b6790ccdf6cceff014216546bafb31820bf92be331c3",
+    "scripts/kafka_lab.py": "44adee54d1baaf9f9f5ddba99edbdd8b6bdd05c7e60928bd3720d0d7e6cc21f8",
+    "scripts/log_capacity_model.py": "f622cfa818d9325a413e089fc9151996f1038e12cce9f654995dd45853960f87",
+    "scripts/prepare_event_lab.py": "7b23692e3ad9b8d699d37537fb4e35a7c50268460000aa2cecfec5fa7862ff2f",
+    "scripts/production_capacity.py": "70af45635c64f459bbc5e08b7b50ecf09321f8600a9ccaa5fe724b4d2f75d3f4",
+    "scripts/profile_core.py": "62db5dfcd7bd2befa0219f10afc10a29e372baf3f20c6ff1de821a920679f002",
+    "scripts/profile_http.py": "3c76c3e1faf605d618ee44be82454a31884c6754369e4e8d4f2fa2161a9464be",
+    "scripts/profile_log.py": "c6a69b7ef3d25b48bb05ff492042d77ba8bd1d69b56c05c1497e8ee5be1a8a19",
+    "scripts/profile_storage.py": "4c8c632c83e581a0c08c2361a89c1950c8e8c7bab7283ab5f4d84e5191d108a5",
+    "scripts/replication_lab.py": "622432be5212c3f5e1827865d7f67261d893984b34c956cedf0cc14bb93f5aab",
+    "scripts/tests/test_production_capacity.py": "2e37093b339787c95f994abbbb02f8bd463300f262b2fcf137e0b4b949222f5f"
+  },
+  "checks": {
+    "checks": [
+      {
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "go",
+          "vet",
+          "./..."
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "make",
+          "build"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/tests",
+          "-p",
+          "test_production_capacity.py"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "python3",
+          "-m",
+          "py_compile",
+          "scripts/profile_log.py",
+          "scripts/kafka_lab.py",
+          "scripts/production_capacity.py"
+        ],
+        "exit_code": 0
+      },
+      {
+        "command": [
+          "gofmt",
+          "-l",
+          "cmd",
+          "internal"
+        ],
+        "exit_code": 0
+      }
+    ],
+    "kafka_integration": true,
+    "postgres_integration": true,
+    "postgres_replication_failover": false,
+    "browser_tests": false
+  },
+  "existing_application_http_status": {
+    "healthz": 200,
+    "readyz": 200,
+    "admin": 200
+  },
+  "kafka_status": {
+    "version": "4.3.1",
+    "bootstrap_servers": "127.0.0.1:19092,127.0.0.1:19093,127.0.0.1:19094",
+    "nodes": [
+      {
+        "id": 1,
+        "pid": 93571,
+        "owned_process_running": true,
+        "broker_listening": true,
+        "controller_listening": true
+      },
+      {
+        "id": 2,
+        "pid": 93725,
+        "owned_process_running": true,
+        "broker_listening": true,
+        "controller_listening": true
+      },
+      {
+        "id": 3,
+        "pid": 93871,
+        "owned_process_running": true,
+        "broker_listening": true,
+        "controller_listening": true
+      }
+    ],
+    "ready": true,
+    "health_topic": {
+      "isr": [
+        1,
+        2,
+        3
+      ],
+      "description": "Topic: gigaquizz_lab_health\tTopicId: s--UFXvUSOSce10lJ-Bg_Q\tPartitionCount: 1\tReplicationFactor: 3\tConfigs: min.insync.replicas=2,cleanup.policy=delete,segment.bytes=67108864,retention.ms=86400000,preallocate=false,unclean.leader.election.enable=false,retention.bytes=1073741824,segment.index.bytes=1048576\n\tTopic: gigaquizz_lab_health\tPartition: 0\tLeader: 1\tReplicas: 3,1,2\tIsr: 1,2,3\tElr: \tLastKnownElr:",
+      "query_ok": true
+    },
+    "free_bytes": 12907487232,
+    "lab_allocated_bytes": 23167770624,
+    "guarantee": "replicated Kafka ACK; no per-record fsync guarantee; shared host and disk"
+  },
+  "notes": [
+    "All three measured profiles use the same framebench binary SHA256 recorded in their telemetry.",
+    "No concurrent compilation/tests during measured load.",
+    "Three brokers share one host/SSD. All-process SIGKILL was after completed load and CLOSED, followed by read-only full audits.",
+    "No browser rerun, PostgreSQL replication-failover run, physical power-loss test or AZ failure test in this series.",
+    "Public reports omit private AES seed, per-voter ledgers and private manifest paths."
+  ]
+}

@@ -1,0 +1,569 @@
+{
+  "mode": "vote",
+  "isolated_schema": "gqbench_eeb044bca36be9bf",
+  "poll_id": "a11142a7-9f1b-43c2-8216-ec096e6d921a",
+  "configuration": {
+    "HTTP_included": false,
+    "different_choice": false,
+    "drain_timeout_ms": 10000,
+    "logical_rate": 10000,
+    "max_lag_ms": 500,
+    "pool_warmup": "Store.Warm opens and validates all configured repository connections before poll creation",
+    "queue": 2048,
+    "repeat_every": 0,
+    "required_standbys": 1,
+    "timeout_ms": 3000,
+    "total_keys": 300000,
+    "warm_connections": true,
+    "workers": 64
+  },
+  "database": {
+    "server_version": "16.3 (Postgres.app)",
+    "synchronous_commit": "on",
+    "synchronous_standby_names": "ANY 1 (gigaquizz_ha_a,gigaquizz_ha_b)",
+    "fsync": "on",
+    "full_page_writes": "on",
+    "in_recovery": false
+  },
+  "workload": {
+    "started_at": "2026-09-10T10:03:55.741884Z",
+    "finished_at": "2026-09-10T10:04:26.168947Z",
+    "logical_planned": 300000,
+    "logical_scheduled": 300000,
+    "logical_sent": 241261,
+    "logical_not_sent": 58739,
+    "logical_with_client_confirmation": 241261,
+    "logical_unconfirmed_with_unknown_attempt": 0,
+    "attempts_planned": 300000,
+    "attempts_queued": 241261,
+    "attempts_sent": 241261,
+    "attempts_not_scheduled": 0,
+    "attempts_skipped": 58739,
+    "skipped_attempts_by_reason": {
+      "queue_full": 58739
+    },
+    "outcomes": {
+      "accepted": 241261
+    },
+    "invalid_receipts": 0,
+    "scheduled_window_seconds": 30,
+    "workload_seconds_including_drain": 30.426589917,
+    "attempts_started_during_window": 239213,
+    "attempts_started_during_window_per_scheduled_second": 7973.766666666666,
+    "attempts_per_workload_second": 7929.281613816414,
+    "interrupted_or_drain_deadline": false,
+    "dispatch_lag": {
+      "count": 241261,
+      "mean_ms": 253.94474455655907,
+      "p50_ms": 249.075375,
+      "p95_ms": 316.546875,
+      "p99_ms": 369.056208,
+      "max_ms": 469.651083
+    },
+    "database_call_latency": {
+      "count": 241261,
+      "mean_ms": 8.05423086123327,
+      "p50_ms": 8.148583,
+      "p95_ms": 15.038292,
+      "p99_ms": 24.430584,
+      "max_ms": 77.81075
+    },
+    "attempt_end_to_end_from_schedule": {
+      "count": 241261,
+      "mean_ms": 261.99897541779234,
+      "p50_ms": 256.825958,
+      "p95_ms": 327.305167,
+      "p99_ms": 383.673792,
+      "max_ms": 492.906333
+    },
+    "first_client_confirmation_from_schedule": {
+      "count": 241261,
+      "mean_ms": 261.99897541779234,
+      "p50_ms": 256.825958,
+      "p95_ms": 327.305167,
+      "p99_ms": 383.673792,
+      "max_ms": 492.906333
+    },
+    "first_confirmation_deadline_counts_from_schedule": {
+      "logical_keys_with_first_confirmation": 241261,
+      "planned_keys_without_confirmation": 58739,
+      "after_100_ms": 240892,
+      "after_250_ms": 140962,
+      "after_500_ms": 0,
+      "after_1000_ms": 0
+    },
+    "one_second_buckets": [
+      {
+        "start_second": 0,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 6405,
+        "accepted_responses": 6341,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6341,
+        "skipped_by_reason": {
+          "queue_full": 1547
+        }
+      },
+      {
+        "start_second": 1,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 7840,
+        "accepted_responses": 7840,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 7840,
+        "skipped_by_reason": {
+          "queue_full": 2157
+        }
+      },
+      {
+        "start_second": 2,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 7584,
+        "accepted_responses": 7584,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 7584,
+        "skipped_by_reason": {
+          "queue_full": 2421
+        }
+      },
+      {
+        "start_second": 3,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 8611,
+        "accepted_responses": 8611,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 8611,
+        "skipped_by_reason": {
+          "queue_full": 1392
+        }
+      },
+      {
+        "start_second": 4,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 8073,
+        "accepted_responses": 8074,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 8074,
+        "skipped_by_reason": {
+          "queue_full": 1927
+        }
+      },
+      {
+        "start_second": 5,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 8248,
+        "accepted_responses": 8247,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 8247,
+        "skipped_by_reason": {
+          "queue_full": 1773
+        }
+      },
+      {
+        "start_second": 6,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 8437,
+        "accepted_responses": 8437,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 8437,
+        "skipped_by_reason": {
+          "queue_full": 1539
+        }
+      },
+      {
+        "start_second": 7,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 8494,
+        "accepted_responses": 8494,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 8494,
+        "skipped_by_reason": {
+          "queue_full": 1504
+        }
+      },
+      {
+        "start_second": 8,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 8751,
+        "accepted_responses": 8751,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 8751,
+        "skipped_by_reason": {
+          "queue_full": 1260
+        }
+      },
+      {
+        "start_second": 9,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 9031,
+        "accepted_responses": 9031,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 9031,
+        "skipped_by_reason": {
+          "queue_full": 967
+        }
+      },
+      {
+        "start_second": 10,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 7923,
+        "accepted_responses": 7923,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 7923,
+        "skipped_by_reason": {
+          "queue_full": 2068
+        }
+      },
+      {
+        "start_second": 11,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 8109,
+        "accepted_responses": 8109,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 8109,
+        "skipped_by_reason": {
+          "queue_full": 1907
+        }
+      },
+      {
+        "start_second": 12,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 8531,
+        "accepted_responses": 8531,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 8531,
+        "skipped_by_reason": {
+          "queue_full": 1458
+        }
+      },
+      {
+        "start_second": 13,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 8968,
+        "accepted_responses": 8968,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 8968,
+        "skipped_by_reason": {
+          "queue_full": 1031
+        }
+      },
+      {
+        "start_second": 14,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 8820,
+        "accepted_responses": 8820,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 8820,
+        "skipped_by_reason": {
+          "queue_full": 1180
+        }
+      },
+      {
+        "start_second": 15,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 8271,
+        "accepted_responses": 8271,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 8271,
+        "skipped_by_reason": {
+          "queue_full": 1728
+        }
+      },
+      {
+        "start_second": 16,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 6680,
+        "accepted_responses": 6680,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6680,
+        "skipped_by_reason": {
+          "queue_full": 3333
+        }
+      },
+      {
+        "start_second": 17,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 7374,
+        "accepted_responses": 7374,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 7374,
+        "skipped_by_reason": {
+          "queue_full": 2629
+        }
+      },
+      {
+        "start_second": 18,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 8678,
+        "accepted_responses": 8678,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 8678,
+        "skipped_by_reason": {
+          "queue_full": 1309
+        }
+      },
+      {
+        "start_second": 19,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 7729,
+        "accepted_responses": 7729,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 7729,
+        "skipped_by_reason": {
+          "queue_full": 2265
+        }
+      },
+      {
+        "start_second": 20,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 8276,
+        "accepted_responses": 8276,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 8276,
+        "skipped_by_reason": {
+          "queue_full": 1728
+        }
+      },
+      {
+        "start_second": 21,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 7821,
+        "accepted_responses": 7821,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 7821,
+        "skipped_by_reason": {
+          "queue_full": 2179
+        }
+      },
+      {
+        "start_second": 22,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 7704,
+        "accepted_responses": 7704,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 7704,
+        "skipped_by_reason": {
+          "queue_full": 2292
+        }
+      },
+      {
+        "start_second": 23,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 6889,
+        "accepted_responses": 6889,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6889,
+        "skipped_by_reason": {
+          "queue_full": 3110
+        }
+      },
+      {
+        "start_second": 24,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 7833,
+        "accepted_responses": 7833,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 7833,
+        "skipped_by_reason": {
+          "queue_full": 2169
+        }
+      },
+      {
+        "start_second": 25,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 6556,
+        "accepted_responses": 6556,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 6556,
+        "skipped_by_reason": {
+          "queue_full": 3443
+        }
+      },
+      {
+        "start_second": 26,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 7614,
+        "accepted_responses": 7614,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 7614,
+        "skipped_by_reason": {
+          "queue_full": 2386
+        }
+      },
+      {
+        "start_second": 27,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 7792,
+        "accepted_responses": 7792,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 7792,
+        "skipped_by_reason": {
+          "queue_full": 2211
+        }
+      },
+      {
+        "start_second": 28,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 9020,
+        "accepted_responses": 9020,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 9020,
+        "skipped_by_reason": {
+          "queue_full": 980
+        }
+      },
+      {
+        "start_second": 29,
+        "includes_later_seconds": false,
+        "logical_scheduled": 10000,
+        "attempts_scheduled": 10000,
+        "attempts_sent": 7151,
+        "accepted_responses": 7151,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 7151,
+        "skipped_by_reason": {
+          "queue_full": 2846
+        }
+      },
+      {
+        "start_second": 30,
+        "includes_later_seconds": false,
+        "logical_scheduled": 0,
+        "attempts_scheduled": 0,
+        "attempts_sent": 2048,
+        "accepted_responses": 2112,
+        "unknown_outcomes": 0,
+        "first_client_confirmations": 2112,
+        "skipped_by_reason": null
+      }
+    ],
+    "one_second_bucket_time_basis": "All seconds are relative to the monotonic workload start. Scheduled and skipped counts use each key's original slot; sent uses the timestamp just before send accounting and the repository call; accepted/unknown use the timestamp captured after the call returns. First confirmations use the earliest accepted/duplicate completion for each key. Buckets are [s,s+1); bucket 127 includes all later times."
+  },
+  "wal": {
+    "before_workload": {
+      "insert_lsn": "0/3EF4A508",
+      "flush_lsn": "0/3EF4A508"
+    },
+    "at_client_drain": {
+      "insert_lsn": "0/4663CB18",
+      "flush_lsn": "0/4663CB18"
+    },
+    "after_post_drain_marker_and_durability_check": {
+      "insert_lsn": "0/4663CBD8",
+      "flush_lsn": "0/4663CBD8"
+    },
+    "insert_lsn_delta_at_client_drain_bytes": 124724752,
+    "insert_lsn_delta_through_marker_bytes": 124724944,
+    "post_drain_marker_durability_confirmed": true,
+    "method": "pg_current_wal_insert_lsn / pg_current_wal_flush_lsn; pg_wal_lsn_diff. Baseline follows setup and a durable marker. Drain snapshot precedes the second marker; that marker is explicitly included in the later boundary. Finalization and cleanup are excluded."
+  },
+  "physical_sizes": {
+    "before_workload": {
+      "schema_tables_and_indexes_bytes": 647168,
+      "vote_partitions_and_indexes_bytes": 524288
+    },
+    "after_client_drain": {
+      "schema_tables_and_indexes_bytes": 51437568,
+      "vote_partitions_and_indexes_bytes": 51314688
+    },
+    "after_real_close_and_finalization": {
+      "schema_tables_and_indexes_bytes": 51716096,
+      "vote_partitions_and_indexes_bytes": 51576832
+    },
+    "vote_bytes_delta_at_client_drain": 50790400,
+    "vote_bytes_delta_after_finalization": 51052544,
+    "method": "SUM(pg_total_relation_size) for ordinary tables/materialized views in the isolated schema; vote subtotal selects votes_p* leaf tables. Includes their indexes/TOAST; excludes WAL and other schemas. Empty schema allocation is subtracted."
+  },
+  "reconciliation": {
+    "poll_finalized_barrier_visible": true,
+    "per_key_correct": true,
+    "unique_database_rows": 241261,
+    "final_result_total": 241261,
+    "final_choice_counts": {
+      "1": 241261,
+      "2": 0
+    },
+    "rows_scanned_bounded": 241261,
+    "unexpected_keys": 0,
+    "rows_for_never_dispatched_keys": 0,
+    "key_content_mismatches": 0,
+    "client_confirmed_keys_absent": 0,
+    "dispatched_keys_absent": 0,
+    "persisted_keys_without_client_confirmation": 0,
+    "unknown_unconfirmed_keys_found": 0,
+    "unknown_unconfirmed_keys_absent_after_barrier": 0,
+    "keys_with_multiple_accepted_responses": 0,
+    "final_aggregate_matches_rows_and_choices": true,
+    "method": "Read-only repeatable-read snapshot after the real close/finalization barrier; compare every bounded submitted key and receipt choice against rows, then compare final aggregate totals and option counts. Unknown absence is not loss of a confirmed vote."
+  },
+  "explicit_replication_durability_checked": true,
+  "private_key_ledger_file": ".local/storagebench/gqbench_eeb044bca36be9bf.json",
+  "schema_cleanup": "retained",
+  "total_wall_seconds": 60.931344625,
+  "errors": [],
+  "limitations": [
+    "Database-only experiment: HTTP parsing, authentication, browser delivery and external TLS are excluded.",
+    "Latency quantiles are exact nearest-rank quantiles for bounded retained observations; do not average quantiles across runs.",
+    "WAL LSNs are global to this PostgreSQL primary; concurrent activity and boundary markers contaminate attribution. Physical size deltas are allocated relation bytes, not bytes written or storage latency.",
+    "Unknown responses are reconciled after the genuine close barrier, not classified as lost confirmations.",
+    "One loopback replication lab does not model separate failure zones or establish production throughput."
+  ]
+}

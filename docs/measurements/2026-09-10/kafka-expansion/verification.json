@@ -1,0 +1,40 @@
+{
+  "verified_at": "2026-09-10T12:40:38.550037+00:00",
+  "commands": [
+    {
+      "command": "GIGAQUIZZ_KAFKA_TEST=1 TEST_DATABASE_URL=<owned development PostgreSQL Unix socket> go test -race -count=1 ./...",
+      "exit_code": 0,
+      "real_kafka_enabled": true,
+      "real_postgresql_enabled": true,
+      "postgresql_replication_fault_tests_enabled": false
+    },
+    {
+      "command": "go vet ./...",
+      "exit_code": 0
+    },
+    {
+      "command": "make build",
+      "exit_code": 0,
+      "binaries": [
+        "gigaquizz",
+        "loadtest",
+        "storagebench",
+        "logbench"
+      ]
+    },
+    {
+      "command": "gofmt -l cmd internal",
+      "unformatted_files": [],
+      "exit_code": 0
+    },
+    {
+      "command": "ast.parse for scripts/*.py",
+      "exit_code": 0
+    }
+  ],
+  "final_binary_sha256": "49d2f687f587deb07ad5e58176911a11b086e3673542b1b170906c5513eaf255",
+  "new_broker_failures_injected": false,
+  "browser_tests_repeated": false,
+  "final_ledger_directory_limit_bytes": 5368709120,
+  "final_ledger_directory_bytes": 5017256561
+}
