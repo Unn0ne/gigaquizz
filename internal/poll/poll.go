@@ -112,6 +112,7 @@ type OptionCount struct {
 type Results struct {
 	PollID       string        `json:"poll_id"`
 	State        string        `json:"state"`
+	Pending      bool          `json:"pending,omitempty"`
 	TotalVotes   int64         `json:"total_votes"`
 	Options      []OptionCount `json:"options"`
 	CalculatedAt time.Time     `json:"calculated_at"`

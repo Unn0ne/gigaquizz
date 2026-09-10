@@ -68,18 +68,61 @@ def disk_guard():
 
 
 def java_home():
-    candidates = [os.environ.get("GIGAQUIZZ_KAFKA_JAVA_HOME", ""),
-                  "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home",
-                  "/opt/homebrew/opt/openjdk@25/libexec/openjdk.jdk/Contents/Home"]
-    found = subprocess.run(["/usr/libexec/java_home", "-v", "21+"], capture_output=True, text=True)
-    if found.returncode == 0:
-        candidates.append(found.stdout.strip())
+    checked = set()
+    version_env = os.environ.copy()
+    for name in ("JAVA_TOOL_OPTIONS", "JDK_JAVA_OPTIONS", "_JAVA_OPTIONS"):
+        version_env.pop(name, None)
+
+    def probe(value):
+        if not value:
+            return None
+        home = Path(value).resolve()
+        executable = home / "bin/java"
+        if home in checked or not executable.is_file() or not os.access(executable, os.X_OK):
+            return None
+        checked.add(home)
+        try:
+            result = subprocess.run([str(executable), "-version"], capture_output=True,
+                                    text=True, timeout=10, env=version_env)
+        except (OSError, subprocess.TimeoutExpired):
+            return None
+        version = (result.stderr + "\n" + result.stdout).strip()
+        major = re.search(r'^(?:openjdk|java)(?:\s+version)?\s+"?(\d+)(?:[.\s"+\-]|$)', version, re.MULTILINE)
+        if result.returncode == 0 and major and int(major[1]) >= 21:
+            return str(home), version
+        return None
+
+    # Respect an explicit selection before touching platform-specific helpers.
+    explicit = os.environ.get("GIGAQUIZZ_KAFKA_JAVA_HOME", "")
+    if explicit:
+        found = probe(explicit)
+        if found:
+            return found
+        raise RuntimeError("GIGAQUIZZ_KAFKA_JAVA_HOME must contain an executable Java 21+ installation")
+    candidates = [os.environ.get("JAVA_HOME", "")]
+    if sys.platform == "darwin":
+        candidates += ["/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home",
+                       "/opt/homebrew/opt/openjdk@25/libexec/openjdk.jdk/Contents/Home"]
     for value in candidates:
-        if value and (Path(value) / "bin/java").is_file():
-            result = subprocess.run([str(Path(value) / "bin/java"), "-version"], capture_output=True, text=True, timeout=10)
-            major = re.search(r'version "(\d+)', result.stderr)
-            if result.returncode == 0 and major and int(major[1]) >= 21:
-                return str(Path(value).resolve()), result.stderr.strip()
+        found = probe(value)
+        if found:
+            return found
+    helper = Path("/usr/libexec/java_home")
+    if sys.platform == "darwin" and helper.is_file() and os.access(helper, os.X_OK):
+        try:
+            result = subprocess.run([str(helper), "-v", "21+"], capture_output=True,
+                                    text=True, timeout=5, env=version_env)
+            found = probe(result.stdout.strip()) if result.returncode == 0 else None
+            if found:
+                return found
+        except (OSError, subprocess.TimeoutExpired):
+            pass
+    executable = shutil.which("java")
+    if executable:
+        # Resolves Linux /usr/bin/java -> alternatives -> actual JDK/bin/java.
+        found = probe(Path(executable).resolve().parent.parent)
+        if found:
+            return found
     raise RuntimeError("JDK 21+ unavailable; set GIGAQUIZZ_KAFKA_JAVA_HOME to an installed JDK (no global install is performed)")
 
 

@@ -1,10 +1,13 @@
-.PHONY: dev run build test integration check lab-up lab-status lab-stop replication-test kafka-up kafka-status kafka-test frame-test file-test capacity-check
+.PHONY: dev run build test integration check lab-up lab-status lab-stop replication-test kafka-up kafka-status kafka-test frame-test file-test capacity-check app-kafka-test e2e
+
+GIGAQUIZZ_ENV_FILE ?= .env.postgres-kafka
+export GIGAQUIZZ_ENV_FILE
 
 dev:
 	./scripts/dev.sh
 
 run:
-	go run ./cmd/gigaquizz
+	go run ./cmd/gigaquizz -env "$$GIGAQUIZZ_ENV_FILE"
 
 build:
 	go build -o bin/gigaquizz ./cmd/gigaquizz
@@ -46,6 +49,13 @@ kafka-status:
 
 kafka-test:
 	GIGAQUIZZ_KAFKA_TEST=1 go test -race -count=1 ./internal/votelog
+
+app-kafka-test:
+	@test -n "$(TEST_DATABASE_URL)" || (echo 'Set TEST_DATABASE_URL for isolated application integration'; exit 1)
+	GIGAQUIZZ_APP_KAFKA_TEST=1 go test -race -count=1 -v ./internal/kafkapoll
+
+e2e:
+	npm run test:e2e
 
 frame-test:
 	GIGAQUIZZ_KAFKA_TEST=1 go test -race -count=1 ./internal/votelog ./cmd/framebench

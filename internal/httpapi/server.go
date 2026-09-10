@@ -37,6 +37,7 @@ type Server struct {
 	ready         atomic.Bool
 	attempts      atomic.Uint64
 	accepted      atomic.Uint64
+	recorded      atomic.Uint64
 	duplicates    atomic.Uint64
 	conflicts     atomic.Uint64
 	rejected      atomic.Uint64
@@ -61,7 +62,7 @@ func New(votes, admin poll.Repository, files fs.FS, cfg Config) (*Server, error)
 func (s *Server) SetReady(ready bool) { s.ready.Store(ready) }
 
 func (s *Server) Metrics() map[string]uint64 {
-	metrics := map[string]uint64{"vote_http_attempts": s.attempts.Load(), "accepted_responses": s.accepted.Load(), "duplicate_responses": s.duplicates.Load(), "conflict_responses": s.conflicts.Load(), "rejected_attempts": s.rejected.Load(), "unknown_outcomes": s.unknown.Load(), "storage_errors": s.storageErrors.Load(), "inflight": uint64(len(s.inflight))}
+	metrics := map[string]uint64{"vote_http_attempts": s.attempts.Load(), "accepted_responses": s.accepted.Load(), "recorded_responses": s.recorded.Load(), "duplicate_responses": s.duplicates.Load(), "conflict_responses": s.conflicts.Load(), "rejected_attempts": s.rejected.Load(), "unknown_outcomes": s.unknown.Load(), "storage_errors": s.storageErrors.Load(), "inflight": uint64(len(s.inflight))}
 	if repository, ok := s.votes.(interface{ Diagnostics() map[string]uint64 }); ok {
 		diagnostics := repository.Diagnostics()
 		for _, key := range [...]string{
@@ -329,7 +330,7 @@ func (s *Server) vote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// The bounded operation is owned by this handler. A disconnected client must
-	// not cancel an admitted database operation; Shutdown still waits for it.
+	// not cancel an admitted storage operation; Shutdown still waits for it.
 	ctx, cancel := context.WithTimeout(context.WithoutCancel(r.Context()), s.timeout)
 	defer cancel()
 	receipt, err := s.votes.Vote(ctx, id, in.Token, choices)
@@ -342,6 +343,9 @@ func (s *Server) vote(w http.ResponseWriter, r *http.Request) {
 	}
 	status := 200
 	switch receipt.Status {
+	case "recorded":
+		status = http.StatusAccepted
+		s.recorded.Add(1)
 	case "accepted":
 		status = 201
 		s.accepted.Add(1)
@@ -362,6 +366,11 @@ func (s *Server) vote(w http.ResponseWriter, r *http.Request) {
 	case "not_found":
 		status = 404
 		s.rejected.Add(1)
+	case "busy":
+		s.rejected.Add(1)
+		w.Header().Set("Retry-After", "1")
+		writeJSON(w, 503, map[string]string{"error": "Сервис занят. Повторите с тем же идентификатором", "outcome": "not_admitted"})
+		return
 	default:
 		s.unknown.Add(1)
 		w.Header().Set("Retry-After", "1")
@@ -372,7 +381,7 @@ func (s *Server) vote(w http.ResponseWriter, r *http.Request) {
 }
 
 func validToken(s string) bool {
-	if len(s) != 32 || s != strings.ToLower(s) {
+	if len(s) != 32 || s != strings.ToLower(s) || s == "00000000000000000000000000000000" {
 		return false
 	}
 	_, err := hex.DecodeString(s)

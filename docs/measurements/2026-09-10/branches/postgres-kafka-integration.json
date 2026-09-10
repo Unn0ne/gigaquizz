@@ -1,0 +1,97 @@
+{
+  "date": "2026-09-10",
+  "branch": "postgres-kafka",
+  "scope": "Functional PostgreSQL/Kafka application integration on existing local infrastructure, with isolated test schemas, topics and HTTP listeners; no throughput claim",
+  "report_origin": "Sanitized aggregate transcription of observed tool output; private connection values and per-poll or voter identifiers are omitted",
+  "integration": [
+    {
+      "test": "TestHTTPKafkaDurableAttemptsRestartAndExactFinal",
+      "package": "internal/kafkapoll",
+      "race_detector": true,
+      "status": "passed",
+      "test_seconds": 65.22,
+      "package_seconds": 67.98,
+      "poll_window_seconds": 60,
+      "acknowledged_attempts": 16,
+      "canonical_unique_voters": 3,
+      "canonical_option_counts": [1, 2, 2],
+      "verified": [
+        "Public poll and administrative pages served over real HTTP",
+        "Administrative operations require authentication",
+        "Future admission is not_open and unfinalized results are pending",
+        "HTTP 202 confirms Kafka-committed attempts",
+        "Concurrent changed repeats preserve the first committed choice of the full identifier",
+        "A second controller cannot acquire the same PostgreSQL schema",
+        "Termination of only the test-owned PostgreSQL ownership session stops admission and closes writers",
+        "A new controller recovers and accepts votes during the original open window",
+        "Restart after the deadline recovers an unsealed journal without reopening admission",
+        "Late attempts receive HTTP 410",
+        "CLOSED replay produces exact canonical totals",
+        "Finalization is idempotent",
+        "The persisted final result and finalized timestamp survive another controller restart"
+      ]
+    },
+    {
+      "test": "TestInterruptedInitialPreparationRetainsOldTopic",
+      "package": "internal/kafkapoll",
+      "race_detector": true,
+      "status": "passed",
+      "test_seconds": 5.47,
+      "package_seconds": 7.56,
+      "verified": [
+        "An unprepared topic containing committed initial control data in only one partition is recoverable",
+        "Recovery allocates a fresh unique topic before exposing a prepared writer",
+        "The old committed evidence remains readable with read_committed",
+        "The prepared topic is reused without rotation on the next restart"
+      ]
+    }
+  ],
+  "code_checks": [
+    {"command": "go test -race ./...", "status": "passed"},
+    {"command": "go vet ./...", "status": "passed"},
+    {
+      "command": "go test -race ./internal/kafkapoll ./cmd/gigaquizz",
+      "status": "passed",
+      "scope": "Follow-up after releasing closed writer references from finalized poll metadata",
+      "kafkapoll_seconds": 2.083
+    },
+    {"command": "go vet ./internal/kafkapoll ./cmd/gigaquizz", "status": "passed"},
+    {"command": "git diff --check", "status": "passed"}
+  ],
+  "branch_environment_check": {
+    "status": "passed",
+    "method": "bash syntax check and execution of the actual environment generator in an isolated temporary directory; generated values read and asserted without starting services",
+    "default_file": ".env.postgres-kafka",
+    "override_variable": "GIGAQUIZZ_ENV_FILE",
+    "http_port": 8092,
+    "max_inflight": 1024,
+    "file_permissions": "0600",
+    "verified": [
+      "DATABASE_URL and a generated administrator password are present",
+      "An explicit configuration path containing spaces works",
+      "Repeated execution preserves an existing selected environment file",
+      "Existing .env and .env.simple-files are unchanged"
+    ]
+  },
+  "java_discovery_check": {
+    "command": "python3 -m unittest discover -s scripts/tests -p test_kafka_java.py -v",
+    "status": "passed",
+    "tests": 5,
+    "seconds": 1.252,
+    "method": "Linux platform simulated with isolated fake Java executables; no JVM or broker started",
+    "verified": [
+      "Explicit GIGAQUIZZ_KAFKA_JAVA_HOME is used before platform discovery",
+      "Linux PATH symlinks resolve to the actual Java installation",
+      "Java versions below 21 are rejected",
+      "Invalid explicit Java selection does not silently select another installation",
+      "Missing Java produces an actionable error without executing the macOS helper"
+    ]
+  },
+  "limits": [
+    "No production HA, power-loss or 1.7-million-HTTP-requests-per-second claim is made",
+    "Only the test-owned PostgreSQL ownership backend was terminated; shared PostgreSQL, Kafka brokers and existing sites were not stopped",
+    "Synthetic test topics and schemas were preserved",
+    "Browser and executable-process SIGKILL verification performed by the root agent is reported separately",
+    "Two earlier development runs exposed and fixed token-format handling and omitted pending:false decoding; only successful verification runs are summarized above"
+  ]
+}

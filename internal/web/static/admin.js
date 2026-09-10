@@ -145,10 +145,11 @@
       if (sequence !== resultsSequence || id !== selectedID || !authenticated) return;
       if (!response.ok || !Array.isArray(response.data.options)) throw new Error('load_failed');
       const results = response.data;
+      const pending = results.pending === true;
       const poll = polls.find((item) => item.id === id);
       if (poll) poll.state = results.state;
       ui.stateBadge(byId('results-state'), results.state);
-      byId('total-votes').textContent = ui.number(results.total_votes);
+      byId('total-votes').textContent = pending ? '—' : ui.number(results.total_votes);
       const fragment = document.createDocumentFragment();
       for (const option of results.options) {
         const row = document.createElement('div');
@@ -158,20 +159,21 @@
         text.textContent = option.label;
         const count = document.createElement('span');
         const percent = results.total_votes > 0 ? Math.round(option.votes / results.total_votes * 100) : 0;
-        count.textContent = ui.number(option.votes) + ' · ' + percent + '%';
+        count.textContent = pending ? '—' : ui.number(option.votes) + ' · ' + percent + '%';
         label.append(text, count);
         const bar = document.createElement('progress');
         bar.className = 'result-progress';
         bar.max = Math.max(1, results.total_votes);
         bar.value = option.votes;
         bar.setAttribute('aria-label', option.label + ': ' + ui.number(option.votes));
+        bar.hidden = pending;
         row.append(label, bar);
         fragment.append(row);
       }
       byId('results-options').replaceChildren(fragment);
       const finalText = results.state === 'final' ? 'Итоги готовы.' : results.state === 'scheduled' ? 'Опрос ещё не начался.' : 'Промежуточные результаты. Для новых данных нажмите «Обновить».';
-      byId('results-note').textContent = finalText + (poll?.type === 'multiple' ? ' Можно выбрать несколько вариантов, поэтому сумма процентов может превышать 100%.' : '');
-      byId('results-updated').textContent = 'Рассчитано ' + ui.time(results.calculated_at);
+      byId('results-note').textContent = pending ? 'Результаты будут доступны после обработки.' : finalText + (poll?.type === 'multiple' ? ' Можно выбрать несколько вариантов, поэтому сумма процентов может превышать 100%.' : '');
+      byId('results-updated').textContent = pending ? '' : 'Рассчитано ' + ui.time(results.calculated_at);
       ui.notice(byId('results-message'), '');
       renderPollList();
     } catch (error) {

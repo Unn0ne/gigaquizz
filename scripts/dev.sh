@@ -2,6 +2,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 project_dir="$(pwd)"
+env_file="${GIGAQUIZZ_ENV_FILE:-.env.postgres-kafka}"
+export GIGAQUIZZ_ENV_FILE="$env_file"
 mkdir -p .local
 chmod 700 .local
 
@@ -34,7 +36,7 @@ fi
 python3 - <<'PY'
 import os, secrets, urllib.parse
 from pathlib import Path
-p = Path('.env')
+p = Path(os.environ['GIGAQUIZZ_ENV_FILE'])
 if not p.exists():
     database_password = secrets.token_urlsafe(32)
     socket = os.environ['GIGAQUIZZ_DEV_SOCKET']
@@ -42,12 +44,12 @@ if not p.exists():
         url = 'postgres://gigaquizz@/gigaquizz?' + urllib.parse.urlencode({'host': socket, 'port': 55432, 'sslmode': 'disable'})
     else:
         url = f'postgres://gigaquizz:{database_password}@127.0.0.1:55432/gigaquizz?sslmode=disable'
-    data = f'HTTP_ADDR=127.0.0.1:8080\nPUBLIC_URL=http://127.0.0.1:8080\nDATABASE_URL={url}\nADMIN_PASSWORD={secrets.token_urlsafe(32)}\nPOSTGRES_PASSWORD={database_password}\nVOTE_DB_CONNECTIONS=64\nMAX_INFLIGHT=256\n'
+    data = f'HTTP_ADDR=127.0.0.1:8092\nPUBLIC_URL=http://127.0.0.1:8092\nDATABASE_URL={url}\nADMIN_PASSWORD={secrets.token_urlsafe(32)}\nPOSTGRES_PASSWORD={database_password}\nGIGAQUIZZ_SCHEMA=gigaquizz_kafka\nKAFKA_BROKERS=127.0.0.1:19092,127.0.0.1:19093,127.0.0.1:19094\nKAFKA_PARTITIONS=4\nMAX_INFLIGHT=1024\n'
     with open(os.open(p, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), 'w') as f:
         f.write(data)
-    print('Created .env. The administrator password is in ADMIN_PASSWORD.')
+    print('Created the PostgreSQL/Kafka environment file. The administrator password is in ADMIN_PASSWORD.')
 PY
 
-if [ -z "$pg_bin" ]; then docker compose up -d --wait db; fi
+if [ -z "$pg_bin" ]; then docker compose --env-file "$env_file" up -d --wait db; fi
 go build -o bin/gigaquizz ./cmd/gigaquizz
-exec ./bin/gigaquizz
+exec ./bin/gigaquizz -env "$env_file"

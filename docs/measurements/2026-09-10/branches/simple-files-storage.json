@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-10",
+  "branch": "simple-files",
+  "kind": "storage_correctness_verification",
+  "result": "pass",
+  "environment": {
+    "operating_system": "darwin",
+    "durable_file_sync": "F_FULLFSYNC",
+    "directory_sync": "File.Sync",
+    "race_detector": true,
+    "test_data": "isolated temporary directories; no live application data",
+    "linux_runtime_tested": false
+  },
+  "directly_observed_run": {
+    "command": "go test -race -count=1 -timeout=90s ./internal/filelog ./internal/filestore",
+    "exit_code": 0,
+    "packages": [
+      {
+        "package": "gigaquizz/internal/filelog",
+        "result": "pass",
+        "reported_elapsed_seconds": 5.262
+      },
+      {
+        "package": "gigaquizz/internal/filestore",
+        "result": "pass",
+        "reported_elapsed_seconds": 8.114
+      }
+    ],
+    "source_state": "After atomic poll-directory preparation, recovery metadata synchronization, and prepared-orphan regression; before the root agent's final release of the closed writer reference."
+  },
+  "subsequent_validation_reported_by_root": {
+    "description": "After clearing the closed writer reference in filestore finalization.",
+    "focused_filestore_race_test": {
+      "result": "pass",
+      "reported_elapsed_seconds": 8.349
+    },
+    "repository_check": {
+      "command": "make check",
+      "result": "pass"
+    },
+    "full_http_recovery": {
+      "result": "pass",
+      "artifact": "simple-files-http-recovery.json",
+      "acknowledged_attempts": 12,
+      "final_unique_voters": 3,
+      "final_option_counts": [
+        2,
+        1
+      ],
+      "scope": "Real application SIGKILL and restart within and after the original voting window."
+    },
+    "provenance": "Reported by the root agent; this report did not rerun those commands."
+  },
+  "scenarios": [
+    {
+      "area": "durability",
+      "result": "pass",
+      "checks": [
+        "A blocked sync cannot emit a successful receipt.",
+        "Several independent frames share one durable group sync.",
+        "Short writes are completed before sync.",
+        "Write ENOSPC and sync EIO produce unknown outcomes and poison the writer.",
+        "Cancellation after enqueue may leave a persisted unknown attempt."
+      ]
+    },
+    {
+      "area": "admission",
+      "result": "pass",
+      "checks": [
+        "Logical queue plus one active batch remains bounded.",
+        "Admission at 59.9 seconds may finish syncing after 60 seconds.",
+        "A deadline observed with a full queue remains closed after clock rollback.",
+        "Invalid, not-open, busy, and closed attempts receive the expected status."
+      ]
+    },
+    {
+      "area": "journal_integrity",
+      "result": "pass",
+      "checks": [
+        "Independent header and payload CRC checks reject corruption at EOF and in the middle.",
+        "Malformed count, length, sequence, kind, token, choice, admission timestamp, or reserved bytes are rejected.",
+        "The complete frame is validated before visiting its votes.",
+        "Frames and stray bytes after CLOSED are rejected.",
+        "Incomplete header and payload tails are distinguished from complete-frame CRC corruption."
+      ]
+    },
+    {
+      "area": "process_failure",
+      "result": "pass",
+      "checks": [
+        "The parent observes an actual successful receipt, SIGKILLs the writer, and verifies it with a separate reader process.",
+        "During a later append, the writer emits READY only after a real partial file write; the parent then sends SIGKILL.",
+        "Independent readers preserve the acknowledged prefix and report incomplete tails for both partial-header and partial-payload crashes."
+      ]
+    },
+    {
+      "area": "recovery",
+      "result": "pass",
+      "checks": [
+        "An active journal resumes with the original deadline and next frame sequence.",
+        "An expired journal seals without extending admission.",
+        "Recovered CLOSED state cannot reopen.",
+        "Only incomplete final frames are truncated; CRC corruption remains unchanged.",
+        "Concurrent writers and recovery owners are excluded by OS locks.",
+        "Existing unrelated or symlinked data is rejected without replacement."
+      ]
+    },
+    {
+      "area": "repository_and_http",
+      "result": "pass",
+      "checks": [
+        "Create, Get, List, Vote, Results, FinalizeDue, Ping, and Close are exercised.",
+        "The HTTP 32-character lowercase hexadecimal token receives a durable recorded receipt with HTTP 202; UUID-form tokens and invalid tokens are rejected.",
+        "Concurrent repeated attempts preserve the first full-token choice during final counting.",
+        "Multiple-choice option counts and unique-voter totals agree.",
+        "Active and finalized application repository restarts preserve definitions, results, and admission boundaries.",
+        "Pending results contain every option and never expose a partial final count.",
+        "Overlapping concurrent poll creation is serialized while adjacent windows are accepted.",
+        "Published definitions are defensively copied."
+      ]
+    },
+    {
+      "area": "publication_and_bounds",
+      "result": "pass",
+      "checks": [
+        "Definition-only and fully initialized unpublished preparation directories do not block recovery of an existing acknowledged poll.",
+        "Preparation orphans remain inspectable and do not become public polls.",
+        "Exceeding the exact unique-voter limit leaves results pending and latches an unhealthy finalization state.",
+        "A higher computation budget after restart completes counting from the preserved journal.",
+        "A finalized result remains unchanged across repeated finalization and restart."
+      ]
+    }
+  ],
+  "read_only_review": {
+    "obvious_release_blocker_found": false,
+    "scope": "Current filestore lifecycle, atomic creation/result publication, recovery parser sharing, ownership, limits, and finalizer release of the closed writer.",
+    "code_changed_during_this_review": false,
+    "tests_or_load_started_during_this_review": false
+  },
+  "limitations": [
+    "These are bounded correctness tests, not a throughput or 100-million-voter capacity measurement.",
+    "SIGKILL leaves the kernel and storage device alive; it does not emulate a power cut, host loss, device failure, or a filesystem that violates sync guarantees.",
+    "The repository has one durable disk copy and no automatic replica failover.",
+    "CRC detects corruption but cannot reconstruct damaged acknowledged data.",
+    "Recovered complete unknown attempts can contribute to the final count; a receipt confirms an attempt, not online canonical deduplication.",
+    "The original stored voting window is preserved; restart latency at the full workload size has not been established by these tests.",
+    "Startup validates historical journals, and exact final counting consumes memory proportional to unique full tokens up to the configured bound.",
+    "Partial-root initialization and corruption fail closed and may require operator inspection; known unpublished poll/result preparation files are preserved.",
+    "The application currently stores one 40-byte frame header plus one 28-byte vote payload per HTTP attempt; packed-frame benchmark rates do not establish HTTP capacity.",
+    "Linux fsync support exists but was not exercised by this Darwin runtime test series."
+  ],
+  "privacy": {
+    "poll_ids_included": false,
+    "voter_tokens_included": false,
+    "credentials_included": false,
+    "absolute_private_paths_included": false,
+    "real_vote_contents_included": false
+  }
+}

@@ -12,6 +12,8 @@ import (
 	"math/bits"
 	"net"
 	"regexp"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -24,7 +26,10 @@ var (
 )
 
 type Config struct {
-	Brokers            []string
+	Brokers []string
+	// AllowRemoteBrokers opts into trusted-network plaintext Kafka addresses.
+	// It adds no authentication or encryption; the default retains lab isolation.
+	AllowRemoteBrokers bool
 	Topic              string
 	PollID             [16]byte
 	Partitions         int
@@ -46,11 +51,22 @@ func (c Config) validate() error {
 		c.Linger < time.Millisecond || c.Linger > time.Second || c.TransactionTimeout < time.Second || c.TransactionTimeout > 30*time.Second {
 		return ErrInvalid
 	}
-	if len(c.Brokers) < 1 || len(c.Brokers) > 3 {
+	maxBrokers := 3
+	if c.AllowRemoteBrokers {
+		maxBrokers = 16
+	}
+	if len(c.Brokers) < 1 || len(c.Brokers) > maxBrokers {
 		return ErrInvalid
 	}
 	for _, address := range c.Brokers {
-		host, _, err := net.SplitHostPort(address)
+		host, port, err := net.SplitHostPort(address)
+		n, portErr := strconv.Atoi(port)
+		if err != nil || portErr != nil || n < 1 || n > 65535 || host == "" || strings.ContainsAny(host, " \t\r\n/\\") {
+			return errors.New("invalid Kafka broker address")
+		}
+		if c.AllowRemoteBrokers {
+			continue
+		}
 		ip := net.ParseIP(host)
 		if err != nil || ip == nil || !ip.IsLoopback() {
 			return errors.New("prototype requires numeric loopback brokers")

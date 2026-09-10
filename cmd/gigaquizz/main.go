@@ -17,6 +17,7 @@ import (
 
 	"gigaquizz/internal/config"
 	"gigaquizz/internal/httpapi"
+	"gigaquizz/internal/kafkapoll"
 	"gigaquizz/internal/postgres"
 	"gigaquizz/internal/web"
 )
@@ -39,33 +40,22 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	startup, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	startup, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 	durability := postgres.DurabilityOptions{RequiredStandbys: cfg.RequiredStandbys, StandbyNames: cfg.StandbyNames}
-	admin, err := postgres.NewWithOptions(startup, cfg.DatabaseURL, 8, durability)
-	if err != nil {
-		return errors.New("cannot connect to PostgreSQL (connection details suppressed)")
-	}
-	defer admin.Close()
-	if err := admin.Migrate(startup); err != nil {
-		return errors.New("database migration failed (query details suppressed)")
-	}
 	if *migrateOnly {
+		if err := kafkapoll.Migrate(startup, cfg.DatabaseURL, cfg.DatabaseSchema); err != nil {
+			return errors.New("metadata migration failed (connection details suppressed)")
+		}
 		slog.Info("migrations applied")
 		return nil
 	}
-	votes, err := postgres.NewWithOptions(startup, cfg.DatabaseURL, cfg.VoteConnections, durability)
+	store, err := kafkapoll.New(startup, kafkapoll.Options{DatabaseURL: cfg.DatabaseURL, Schema: cfg.DatabaseSchema, Brokers: cfg.KafkaBrokers, AllowRemoteBrokers: cfg.KafkaAllowRemote, Partitions: cfg.KafkaPartitions, MaxUnique: cfg.MaxUnique, MaxPolls: cfg.MaxPolls, PreparationLead: cfg.PreparationLead, Durability: durability})
 	if err != nil {
-		return errors.New("cannot open vote connection pool")
+		return errors.New("cannot initialize PostgreSQL/Kafka controller (check broker readiness and exclusive schema ownership)")
 	}
-	defer votes.Close()
-	if err := votes.Warm(startup); err != nil {
-		return errors.New("cannot warm vote connection pool before serving traffic")
-	}
-	if err := admin.Warm(startup); err != nil {
-		return errors.New("cannot warm administrative connection pool before serving traffic")
-	}
-	api, err := httpapi.New(votes, admin, web.Files, httpapi.Config{AdminPassword: cfg.AdminPassword, PublicURL: cfg.PublicURL, MaxInflight: cfg.MaxInflight, OperationTimeout: 10 * time.Second})
+	defer store.Close()
+	api, err := httpapi.New(store, store, web.Files, httpapi.Config{AdminPassword: cfg.AdminPassword, PublicURL: cfg.PublicURL, MaxInflight: cfg.MaxInflight, OperationTimeout: 10 * time.Second})
 	if err != nil {
 		return err
 	}
@@ -79,7 +69,7 @@ func run() error {
 	defer stop()
 	workerCtx, stopWorker := context.WithCancel(context.Background())
 	workerDone := make(chan struct{})
-	go func() { defer close(workerDone); maintenance(workerCtx, api, admin) }()
+	go func() { defer close(workerDone); maintenance(workerCtx, api, store) }()
 	serveDone := make(chan error, 1)
 	go func() { serveDone <- server.Serve(listener) }()
 	slog.Info("gigaquizz started", "url", cfg.PublicURL, "admin", cfg.PublicURL+"/admin")
@@ -106,7 +96,24 @@ func run() error {
 	return err
 }
 
-func maintenance(ctx context.Context, api *httpapi.Server, store *postgres.Store) {
+func maintenance(ctx context.Context, api *httpapi.Server, store *kafkapoll.Store) {
+	healthDone := make(chan struct{})
+	go func() {
+		defer close(healthDone)
+		tick := time.NewTicker(time.Second)
+		defer tick.Stop()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-tick.C:
+			}
+			ping, cancel := context.WithTimeout(ctx, time.Second)
+			api.SetReady(store.Ping(ping) == nil)
+			cancel()
+		}
+	}()
+	defer func() { <-healthDone }()
 	tick := time.NewTicker(time.Second)
 	defer tick.Stop()
 	var ticks int
@@ -116,15 +123,10 @@ func maintenance(ctx context.Context, api *httpapi.Server, store *postgres.Store
 			return
 		case <-tick.C:
 		}
-		work, cancel := context.WithTimeout(ctx, 15*time.Second)
+		work, cancel := context.WithTimeout(ctx, 5*time.Minute)
 		_, err := store.FinalizeDue(work)
 		cancel()
 		ticks++
-		if ticks%5 == 0 {
-			ping, pingCancel := context.WithTimeout(ctx, time.Second)
-			api.SetReady(store.Ping(ping) == nil)
-			pingCancel()
-		}
 		if ticks%30 == 0 {
 			slog.Info("service counters", "counters", api.Metrics(), "finalization_healthy", err == nil)
 		}

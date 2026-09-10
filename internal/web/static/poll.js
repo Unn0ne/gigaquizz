@@ -117,7 +117,7 @@
 
   function renderRecord() {
     if (!record) return;
-    const remembered = record.receipt ? record.receipt.choices : record.pending?.choices;
+    const remembered = record.receipt ? (record.receipt.attempt_choices || record.receipt.choices) : record.pending?.choices;
     for (const input of document.querySelectorAll('#choices input')) {
       if (remembered) input.checked = remembered.includes(Number(input.value));
     }
@@ -125,11 +125,19 @@
       retryFailures = 0;
       retryAvailableAt = 0;
       byId('receipt-panel').hidden = false;
-      byId('receipt-title').textContent = record.receipt.status === 'conflict' ? 'Сохранён ваш предыдущий ответ' : 'Ваш голос принят';
-      const labels = (record.receipt.choices || []).map((id) => poll.options.find((option) => option.id === id)?.label).filter(Boolean);
-      byId('receipt-description').textContent = labels.join(' · ');
+      if (record.receipt.status === 'recorded') {
+        byId('receipt-title').textContent = 'Ответ сохранён';
+        byId('receipt-description').textContent = 'При повторных ответах учитывается первый.';
+        byId('selection-hint').textContent = 'Ваш отправленный выбор.';
+      } else {
+        byId('receipt-title').textContent = record.receipt.status === 'conflict' ? 'Сохранён ваш предыдущий ответ' : 'Ваш голос принят';
+        const labels = (record.receipt.choices || []).map((id) => poll.options.find((option) => option.id === id)?.label).filter(Boolean);
+        byId('receipt-description').textContent = labels.join(' · ');
+      }
       byId('poll-footnote').textContent = 'Спасибо за участие. Повторно отправлять ответ не нужно.';
       ui.notice(message, '');
+    } else if (record.pending?.closed) {
+      ui.notice(message, 'Приём ответов закрыт. Повторная отправка не принята. Если подтверждение прежней отправки потерялось, её исход здесь неизвестен.', 'warning');
     }
     renderClock();
   }
@@ -150,10 +158,11 @@
     byId('choices-fieldset').disabled = busy || Boolean(record.pending) || Boolean(record.receipt) || state !== 'open';
     const retrySeconds = Math.max(0, Math.ceil((retryAvailableAt - performance.now()) / 1000));
     button.hidden = Boolean(record.receipt);
-    button.disabled = busy || retrySeconds > 0 || (!record.pending && state !== 'open');
-    if (busy) button.textContent = 'Проверяем ответ…';
+    button.disabled = busy || retrySeconds > 0 || Boolean(record.pending?.closed) || (!record.pending && state !== 'open');
+    if (busy) button.textContent = 'Отправляем ответ…';
+    else if (record.pending?.closed) button.textContent = 'Приём ответов закрыт';
     else if (retrySeconds > 0) button.textContent = 'Повторить через ' + retrySeconds + ' с';
-    else if (record.pending) button.textContent = 'Проверить и повторить отправку';
+    else if (record.pending) button.textContent = 'Повторить отправку';
     else if (state === 'scheduled') button.textContent = 'Голосование скоро начнётся';
     else if (state !== 'open') button.textContent = 'Голосование завершено';
     else button.textContent = 'Отправить ответ →';
@@ -161,7 +170,7 @@
 
   async function sendVote(event) {
     event.preventDefault();
-    if (busy || record.receipt || performance.now() < retryAvailableAt) return;
+    if (busy || record.receipt || record.pending?.closed || performance.now() < retryAvailableAt) return;
     if (!record.pending && liveState() !== 'open') {
       renderClock();
       return;
@@ -182,18 +191,29 @@
       announceChange();
       renderRecord();
       if (record.receipt) return;
-      const response = await ui.request('/api/polls/' + encodeURIComponent(pollID) + '/votes', { method: 'POST', body: JSON.stringify({ token: record.token, choices: record.pending.choices }) });
+      const submittedChoices = record.pending.choices.slice();
+      const response = await ui.request('/api/polls/' + encodeURIComponent(pollID) + '/votes', { method: 'POST', body: JSON.stringify({ token: record.token, choices: submittedChoices }) });
       const data = response.data;
-      if ([200, 201, 409].includes(response.status) && Array.isArray(data.choices) && data.choices.length > 0) {
+      const recorded = response.status === 202 && data.status === 'recorded';
+      if (recorded || ([200, 201, 409].includes(response.status) && Array.isArray(data.choices) && data.choices.length > 0)) {
         record = await store.update((current) => {
-          current.receipt = { status: response.status === 409 ? 'conflict' : data.status, choices: data.choices, accepted_at: data.accepted_at || null };
+          // A recorded receipt confirms this attempt, without claiming which
+          // choice will be canonical after all attempts have been processed.
+          if (!current.receipt) current.receipt = recorded
+            ? { status: 'recorded', attempt_choices: submittedChoices, accepted_at: data.accepted_at || null }
+            : { status: response.status === 409 ? 'conflict' : data.status, choices: data.choices, accepted_at: data.accepted_at || null };
           delete current.pending;
           return current;
         });
         announceChange();
         renderRecord();
       } else if (response.status === 410) {
-        ui.notice(message, 'Приём ответов закрыт. Сервер не подтвердил ваш ответ. Если вы отправляли его до закрытия, можно проверить ещё раз.', 'warning');
+        record = await store.update((current) => {
+          if (!current.receipt && current.pending) current.pending.closed = true;
+          return current;
+        });
+        announceChange();
+        renderRecord();
       } else if (response.status === 425) {
         ui.notice(message, 'Опрос ещё не начался. Ваш выбор сохранён на этой странице; повторите отправку после начала.', 'warning');
       } else if (response.status === 422) {
@@ -201,13 +221,16 @@
       } else if (response.status === 429) {
         delayManualRetry(response.retryAfter);
         ui.notice(message, 'Слишком много попыток. Подождите немного и проверьте ответ ещё раз.', 'warning');
+      } else if (response.status === 503 && data.outcome === 'not_admitted') {
+        delayManualRetry(response.retryAfter);
+        ui.notice(message, 'Сервис занят. Эта попытка не принята. Повторите тот же ответ до закрытия опроса.', 'warning');
       } else {
         delayManualRetry(response.retryAfter);
-        ui.notice(message, 'Подтверждение пока не получено. Голос мог быть принят. Проверьте ещё раз: мы отправим тот же выбор без повторного учёта.', 'warning');
+        ui.notice(message, 'Подтверждение пока не получено. Ответ мог сохраниться. Повторная отправка сохранит тот же выбор и идентификатор.', 'warning');
       }
     } catch (error) {
       delayManualRetry(error.retryAfter);
-      ui.notice(message, 'Связь прервалась, и исход пока неизвестен. Голос мог быть принят. Проверьте ещё раз с тем же ответом.', 'warning');
+      ui.notice(message, 'Связь прервалась, и исход пока неизвестен. Ответ мог сохраниться. Повторите отправку с тем же выбором.', 'warning');
     } finally {
       busy = false;
       renderClock();
@@ -218,7 +241,7 @@
     if (!store || busy) return;
     record = await store.update();
     renderRecord();
-    if (record.pending && !record.receipt && message.hidden) ui.notice(message, 'Этот ответ уже отправляли, но подтверждение ещё не получено. Проверьте его — выбранные варианты останутся прежними.', 'warning');
+    if (record.pending && !record.pending.closed && !record.receipt && message.hidden) ui.notice(message, 'Этот ответ уже отправляли, но подтверждение ещё не получено. При повторной отправке выбор останется прежним.', 'warning');
   }
 
   async function init() {
@@ -254,7 +277,7 @@
       byId('loading').hidden = true;
       byId('poll-panel').hidden = false;
       renderRecord();
-      if (record.pending && !record.receipt) ui.notice(message, 'Вы уже отправляли этот ответ. Подтверждение ещё не сохранено — проверьте его, чтобы узнать исход.', 'warning');
+      if (record.pending && !record.pending.closed && !record.receipt) ui.notice(message, 'Вы уже отправляли этот ответ. Подтверждение ещё не получено; можно повторить отправку с тем же выбором.', 'warning');
       byId('vote-form').addEventListener('submit', sendVote);
       if ('BroadcastChannel' in window) {
         channel = new BroadcastChannel('gigaquizz-votes');

@@ -1,0 +1,21 @@
+{
+  "mode": "postgres-kafka",
+  "started_at": "2026-09-10T19:36:23.464018+00:00",
+  "correct": true,
+  "checks": [
+    "resume_inside_original_window_after_sigkill",
+    "exact_first_choice_after_expired_unsealed_restart",
+    "final_result_survives_graceful_restart",
+    "late_new_and_repeat_rejected",
+    "admin_sessions_revoked_on_restart"
+  ],
+  "errors": [],
+  "acknowledged_attempts": 12,
+  "scope": "Real local HTTP app, isolated data/schema, real 60-second poll, owned-process SIGKILL and restart. No physical power loss or throughput claim.",
+  "final_unique_votes": 3,
+  "final_choice_counts": [
+    2,
+    1
+  ],
+  "finished_at": "2026-09-10T19:37:56.884962+00:00"
+}

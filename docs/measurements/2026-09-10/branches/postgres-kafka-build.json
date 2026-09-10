@@ -1,0 +1,19 @@
+{
+  "branch": "postgres-kafka",
+  "base_commit": "8f5f3efc63d7cc4638ea673d620822e94c1b97d0",
+  "source_digest_method": "SHA-256 over sorted existing tracked and unignored source paths: path + NUL + bytes + NUL; cmd/internal/scripts/tests plus build/config manifests; documentation excluded",
+  "source_files": 112,
+  "source_sha256": "4d6dbcd6f85d6f13ea24f561c0d6ee767d6c22b8b140b5dafddc596530beef03",
+  "macos_app_binary_sha256": "1fece76177e7a36f9df6f89fc620d7ba0a18c948f76d4142fef16c2546afa860",
+  "checks": {
+    "go_race": "passed; full suite followed by focused tests after final writer-reference change",
+    "go_vet": "passed",
+    "all_branch_commands_build": "passed",
+    "linux_amd64_cross_compile": "passed; execution not tested on Linux"
+  },
+  "limitations": [
+    "functional verification, not throughput benchmark",
+    "no physical power or disk failure",
+    "Kafka brokers share one machine"
+  ]
+}
