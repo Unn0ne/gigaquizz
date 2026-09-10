@@ -1,0 +1,47 @@
+COMMAND: ["go", "test", "-race", "-count=1", "./..."]
+ok  	gigaquizz/cmd/corebench	1.703s
+ok  	gigaquizz/cmd/filebench	2.082s
+ok  	gigaquizz/cmd/framebench	2.438s
+?   	gigaquizz/cmd/gigaquizz	[no test files]
+ok  	gigaquizz/cmd/loadtest	2.887s
+ok  	gigaquizz/cmd/logbench	3.352s
+ok  	gigaquizz/cmd/storagebench	4.746s
+?   	gigaquizz/internal/config	[no test files]
+ok  	gigaquizz/internal/filelog	7.576s
+ok  	gigaquizz/internal/httpapi	4.763s
+ok  	gigaquizz/internal/poll	5.039s
+ok  	gigaquizz/internal/postgres	13.109s
+ok  	gigaquizz/internal/votecore	4.581s
+ok  	gigaquizz/internal/votelog	32.807s
+?   	gigaquizz/internal/web	[no test files]
+EXIT: 0
+
+COMMAND: ["go", "vet", "./..."]
+EXIT: 0
+
+COMMAND: ["make", "build"]
+go build -o bin/gigaquizz ./cmd/gigaquizz
+go build -o bin/loadtest ./cmd/loadtest
+go build -o bin/storagebench ./cmd/storagebench
+go build -o bin/logbench ./cmd/logbench
+go build -o bin/corebench ./cmd/corebench
+go build -o bin/framebench ./cmd/framebench
+go build -o bin/filebench ./cmd/filebench
+EXIT: 0
+
+COMMAND: ["python3", "-m", "unittest", "discover", "-s", "scripts/tests", "-p", "test_production_capacity.py"]
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.003s
+
+OK
+EXIT: 0
+
+COMMAND: ["python3", "-m", "py_compile", "scripts/profile_file.py", "scripts/kafka_lab.py"]
+EXIT: 0
+
+COMMAND: ["gofmt", "-l", "cmd", "internal"]
+EXIT: 0
+
+COMMAND: ["git", "diff", "--check"]
+EXIT: 0

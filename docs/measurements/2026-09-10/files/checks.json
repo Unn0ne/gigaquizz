@@ -1,0 +1,73 @@
+{
+  "checks": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "./..."
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "go",
+        "vet",
+        "./..."
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "make",
+        "build"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests",
+        "-p",
+        "test_production_capacity.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "py_compile",
+        "scripts/profile_file.py",
+        "scripts/kafka_lab.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "gofmt",
+        "-l",
+        "cmd",
+        "internal"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "kafka_integration": true,
+  "postgres_integration": true,
+  "postgres_replication_failover": false,
+  "browser_tests": false
+}

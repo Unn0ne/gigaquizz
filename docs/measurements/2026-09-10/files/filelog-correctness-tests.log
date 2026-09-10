@@ -1,0 +1,71 @@
+=== RUN   TestProcessCrashDuringAppendPreservesACKPrefix
+=== RUN   TestProcessCrashDuringAppendPreservesACKPrefix/partial_header
+    crash_append_test.go:161: parent ACK preserved after SIGKILL during partial_header (17 real bytes), independent reader reports incomplete tail
+=== RUN   TestProcessCrashDuringAppendPreservesACKPrefix/partial_payload
+    crash_append_test.go:161: parent ACK preserved after SIGKILL during partial_payload (47 real bytes), independent reader reports incomplete tail
+--- PASS: TestProcessCrashDuringAppendPreservesACKPrefix (2.11s)
+    --- PASS: TestProcessCrashDuringAppendPreservesACKPrefix/partial_header (1.06s)
+    --- PASS: TestProcessCrashDuringAppendPreservesACKPrefix/partial_payload (1.05s)
+=== RUN   TestProcessCrashPreservesParentObservedACK
+    crash_test.go:130: parent ACK retained through SIGKILL and independent reader: darwin_f_fullfsync, frame=0 entries=3
+--- PASS: TestProcessCrashPreservesParentObservedACK (1.05s)
+=== RUN   TestScanDistinguishesPartialTailFromCorruption
+=== RUN   TestScanDistinguishesPartialTailFromCorruption/partial_header
+=== RUN   TestScanDistinguishesPartialTailFromCorruption/partial_payload
+=== RUN   TestScanDistinguishesPartialTailFromCorruption/header_crc_at_tail
+=== RUN   TestScanDistinguishesPartialTailFromCorruption/payload_crc_at_tail
+=== RUN   TestScanDistinguishesPartialTailFromCorruption/payload_crc_in_middle
+=== RUN   TestScanDistinguishesPartialTailFromCorruption/byte_after_closed
+=== RUN   TestScanDistinguishesPartialTailFromCorruption/file_header_corruption
+--- PASS: TestScanDistinguishesPartialTailFromCorruption (0.20s)
+    --- PASS: TestScanDistinguishesPartialTailFromCorruption/partial_header (0.03s)
+    --- PASS: TestScanDistinguishesPartialTailFromCorruption/partial_payload (0.03s)
+    --- PASS: TestScanDistinguishesPartialTailFromCorruption/header_crc_at_tail (0.03s)
+    --- PASS: TestScanDistinguishesPartialTailFromCorruption/payload_crc_at_tail (0.04s)
+    --- PASS: TestScanDistinguishesPartialTailFromCorruption/payload_crc_in_middle (0.04s)
+    --- PASS: TestScanDistinguishesPartialTailFromCorruption/byte_after_closed (0.03s)
+    --- PASS: TestScanDistinguishesPartialTailFromCorruption/file_header_corruption (0.03s)
+=== RUN   TestReplayRejectsValidFrameAfterClosed
+--- PASS: TestReplayRejectsValidFrameAfterClosed (0.03s)
+=== RUN   TestCodecRejectsMalformedCompleteFramesBeforeVisit
+=== RUN   TestCodecRejectsMalformedCompleteFramesBeforeVisit/zero_token
+=== RUN   TestCodecRejectsMalformedCompleteFramesBeforeVisit/choice
+=== RUN   TestCodecRejectsMalformedCompleteFramesBeforeVisit/timestamp
+=== RUN   TestCodecRejectsMalformedCompleteFramesBeforeVisit/count
+=== RUN   TestCodecRejectsMalformedCompleteFramesBeforeVisit/sequence
+=== RUN   TestCodecRejectsMalformedCompleteFramesBeforeVisit/kind
+=== RUN   TestCodecRejectsMalformedCompleteFramesBeforeVisit/reserved
+=== RUN   TestCodecRejectsMalformedCompleteFramesBeforeVisit/length
+--- PASS: TestCodecRejectsMalformedCompleteFramesBeforeVisit (0.10s)
+    --- PASS: TestCodecRejectsMalformedCompleteFramesBeforeVisit/zero_token (0.01s)
+    --- PASS: TestCodecRejectsMalformedCompleteFramesBeforeVisit/choice (0.01s)
+    --- PASS: TestCodecRejectsMalformedCompleteFramesBeforeVisit/timestamp (0.01s)
+    --- PASS: TestCodecRejectsMalformedCompleteFramesBeforeVisit/count (0.01s)
+    --- PASS: TestCodecRejectsMalformedCompleteFramesBeforeVisit/sequence (0.01s)
+    --- PASS: TestCodecRejectsMalformedCompleteFramesBeforeVisit/kind (0.01s)
+    --- PASS: TestCodecRejectsMalformedCompleteFramesBeforeVisit/reserved (0.01s)
+    --- PASS: TestCodecRejectsMalformedCompleteFramesBeforeVisit/length (0.01s)
+=== RUN   TestSeveralFramesShareOneSyncGroup
+--- PASS: TestSeveralFramesShareOneSyncGroup (0.02s)
+=== RUN   TestDurableFramesReplayFullIDsAndFirstChoice
+--- PASS: TestDurableFramesReplayFullIDsAndFirstChoice (0.03s)
+=== RUN   TestSyncBlocksACKAndLogicalQueueBounds
+--- PASS: TestSyncBlocksACKAndLogicalQueueBounds (0.02s)
+=== RUN   TestAdmissionBeforeDeadlineMaySyncAfterDeadline
+--- PASS: TestAdmissionBeforeDeadlineMaySyncAfterDeadline (0.02s)
+=== RUN   TestCanceledWaitMayStillPersist
+--- PASS: TestCanceledWaitMayStillPersist (0.02s)
+=== RUN   TestShortWritesAreCompletedBeforeSync
+--- PASS: TestShortWritesAreCompletedBeforeSync (0.02s)
+=== RUN   TestIOFailurePoisonsWriter
+=== RUN   TestIOFailurePoisonsWriter/write
+=== RUN   TestIOFailurePoisonsWriter/sync
+--- PASS: TestIOFailurePoisonsWriter (0.03s)
+    --- PASS: TestIOFailurePoisonsWriter/write (0.01s)
+    --- PASS: TestIOFailurePoisonsWriter/sync (0.01s)
+=== RUN   TestNewPreservesExistingStateAndScanRequiresOwnership
+--- PASS: TestNewPreservesExistingStateAndScanRequiresOwnership (0.01s)
+=== RUN   TestValidationAndNotOpen
+--- PASS: TestValidationAndNotOpen (0.01s)
+PASS
+ok  	gigaquizz/internal/filelog	5.372s

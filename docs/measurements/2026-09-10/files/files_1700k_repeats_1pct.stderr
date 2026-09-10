@@ -1,0 +1,3 @@
+filebench: ready; 103020000 attempts from 2026-09-10T17:54:57.540391Z for 60s; sync=darwin_f_fullfsync
+filebench: workload complete; recorded=103015715 unknown=0 busy=0 skipped=0 closed=4285; saving client ledger
+filebench: offline audit complete; records=103015715 canonical=101995758 correct=true
