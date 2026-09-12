@@ -1,0 +1,129 @@
+{
+  "date": "2026-09-12",
+  "branch": "postgres-kafka",
+  "scope": "Read-only readiness/resource preflight, harness path-selection fixtures and framebench build; no new Kafka workload executed by this agent",
+  "harness": {
+    "script": "scripts/profile_log.py",
+    "runtime_option": "--runtime-root",
+    "default_runtime": "source worktree root, preserving previous default behavior",
+    "path_selection": {
+      "binary": "<source-root>/bin/framebench",
+      "process_working_directory": "<runtime-root>",
+      "lab_and_shared_lock": "<runtime-root>/.local/kafka-lab",
+      "private_ledgers": "<runtime-root>/.local/framebench",
+      "new_reports": "<runtime-root>/.local/kafka-lab/profiles/<unique-label>"
+    },
+    "external_runtime_fault_injection": "--fault-node is rejected before launch",
+    "free_disk_reserve_bytes": 8589934592,
+    "watchdog_seconds": 270,
+    "owned_child_termination": "SIGTERM, wait 15 seconds, then SIGKILL if needed and wait 5 seconds",
+    "telemetry": "Selected source/runtime paths, binary SHA256, metadata-only aggregate physical/logical inventory, process CPU/RSS and free disk; private ledgers are not copied"
+  },
+  "fixture_tests": {
+    "command": "python3 -m unittest discover -s scripts/tests -p test_profile_log_paths.py -v",
+    "status": "passed",
+    "count": 5,
+    "seconds": 0.015,
+    "real_benchmark_processes_started": 0,
+    "tests": [
+      "test_default_stays_with_source_root",
+      "test_external_runtime_cannot_inject_faults",
+      "test_external_runtime_uses_source_binary_and_preserves_previous_artifacts",
+      "test_free_space_floor_cannot_launch_child",
+      "test_wrong_marker_cannot_launch_child"
+    ],
+    "method": "Temporary owned fixture directories and a mocked child; source/runtime paths include spaces; repeated labels must preserve existing reports"
+  },
+  "build": {
+    "command": "go build -o bin/framebench ./cmd/framebench",
+    "status": "passed",
+    "binary_bytes": 13476082,
+    "binary_sha256": "50e303561f5b7fdb892d7a8a7ecca5092937500357b1f058cdc4485819e2acf6",
+    "syntax_check": "Python AST parsing passed",
+    "diff_check": "git diff --check passed"
+  },
+  "readiness_snapshot": {
+    "kafka_version": "4.3.1",
+    "java_version": "21.0.10",
+    "owned_broker_processes_running": 3,
+    "broker_listeners_available": 3,
+    "controller_listeners_available": 3,
+    "health_topic_replication_factor": 3,
+    "health_topic_isr_count": 3,
+    "min_insync_replicas": 2,
+    "eligible_leader_replicas_version": 0,
+    "ready": true,
+    "postgres_version": "16.3 (Postgres.app)",
+    "postgres_in_recovery": false,
+    "postgres_fsync": "on",
+    "postgres_synchronous_commit": "on",
+    "postgres_full_page_writes": "on",
+    "existing_site_port": 8088,
+    "existing_site_health_status": 200,
+    "existing_site_ready_status": 200
+  },
+  "resource_snapshots": {
+    "free_disk_bytes_at_kafka_status": 33739501568,
+    "free_disk_bytes_at_final_build_check": 56262184960,
+    "lab_allocated_bytes": 1067065344,
+    "retained_frame_ledger_logical_bytes": 117832718,
+    "retained_frame_ledger_files": 10,
+    "initial_memory_observation": {
+      "page_size_bytes": 16384,
+      "free_pages": 3841,
+      "pages_occupied_by_compressor": 851022,
+      "swap_used_reported_M": 16408.81,
+      "interpretation": "Memory pressure was present; this is an initial snapshot, not an assertion about conditions during a later workload"
+    },
+    "note": "Free space changed during preflight. This agent deleted no retained data and stopped no services; repeat resource checks immediately before sequential loads"
+  },
+  "planned_bounded_runs": [
+    {
+      "profile": "smoke",
+      "unique_keys_per_second": 1000,
+      "duration_seconds": 60,
+      "repeat_every": 5,
+      "planned_unique_keys": 60000,
+      "planned_attempts": 72000,
+      "partitions": 8,
+      "frame_age_ms": 20,
+      "guard_new_broker_and_client_bytes": 99149728
+    },
+    {
+      "profile": "baseline repeat",
+      "unique_keys_per_second": 1700000,
+      "duration_seconds": 60,
+      "planned_attempts": 102000000,
+      "partitions": 8,
+      "frame_age_ms": 20,
+      "guard_new_broker_bytes": 9859108864,
+      "guard_new_client_bytes": 105198912,
+      "guard_required_free_bytes_including_reserve": 18554242368
+    },
+    {
+      "profile": "conditional candidate, not yet measured",
+      "unique_keys_per_second": 1700000,
+      "duration_seconds": 60,
+      "planned_attempts": 102000000,
+      "partitions": 16,
+      "frame_age_ms": 50,
+      "guard_required_free_bytes_including_reserve": 18553935680,
+      "decision": "Reassess after the file workload and baseline, using actual remaining disk and memory pressure"
+    }
+  ],
+  "acceptance": [
+    "Smoke precedes a full baseline",
+    "All workloads, audits and resource-intensive checks run sequentially after the root agent declares UI/tests/build freeze",
+    "Each completed profile has a separate new-process -audit-only reader using its own report label",
+    "Require no report errors, reconciliation.correct=true and zero missing ACK attempts, receipt mismatches or unexpected records",
+    "Report generator skips, busy refusals, unknown outcomes and confirmed attempts separately from the offered 102-million-attempt plan"
+  ],
+  "limitations": [
+    "No new minute workload or broker crash was executed in this preflight",
+    "A direct Go-to-Kafka profile does not measure public HTTP, TLS or QR/browser traffic",
+    "A separate reader does not simulate power loss or independent availability zones",
+    "Existing Kafka retained bytes are much smaller than in prior experiments; prior reports and client ledgers alone do not prove the old raw Kafka prefix still exists after retention",
+    "The profile watcher samples disk once per second and is not a filesystem quota",
+    "No polling IDs, voter tokens, private AES seed, connection credentials or private ledger contents are included in this artifact"
+  ]
+}

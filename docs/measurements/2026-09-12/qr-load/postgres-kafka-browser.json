@@ -1,0 +1,25 @@
+{
+  "mode": "postgres-kafka",
+  "passed": true,
+  "scope": "Installed Chrome, real branch app and storage; nine tests including a real 60-second poll and independent QR raster/PNG decoding.",
+  "exit_code": 0,
+  "stats": {
+    "startTime": "2026-09-12T18:35:05.480Z",
+    "duration": 104634.13799999999,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "duration_seconds": 105.26,
+  "verified": {
+    "real_poll_window_seconds": 60,
+    "recorded_attempts": 5,
+    "unique_voters": 3,
+    "lost_responses_after_actual_ack": 2,
+    "qr_independent_decoder": "jsqr@1.4.0",
+    "real_poll_canvas_and_png_exact_url": true,
+    "qr_cleared_on_logout": true,
+    "synthetic_qr_tests": 4
+  }
+}

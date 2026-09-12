@@ -1,0 +1,9 @@
+{
+  "at": "2026-09-12T18:38:18.058714+00:00",
+  "free_disk_bytes": 55062687744,
+  "go_version": "go version go1.26.1 darwin/arm64",
+  "vm_stat": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                     4657.\nPages active:                                 482059.\nPages inactive:                               485310.\nPages speculative:                               342.\nPages throttled:                                   0.\nPages wired down:                             237138.\nPages purgeable:                                   4.\n\"Translation faults\":                    25829326157.\nPages copy-on-write:                      2364514946.\nPages zero filled:                        5514861676.\nPages reactivated:                         502554265.\nPages purged:                              319047940.\nFile-backed pages:                            237651.\nAnonymous pages:                              730060.\nPages stored in compressor:                  4455021.\nPages occupied by compressor:                 846135.\nDecompressions:                           2990445744.\nCompressions:                             3095465060.\nPageins:                                    88913924.\nPageouts:                                    3026168.\nSwapins:                                     6812739.\nSwapouts:                                    8531786.\n",
+  "swap": "vm.swapusage: total = 17408.00M  used = 16365.00M  free = 1043.00M  (encrypted)",
+  "test_apps_stopped": true,
+  "policy": "Sequential profiles; no builds or browser tests during measurement; preserve existing data; 8GiB free disk reserve."
+}

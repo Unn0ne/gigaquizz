@@ -44,7 +44,10 @@ func ledgerBytes(c config) uint64 {
 }
 
 const maximumWALBytes uint64 = 4 << 30
-const maximumRetainedWALBytes uint64 = 8 << 30
+
+// Retain the previous 100M runs alongside the September 12 rerun. The
+// independent 4GiB per-run bound and 8GiB free-space reserve are unchanged.
+const maximumRetainedWALBytes uint64 = 12 << 30
 const ownedLedgerRoot = ".local/filebench/ledgers"
 const ownedLogsRoot = ".local/filebench/logs"
 
@@ -116,7 +119,7 @@ func diskGuard(directory string, c config, includeWAL bool) (map[string]uint64, 
 		}
 		wal = estimatedWALBytes(c)
 		if wal > maximumWALBytes || retained+wal > maximumRetainedWALBytes {
-			return nil, fmt.Errorf("file journals exceed 4 GiB/run or 8 GiB aggregate bound; prior artifacts preserved")
+			return nil, fmt.Errorf("file journals exceed 4 GiB/run or 12 GiB aggregate bound; prior artifacts preserved")
 		}
 	}
 	var fs syscall.Statfs_t

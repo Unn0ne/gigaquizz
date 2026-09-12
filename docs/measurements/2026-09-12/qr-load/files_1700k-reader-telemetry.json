@@ -1,0 +1,143 @@
+{
+  "command": [
+    "bin/filebench",
+    "-audit-only",
+    "<private-manifest>"
+  ],
+  "started_at": "2026-09-12T18:42:38.420397+00:00",
+  "binary_sha256": "217e83e70e7374aed29889e4fb6676c5f8af2920218580f8039e8a60eb3e3199",
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "system": "Darwin",
+    "machine": "arm64",
+    "logical_cpus": 10,
+    "python": "3.14.0",
+    "go": {
+      "exit_code": 0,
+      "stdout": "go version go1.26.1 darwin/arm64"
+    },
+    "GOGC": "default",
+    "GOMEMLIMIT": "6GiB",
+    "GOMAXPROCS": "default",
+    "hardware": {
+      "exit_code": 0,
+      "stdout": "machdep.cpu.brand_string: Apple M1 Pro\nhw.logicalcpu: 10\nhw.memsize: 34359738368"
+    }
+  },
+  "free_disk_bytes_before": 52084633600,
+  "samples": [
+    {
+      "at": "2026-09-12T18:42:38.499490+00:00",
+      "free_disk_bytes": 52084625408,
+      "profile_artifact_bytes": 359451,
+      "processes": {
+        "filebench": {
+          "pid": 60741,
+          "cpu_seconds": 0.0,
+          "rss_bytes": 6406144
+        }
+      }
+    },
+    {
+      "at": "2026-09-12T18:42:39.498679+00:00",
+      "free_disk_bytes": 52084662272,
+      "profile_artifact_bytes": 359451,
+      "processes": {
+        "filebench": {
+          "pid": 60741,
+          "cpu_seconds": 0.91,
+          "rss_bytes": 125698048
+        }
+      }
+    },
+    {
+      "at": "2026-09-12T18:42:40.498190+00:00",
+      "free_disk_bytes": 52084649984,
+      "profile_artifact_bytes": 359451,
+      "processes": {
+        "filebench": {
+          "pid": 60741,
+          "cpu_seconds": 1.86,
+          "rss_bytes": 138608640
+        }
+      }
+    },
+    {
+      "at": "2026-09-12T18:42:41.503869+00:00",
+      "free_disk_bytes": 52084654080,
+      "profile_artifact_bytes": 359451,
+      "processes": {
+        "filebench": {
+          "pid": 60741,
+          "cpu_seconds": 2.81,
+          "rss_bytes": 151650304
+        }
+      }
+    },
+    {
+      "at": "2026-09-12T18:42:42.499626+00:00",
+      "free_disk_bytes": 52084654080,
+      "profile_artifact_bytes": 359451,
+      "processes": {
+        "filebench": {
+          "pid": 60741,
+          "cpu_seconds": 3.73,
+          "rss_bytes": 164347904
+        }
+      }
+    },
+    {
+      "at": "2026-09-12T18:42:43.500305+00:00",
+      "free_disk_bytes": 52084580352,
+      "profile_artifact_bytes": 359451,
+      "processes": {
+        "filebench": {
+          "pid": 60741,
+          "cpu_seconds": 4.71,
+          "rss_bytes": 178110464
+        }
+      }
+    },
+    {
+      "at": "2026-09-12T18:42:44.501080+00:00",
+      "free_disk_bytes": 52084572160,
+      "profile_artifact_bytes": 359451,
+      "processes": {
+        "filebench": {
+          "pid": 60741,
+          "cpu_seconds": 5.69,
+          "rss_bytes": 192299008
+        }
+      }
+    },
+    {
+      "at": "2026-09-12T18:42:45.501007+00:00",
+      "free_disk_bytes": 52084559872,
+      "profile_artifact_bytes": 359451,
+      "processes": {
+        "filebench": {
+          "pid": 60741,
+          "cpu_seconds": 6.68,
+          "rss_bytes": 206749696
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "limits": {
+    "watchdog_seconds": 300,
+    "sample_interval_seconds": 1,
+    "free_disk_reserve_bytes": 8589934592,
+    "aggregate_profiles_bytes": 1073741824,
+    "report_bytes": 67108864,
+    "stderr_bytes": 16777216
+  },
+  "scope": "One local Go filebench process includes generator, file journal and audit; no HTTP or replicated-cluster performance is inferred.",
+  "sampling_limits": "One-second observations are a watchdog, not a filesystem quota. CPU is cumulative process time; sampled RSS may miss shorter peaks. The wrapper never reads or copies private ledgers.",
+  "child_pid": 60741,
+  "exit_code": 0,
+  "finished_at": "2026-09-12T18:42:46.498953+00:00",
+  "elapsed_seconds": 8.00519658299163,
+  "free_disk_bytes_after": 52084551680,
+  "report_complete": true
+}

@@ -6,6 +6,7 @@ import { chromium, expect } from '@playwright/test';
 import { existsSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { randomBytes } from 'node:crypto';
+import jsQR from 'jsqr';
 
 class E2EInvariantError extends Error {}
 function check(condition, message) { if (!condition) throw new E2EInvariantError(message); }
@@ -14,6 +15,56 @@ function validateTarget(baseURL, password) {
   check(['http:', 'https:'].includes(target.protocol) && ['127.0.0.1', '[::1]', 'localhost'].includes(target.hostname), 'Only a local application target is supported');
   check(!target.username && !target.password && target.pathname === '/' && !target.search && !target.hash, 'BASE_URL must be a local origin');
   check(typeof password === 'string' && password.length >= 16, 'ADMIN_PASSWORD must be configured');
+}
+
+// Decode real canvas/PNG raster bytes with a dev-only library independent of
+// the application's QR encoder. Failures never print the URL or poll identity.
+async function verifyAdminQRCode(page, expectedURL) {
+  const raster = async (png = null) => page.evaluate(async encodedPNG => {
+    let canvas = document.querySelector('#poll-qr');
+    if (encodedPNG !== null) {
+      const bytes = Uint8Array.from(atob(encodedPNG), char => char.charCodeAt(0));
+      const bitmap = await createImageBitmap(new Blob([bytes], { type: 'image/png' }));
+      canvas = document.createElement('canvas');
+      canvas.width = bitmap.width;
+      canvas.height = bitmap.height;
+      canvas.getContext('2d').drawImage(bitmap, 0, 0);
+      bitmap.close();
+    }
+    if (!canvas?.width || !canvas.height) return null;
+    const image = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+    let binary = '';
+    for (let offset = 0; offset < image.data.length; offset += 8192) {
+      binary += String.fromCharCode(...image.data.subarray(offset, offset + 8192));
+    }
+    return { width: image.width, height: image.height, rgba: btoa(binary) };
+  }, png?.toString('base64') ?? null);
+  const verify = image => {
+    check(image && image.width === image.height, 'QR raster missing or not square');
+    const pixels = new Uint8ClampedArray(Buffer.from(image.rgba, 'base64'));
+    const decoded = jsQR(pixels, image.width, image.height, { inversionAttempts: 'dontInvert' });
+    check(decoded?.data === expectedURL, 'Independent QR decoder returned an incorrect URL');
+    check(Buffer.from(decoded.binaryData).equals(Buffer.from(expectedURL, 'utf8')), 'QR URL bytes differ');
+  };
+  check(await page.locator('#share-link').inputValue() === expectedURL, 'Share URL does not match the created poll');
+  await page.locator('#toggle-qr').click();
+  await expect(page.locator('#qr-panel')).toBeVisible();
+  verify(await raster());
+  const downloadEvent = page.waitForEvent('download');
+  await page.locator('#download-qr').click();
+  const download = await downloadEvent;
+  try {
+    check(download.suggestedFilename() === 'gigaquizz-qr.png', 'QR download filename changed');
+    check(await download.failure() === null, 'QR PNG download failed');
+    const stream = await download.createReadStream();
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    const bytes = Buffer.concat(chunks);
+    check(bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])), 'QR download is not a PNG');
+    verify(await raster(bytes));
+  } finally {
+    await download.delete();
+  }
 }
 
 async function localVote(page, pollID) {
@@ -74,6 +125,9 @@ export async function runE2E({ browser, baseURL, password, progress = () => {} }
     check(pendingLabels.length === 3 && pendingLabels.every(value => value === '—'), 'Pending result rows were missing or showed numeric counts');
     const pending = await (await admin.request.get(resultsPath)).json();
     check(pending.pending === true, 'Pending result marker absent');
+
+    mark('administrator_qr_canvas_and_download');
+    await verifyAdminQRCode(admin, new URL(pagePath, baseURL).href);
 
     mark('two_tabs_same_identity');
     const tabs = await newContext();
@@ -223,10 +277,12 @@ export async function runE2E({ browser, baseURL, password, progress = () => {} }
     check(!Object.hasOwn(publicPoll, 'total_votes') && !Object.hasOwn(publicPoll, 'pending'), 'Public metadata leaked private aggregates');
     await admin.locator('#logout').click();
     await expect(admin.locator('#login-panel')).toBeVisible();
+    await expect(admin.locator('#qr-panel')).toBeHidden();
+    check(await admin.locator('#poll-qr').evaluate(canvas => canvas.width === 0 && canvas.height === 0), 'Logout retained the QR raster');
     check((await admin.request.get('/api/admin/polls')).status() === 401, 'Logout did not revoke authorization');
     check(pageErrors === 0, 'Browser reported a script error');
     mark('complete');
-    return { passed: true, real_poll_window_seconds: 60, recorded_attempt_responses: 5, exact_unique_votes: 3, lost_responses_after_real_ack: 2, closed_request_responses: 3, same_browser_identity_preserved: true, pending_choice_and_receipt_persisted: true, private_results_protected: true, page_errors: pageErrors };
+    return { passed: true, real_poll_window_seconds: 60, recorded_attempt_responses: 5, exact_unique_votes: 3, lost_responses_after_real_ack: 2, closed_request_responses: 3, same_browser_identity_preserved: true, pending_choice_and_receipt_persisted: true, private_results_protected: true, qr_canvas_decoded_exact_link: true, qr_downloaded_png_decoded_exact_link: true, qr_cleared_on_logout: true, qr_decoder: 'jsqr@1.4.0', page_errors: pageErrors };
   } catch (error) {
     // Avoid Playwright assertion/request dumps containing tokens, poll IDs or
     // authentication material. The last aggregate stage identifies the failure.

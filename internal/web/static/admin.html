@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#18231f">
   <title>Опросы — Gigaquizz</title>
-  <link rel="stylesheet" href="/static/app.css">
+  <link rel="stylesheet" href="/static/app.css?v=qr-1">
   <script src="/static/common.js" defer></script>
-  <script src="/static/admin.js" defer></script>
+  <script src="/static/qrcodegen.js" defer></script>
+  <script src="/static/admin.js?v=qr-1" defer></script>
 </head>
 <body class="admin-page">
   <header class="site-header wrap"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">g.</span>gigaquizz</a><div class="header-actions"><span class="header-caption">Для организаторов</span><button id="logout" class="quiet-button" type="button" hidden>Выйти ↗</button></div></header>
@@ -30,7 +31,13 @@
         </form>
       </section>
       <div class="admin-columns"><section class="polls-column" aria-labelledby="polls-heading"><div class="section-heading"><h2 id="polls-heading">Все опросы <span id="poll-count" class="count-tag">0</span></h2><button id="refresh-polls" class="quiet-button" type="button">Обновить ↻</button></div><div id="poll-list" class="poll-list"></div><div id="polls-empty" class="card empty-state" hidden><span class="empty-symbol" aria-hidden="true">+</span><h3>Начните с одного вопроса</h3><p>Созданные опросы и ссылки для участников появятся здесь.</p><button id="empty-create" class="button secondary" type="button">Создать первый опрос</button></div></section>
-      <aside class="results-column"><section id="results-placeholder" class="card results-placeholder"><span class="chart-symbol" aria-hidden="true">▂ ▅ ▇</span><h2>Посмотрим, что думают участники</h2><p>Выберите опрос, чтобы увидеть ссылку и результаты.</p></section><section id="results-panel" class="card results-card" hidden><div class="section-heading"><span id="results-state" class="badge"></span><button id="refresh-results" class="quiet-button" type="button">Обновить ↻</button></div><h2 id="results-question"></h2><p id="results-schedule" class="subtle"></p><label for="share-link">Ссылка для участников</label><div class="copy-row"><input id="share-link" type="url" readonly><button id="copy-link" class="button secondary" type="button">Копировать</button></div><a id="open-poll" class="quiet-link" target="_blank" rel="noopener" href="/">Открыть опрос ↗</a><div class="results-divider"></div><div class="total-stat"><span id="total-votes">—</span><p>принято голосов</p></div><div id="results-options" class="results-options"></div><p id="results-note" class="field-hint"></p><p id="results-updated" class="field-hint"></p><div id="results-message" class="notice" role="status" hidden></div></section></aside></div>
+      <aside class="results-column"><section id="results-placeholder" class="card results-placeholder"><span class="chart-symbol" aria-hidden="true">▂ ▅ ▇</span><h2>Посмотрим, что думают участники</h2><p>Выберите опрос, чтобы увидеть ссылку и результаты.</p></section><section id="results-panel" class="card results-card" hidden><div class="section-heading"><span id="results-state" class="badge"></span><button id="refresh-results" class="quiet-button" type="button">Обновить ↻</button></div><h2 id="results-question"></h2><p id="results-schedule" class="subtle"></p><label for="share-link">Ссылка для участников</label><div class="copy-row"><input id="share-link" type="url" readonly><button id="copy-link" class="button secondary" type="button">Копировать</button></div><div class="share-actions"><a id="open-poll" class="quiet-link" target="_blank" rel="noopener" href="/">Открыть опрос ↗</a><button id="toggle-qr" class="quiet-button" type="button" aria-expanded="false" aria-controls="qr-panel">Показать QR-код</button></div>
+        <section id="qr-panel" class="qr-panel" aria-label="QR-код ссылки на опрос" hidden>
+          <canvas id="poll-qr" width="0" height="0" role="img" aria-label="QR-код со ссылкой на выбранный опрос">Ссылка на опрос доступна в поле выше.</canvas>
+          <p id="qr-hint" class="field-hint">Отсканируйте камерой, чтобы открыть этот опрос.</p>
+          <button id="download-qr" class="button secondary" type="button" disabled>Скачать PNG</button>
+        </section>
+        <div id="qr-message" class="notice" role="status" aria-live="polite" hidden></div><div class="results-divider"></div><div class="total-stat"><span id="total-votes">—</span><p>принято голосов</p></div><div id="results-options" class="results-options"></div><p id="results-note" class="field-hint"></p><p id="results-updated" class="field-hint"></p><div id="results-message" class="notice" role="status" hidden></div></section></aside></div>
     </section>
     <noscript><p class="notice warning">Для работы кабинета включите JavaScript в браузере.</p></noscript>
   </main>

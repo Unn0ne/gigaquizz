@@ -1,0 +1,13 @@
+go vet ./...
+go test -race -count=1 ./...
+ok  	gigaquizz/cmd/corebench	6.131s
+ok  	gigaquizz/cmd/filebench	5.936s
+?   	gigaquizz/cmd/gigaquizz	[no test files]
+ok  	gigaquizz/cmd/loadtest	6.672s
+ok  	gigaquizz/internal/config	6.167s
+ok  	gigaquizz/internal/filelog	11.042s
+ok  	gigaquizz/internal/filestore	15.466s
+ok  	gigaquizz/internal/httpapi	7.800s
+ok  	gigaquizz/internal/poll	7.393s
+ok  	gigaquizz/internal/votecore	8.202s
+?   	gigaquizz/internal/web	[no test files]
