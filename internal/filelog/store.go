@@ -19,9 +19,14 @@ type answer struct {
 	err     error
 }
 type job struct {
+	// A nonnil data slice is an explicit SubmitFrame with immutable boundaries.
+	// A single keeps just its entry until the writer chooses its physical frame.
 	data     []byte
+	single   [entryBytes]byte
 	count    int
 	admitted time.Time
+	offset   int64
+	index    uint32
 	done     chan answer
 }
 
@@ -117,31 +122,49 @@ func New(ctx context.Context, c Config) (_ *Store, err error) {
 	return s, nil
 }
 
+// Submit admits one attempt. The writer packs adjacent singles into frames of
+// at most 4096 entries, preserving queue order and each admission timestamp.
+// Success follows the same durable sync as SubmitFrame; cancellation after
+// enqueue is unknown and never removes an already admitted attempt.
+func (s *Store) Submit(ctx context.Context, input Input) (Receipt, error) {
+	r, index, err := s.submit(ctx, []Input{input}, true)
+	if err != nil {
+		return Receipt{}, err
+	}
+	return Receipt{Partition: r.Partition, Offset: r.Offset, Index: index, AdmittedAt: r.AdmittedAt}, nil
+}
+
 // SubmitFrame copies its inputs before returning. The caller must not mutate
 // them concurrently with this call. One frame must fit BatchSize and contain
 // 1..4096 votes. Admission is sampled under the queue lock after capacity is
 // reserved; context expiry after enqueue means an unknown outcome.
+// Explicit frame boundaries are retained even when mixed with Submit calls.
 func (s *Store) SubmitFrame(ctx context.Context, inputs []Input) (FrameReceipt, error) {
+	r, _, err := s.submit(ctx, inputs, false)
+	return r, err
+}
+
+func (s *Store) submit(ctx context.Context, inputs []Input, single bool) (FrameReceipt, uint32, error) {
 	if len(inputs) == 0 || len(inputs) > maxFrameVotes || len(inputs) > s.c.BatchSize {
-		return FrameReceipt{}, ErrInvalid
+		return FrameReceipt{}, 0, ErrInvalid
 	}
 	for _, in := range inputs {
 		if in.Token == [16]byte{} || !s.c.validChoice(in.Choice) {
-			return FrameReceipt{}, ErrInvalid
+			return FrameReceipt{}, 0, ErrInvalid
 		}
 	}
 	if err := ctx.Err(); err != nil {
-		return FrameReceipt{}, err
+		return FrameReceipt{}, 0, err
 	}
 	s.mu.Lock()
 	if s.poison != nil {
 		err := s.poison
 		s.mu.Unlock()
-		return FrameReceipt{}, err
+		return FrameReceipt{}, 0, err
 	}
 	if s.admissionClosed {
 		s.mu.Unlock()
-		return FrameReceipt{}, ErrClosed
+		return FrameReceipt{}, 0, ErrClosed
 	}
 	// Observe the deadline even under saturation, so a later clock rollback
 	// cannot reopen a poll whose deadline this owner already observed.
@@ -149,32 +172,37 @@ func (s *Store) SubmitFrame(ctx context.Context, inputs []Input) (FrameReceipt, 
 	if !observed.Before(s.c.EndsAt) {
 		s.admissionClosed = true
 		s.mu.Unlock()
-		return FrameReceipt{}, ErrClosed
+		return FrameReceipt{}, 0, ErrClosed
 	}
 	if observed.Before(s.c.StartsAt) {
 		s.mu.Unlock()
-		return FrameReceipt{}, ErrNotOpen
+		return FrameReceipt{}, 0, ErrNotOpen
 	}
 	if s.queuedVotes+len(inputs) > s.c.QueuePerPartition {
 		s.mu.Unlock()
 		s.busyVotes.Add(uint64(len(inputs)))
-		return FrameReceipt{}, ErrBusy
+		return FrameReceipt{}, 0, ErrBusy
 	}
 	admitted := s.now()
 	if admitted.Before(s.c.StartsAt) {
 		s.mu.Unlock()
-		return FrameReceipt{}, ErrNotOpen
+		return FrameReceipt{}, 0, ErrNotOpen
 	}
 	if !admitted.Before(s.c.EndsAt) {
 		s.admissionClosed = true
 		s.mu.Unlock()
-		return FrameReceipt{}, ErrClosed
+		return FrameReceipt{}, 0, ErrClosed
 	}
 	if err := ctx.Err(); err != nil {
 		s.mu.Unlock()
-		return FrameReceipt{}, err
+		return FrameReceipt{}, 0, err
 	}
-	j := &job{data: encodeInputs(inputs, admitted), count: len(inputs), admitted: admitted, done: make(chan answer, 1)}
+	j := &job{count: len(inputs), admitted: admitted, done: make(chan answer, 1)}
+	if single {
+		encodeEntry(j.single[:], inputs[0], admitted)
+	} else {
+		j.data = encodeInputs(inputs, admitted)
+	}
 	s.queuedVotes += len(inputs)
 	s.queue <- j // The logical-vote capacity also bounds the number of frames.
 	s.mu.Unlock()
@@ -185,10 +213,10 @@ func (s *Store) SubmitFrame(ctx context.Context, inputs []Input) (FrameReceipt, 
 		} else {
 			s.unknownVotes.Add(uint64(j.count))
 		}
-		return a.receipt, a.err
+		return a.receipt, j.index, a.err // done synchronizes the writer's index.
 	case <-ctx.Done():
 		s.unknownVotes.Add(uint64(j.count))
-		return FrameReceipt{}, fmt.Errorf("%w: %v", ErrUnknown, ctx.Err())
+		return FrameReceipt{}, 0, fmt.Errorf("%w: %v", ErrUnknown, ctx.Err())
 	}
 }
 
@@ -301,29 +329,23 @@ func (s *Store) run() {
 			return nil
 		}
 		stopTimer()
-		data = data[:0]
+		var frames int64
 		var err error
-		if int64(len(batch)) > math.MaxInt64-sequence {
-			err = errors.New("frame sequence exhausted")
-		}
+		data, frames, err = encodeBatch(data[:0], batch, sequence)
 		if err == nil {
-			for i, j := range batch {
-				finishFrame(j.data, sequence+int64(i), kindVotes, uint32(j.count))
-				data = append(data, j.data...)
-			}
 			err = s.syncGroup(data)
 		}
 		if err != nil {
 			err = s.fail(err)
 		} else {
 			s.durableVotes.Add(uint64(votes))
-			s.durableFrames.Add(uint64(len(batch)))
+			s.durableFrames.Add(uint64(frames))
 		}
 		for i, j := range batch {
-			j.done <- answer{receipt: FrameReceipt{Partition: 0, Offset: sequence + int64(i), Count: uint32(j.count), AdmittedAt: j.admitted}, err: err}
+			j.done <- answer{receipt: FrameReceipt{Partition: 0, Offset: j.offset, Count: uint32(j.count), AdmittedAt: j.admitted}, err: err}
 			batch[i] = nil
 		}
-		sequence += int64(len(batch))
+		sequence += frames
 		batch = batch[:0]
 		votes = 0
 		s.activeVotes.Store(0)
@@ -391,6 +413,41 @@ func (s *Store) run() {
 			}
 		}
 	}
+}
+
+// encodeBatch assigns each job its final offset/index without changing order.
+// It creates ordinary version-1 frames: old readers/recovery need no migration.
+// The caller must sync all returned bytes before publishing any job's receipt.
+func encodeBatch(data []byte, batch []*job, sequence int64) ([]byte, int64, error) {
+	var frames int64
+	for i := 0; i < len(batch); {
+		// Reserve a sequence for CLOSED, as the explicit-frame writer does.
+		if frames >= math.MaxInt64-sequence {
+			return data, frames, errors.New("frame sequence exhausted")
+		}
+		offset := sequence + frames
+		j := batch[i]
+		if j.data != nil {
+			j.offset, j.index = offset, 0
+			finishFrame(j.data, offset, kindVotes, uint32(j.count))
+			data = append(data, j.data...)
+			i++
+		} else {
+			start := len(data)
+			data = append(data, make([]byte, frameHeaderBytes)...)
+			var count uint32
+			for i < len(batch) && batch[i].data == nil && count < maxFrameVotes {
+				j = batch[i]
+				j.offset, j.index = offset, count
+				data = append(data, j.single[:]...)
+				count++
+				i++
+			}
+			finishFrame(data[start:], offset, kindVotes, count)
+		}
+		frames++
+	}
+	return data, frames, nil
 }
 
 func writeAll(write func([]byte) (int, error), b []byte) error {

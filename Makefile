@@ -9,6 +9,7 @@ run:
 build:
 	go build -o bin/gigaquizz ./cmd/gigaquizz
 	go build -o bin/loadtest ./cmd/loadtest
+	go build -o bin/httpbench ./cmd/httpbench
 	go build -o bin/corebench ./cmd/corebench
 	go build -o bin/filebench ./cmd/filebench
 

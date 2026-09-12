@@ -1,0 +1,33 @@
+File: gigaquizz-profile
+Type: cpu
+Time: 2026-09-12 23:39:41 MSK
+Duration: 79.49s, Total samples = 177.01s (222.68%)
+Showing nodes accounting for 149.76s, 84.61% of 177.01s total
+Dropped 710 nodes (cum <= 0.89s)
+Showing top 25 nodes out of 81
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%    149.67s 84.55%  syscall.syscalln
+         0     0%     0%    149.66s 84.55%  syscall.syscall
+     0.01s 0.0056% 0.0056%    149.64s 84.54%  internal/poll.ignoringEINTRIO (inline)
+   149.61s 84.52% 84.53%    149.61s 84.52%  syscall.rawsyscalln
+     0.02s 0.011% 84.54%    109.92s 62.10%  net/http.(*conn).serve
+     0.02s 0.011% 84.55%     92.76s 52.40%  internal/poll.(*FD).Read
+         0     0% 84.55%     92.62s 52.32%  syscall.Read (inline)
+         0     0% 84.55%     92.62s 52.32%  syscall.read
+     0.01s 0.0056% 84.55%     92.55s 52.29%  net.(*conn).Read
+         0     0% 84.55%     92.13s 52.05%  net.(*netFD).Read
+         0     0% 84.55%     57.04s 32.22%  internal/poll.(*FD).Write
+         0     0% 84.55%     57.01s 32.21%  syscall.Write (inline)
+         0     0% 84.55%     57.01s 32.21%  syscall.write
+     0.02s 0.011% 84.57%     56.87s 32.13%  net/http.(*response).finishRequest
+         0     0% 84.57%     56.78s 32.08%  bufio.(*Writer).Flush
+         0     0% 84.57%     56.42s 31.87%  net.(*conn).Write
+         0     0% 84.57%     56.42s 31.87%  net.(*netFD).Write
+         0     0% 84.57%     56.42s 31.87%  net/http.checkConnErrorWriter.Write
+     0.01s 0.0056% 84.57%     47.14s 26.63%  net/http.(*connReader).backgroundRead
+     0.04s 0.023% 84.59%     45.50s 25.70%  bufio.(*Reader).Peek
+         0     0% 84.59%     45.46s 25.68%  bufio.(*Reader).fill
+         0     0% 84.59%     45.46s 25.68%  net/http.(*connReader).Read
+         0     0% 84.59%     11.17s  6.31%  runtime.mcall
+     0.02s 0.011% 84.61%     10.52s  5.94%  runtime.schedule
+         0     0% 84.61%     10.30s  5.82%  runtime.park_m

@@ -29,9 +29,19 @@ func main() {
 	}
 }
 
-func run() error {
+func run() (runErr error) {
 	envFile := flag.String("env", ".env", "configuration file")
+	cpuProfile := flag.String("cpu-profile", "", "write CPU profile to a new private local file (includes startup and shutdown)")
 	flag.Parse()
+	stopProfile, err := startCPUProfile(*cpuProfile)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := stopProfile(); err != nil {
+			runErr = errors.Join(runErr, err)
+		}
+	}()
 	if err := config.LoadEnv(*envFile); err != nil {
 		return errors.New("cannot load environment file")
 	}

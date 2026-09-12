@@ -54,11 +54,15 @@ func encodeInputs(inputs []Input, admitted time.Time) []byte {
 	b := make([]byte, frameHeaderBytes+entryBytes*len(inputs))
 	for i, v := range inputs {
 		e := b[frameHeaderBytes+i*entryBytes : frameHeaderBytes+(i+1)*entryBytes]
-		copy(e[:16], v.Token[:])
-		binary.BigEndian.PutUint32(e[16:20], v.Choice)
-		binary.BigEndian.PutUint64(e[20:28], uint64(admitted.UnixNano()))
+		encodeEntry(e, v, admitted)
 	}
 	return b
+}
+
+func encodeEntry(e []byte, v Input, admitted time.Time) {
+	copy(e[:16], v.Token[:])
+	binary.BigEndian.PutUint32(e[16:20], v.Choice)
+	binary.BigEndian.PutUint64(e[20:28], uint64(admitted.UnixNano()))
 }
 
 func finishFrame(b []byte, sequence int64, kind uint32, count uint32) {

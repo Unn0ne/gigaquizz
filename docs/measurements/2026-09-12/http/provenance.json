@@ -1,0 +1,39 @@
+{
+  "scope": "Binary hashes identify the actual measured builds; experimental CLI additions and independent-reader hardening followed the initial packed freeze. Same frozen POST generator per branch for all 16 paired comparisons.",
+  "baseline_commits": {
+    "simple-files": "54526b9ecac94bd1594fca4834aa3b50ebdecf01",
+    "postgres-kafka": "422e9e1b9462c7e5251f639d0a0ce47d619e8d8b"
+  },
+  "branches": {
+    "simple-files": {
+      "baseline_application_sha256": "04d3c25cf9eb8ef449eb004b9a0d209bf7c6d0e7a957c9e8be9508a6c3aaee78",
+      "paired_generator_sha256": "f9fbb3a986e10ab051dce79623f3938013edd4fdb5cad85a916da7595826df0f",
+      "packed_application_sha256": "9b0698b6f508606f384eb85bf4fc068a76fb48a91d3d6112c589c865133386bd",
+      "frozen_generator_source_sha256": {
+        "audit.go": "2f2d93a19dca0a1f8f06ec835c0be7c909acbf455c86c5a7e73f5c496c1796a7",
+        "audit_test.go": "4e1df9dd87b75060f4f6220be639b367e60314005b9161a9fd98ad83c264d9e3",
+        "backend.go": "90737514fec4497f1c83081dd8ecee4836416d5f312d45a0539ad2094bbdbeb5",
+        "backend_test.go": "f636034322b9dff839537826a06848556ac98639e254224bee3a0a5d85c66441",
+        "ledger.go": "aaa64bb4c59346eb18e915a3ee9110cf4c52e81372e0ae35430ddacb5b72c6d6",
+        "main.go": "4f83ea0eec77a7e966b321621bae135e40b1b93d1a2903ed90eba3eaf07737bb",
+        "workload.go": "9858b654dd3b05d818b5dabba35fba5e436186133178a5b7b640b3f9ad2fbd93",
+        "workload_test.go": "3ca386b4113a71093d437276dda6f23fa2db9c4b5a3a255d3306228b926b39aa"
+      }
+    },
+    "postgres-kafka": {
+      "baseline_application_sha256": "ca493a0c916dcdf53eb6504879d6d3ce3c86cb625562b41424d22a94b9a854bd",
+      "paired_generator_sha256": "de7605dbfe8499e248043029f3db8a8fc985ec56b512272c19a3e02a294f9d73",
+      "packed_application_sha256": "68af7e5085997e7e319f78438e4e8c8331503ebb2c11d2de334e50a15ae5bd69",
+      "frozen_generator_source_sha256": {
+        "audit.go": "2f2d93a19dca0a1f8f06ec835c0be7c909acbf455c86c5a7e73f5c496c1796a7",
+        "audit_test.go": "4e1df9dd87b75060f4f6220be639b367e60314005b9161a9fd98ad83c264d9e3",
+        "backend.go": "8193f0fd1bd3c3af13fd47268be3d2f7c8e1492e399a772f1b65a5a3c649e694",
+        "backend_test.go": "d8e160d77dfcb1d008837b4b005cd0f2fcee3dd83606adb3782d97b16dea8029",
+        "ledger.go": "aaa64bb4c59346eb18e915a3ee9110cf4c52e81372e0ae35430ddacb5b72c6d6",
+        "main.go": "4f83ea0eec77a7e966b321621bae135e40b1b93d1a2903ed90eba3eaf07737bb",
+        "workload.go": "9858b654dd3b05d818b5dabba35fba5e436186133178a5b7b640b3f9ad2fbd93",
+        "workload_test.go": "3ca386b4113a71093d437276dda6f23fa2db9c4b5a3a255d3306228b926b39aa"
+      }
+    }
+  }
+}

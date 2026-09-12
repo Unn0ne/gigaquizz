@@ -1,0 +1,3907 @@
+{
+  "mode": "postgres-kafka",
+  "label": "packed_kafka_5000",
+  "started_at": "2026-09-12T20:24:31.601797+00:00",
+  "correct": true,
+  "scope": "Real local HTTP application, isolated real 60-second poll, exact private-ledger audit, process restart; no TLS/CDN capacity claim",
+  "diagnostic_cpu_profile": false,
+  "configuration": {
+    "rate_unique_s": 5000,
+    "planned_attempts": 300000,
+    "workers": 256,
+    "generator_queue": 4096,
+    "max_lag_ms": 100,
+    "repeat_every": 0,
+    "journey": false,
+    "max_inflight": 1024,
+    "kafka_partitions": 4,
+    "batch_votes_override": null,
+    "queue_votes_override": null,
+    "linger_ms_override": null,
+    "app_GOMEMLIMIT": "3GiB",
+    "generator_GOMEMLIMIT": "2GiB",
+    "GOGC": "100",
+    "GOMAXPROCS": 10,
+    "owned_child_open_file_limit": 8192
+  },
+  "binary_sha256": {
+    "application": "68af7e5085997e7e319f78438e4e8c8331503ebb2c11d2de334e50a15ae5bd69",
+    "generator_and_reader": "de7605dbfe8499e248043029f3db8a8fc985ec56b512272c19a3e02a294f9d73"
+  },
+  "disk": {
+    "required_bytes_including_reserve": 9323605504,
+    "reserve_bytes": 8589934592,
+    "free_before": 35097542656,
+    "free_after": 34959835136
+  },
+  "samples": [
+    {
+      "at": "2026-09-12T20:24:32.312681+00:00",
+      "elapsed_seconds": 0.7261470839730464,
+      "phase": "preparation",
+      "free_disk_bytes": 35097153536,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.04",
+          "rss_bytes": 23166976
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.01",
+          "rss_bytes": 5947392
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.01",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.70",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.16",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:33.354694+00:00",
+      "elapsed_seconds": 1.7681967089883983,
+      "phase": "preparation",
+      "free_disk_bytes": 35096612864,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.07",
+          "rss_bytes": 23265280
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.03",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.72",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.18",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:34.442005+00:00",
+      "elapsed_seconds": 2.8555126250139438,
+      "phase": "preparation",
+      "free_disk_bytes": 35097972736,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.11",
+          "rss_bytes": 23265280
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.05",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.74",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.20",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:35.507771+00:00",
+      "elapsed_seconds": 3.9213458750164136,
+      "phase": "preparation",
+      "free_disk_bytes": 35080339456,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.14",
+          "rss_bytes": 23265280
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.07",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.76",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.21",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:36.566658+00:00",
+      "elapsed_seconds": 4.980230042012408,
+      "phase": "preparation",
+      "free_disk_bytes": 35049861120,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.19",
+          "rss_bytes": 23265280
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.08",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.77",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.23",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:37.623948+00:00",
+      "elapsed_seconds": 6.037546542007476,
+      "phase": "preparation",
+      "free_disk_bytes": 35021389824,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.23",
+          "rss_bytes": 23265280
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.10",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.79",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.25",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:38.682621+00:00",
+      "elapsed_seconds": 7.096218416991178,
+      "phase": "preparation",
+      "free_disk_bytes": 35097489408,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.27",
+          "rss_bytes": 23265280
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.12",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.81",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.27",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:39.752029+00:00",
+      "elapsed_seconds": 8.165696959011257,
+      "phase": "preparation",
+      "free_disk_bytes": 35096502272,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.30",
+          "rss_bytes": 23281664
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.14",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.83",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.29",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:40.807403+00:00",
+      "elapsed_seconds": 9.221039999974892,
+      "phase": "preparation",
+      "free_disk_bytes": 35096596480,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.34",
+          "rss_bytes": 23281664
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.16",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.85",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.31",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:41.872617+00:00",
+      "elapsed_seconds": 10.286471874976996,
+      "phase": "preparation",
+      "free_disk_bytes": 35095904256,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.37",
+          "rss_bytes": 23281664
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.18",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.87",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.32",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:42.930617+00:00",
+      "elapsed_seconds": 11.344348417012952,
+      "phase": "preparation",
+      "free_disk_bytes": 35095728128,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.41",
+          "rss_bytes": 23281664
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.20",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.89",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.35",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:43.983029+00:00",
+      "elapsed_seconds": 12.396723916986957,
+      "phase": "preparation",
+      "free_disk_bytes": 35094560768,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.45",
+          "rss_bytes": 23281664
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.22",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.91",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.36",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:45.059083+00:00",
+      "elapsed_seconds": 13.47280899999896,
+      "phase": "preparation",
+      "free_disk_bytes": 35094036480,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.48",
+          "rss_bytes": 23281664
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.24",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.93",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.38",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:46.137660+00:00",
+      "elapsed_seconds": 14.551397333969362,
+      "phase": "preparation",
+      "free_disk_bytes": 35094142976,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.52",
+          "rss_bytes": 23314432
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.25",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.95",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.40",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:47.213409+00:00",
+      "elapsed_seconds": 15.62709416699363,
+      "phase": "preparation",
+      "free_disk_bytes": 35098398720,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.56",
+          "rss_bytes": 23314432
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.27",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:29.97",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.42",
+          "rss_bytes": 541474816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:48.266421+00:00",
+      "elapsed_seconds": 16.68016483396059,
+      "phase": "preparation",
+      "free_disk_bytes": 35098718208,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.59",
+          "rss_bytes": 23314432
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.29",
+          "rss_bytes": 543784960
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.00",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.44",
+          "rss_bytes": 541491200
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:49.309948+00:00",
+      "elapsed_seconds": 17.723701125010848,
+      "phase": "preparation",
+      "free_disk_bytes": 35098025984,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.63",
+          "rss_bytes": 23314432
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.31",
+          "rss_bytes": 543768576
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.02",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.46",
+          "rss_bytes": 541442048
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:50.365272+00:00",
+      "elapsed_seconds": 18.779077999992296,
+      "phase": "preparation",
+      "free_disk_bytes": 35098025984,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.67",
+          "rss_bytes": 23314432
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.33",
+          "rss_bytes": 543768576
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.04",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.49",
+          "rss_bytes": 541442048
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:51.429023+00:00",
+      "elapsed_seconds": 19.842813041992486,
+      "phase": "preparation",
+      "free_disk_bytes": 35097997312,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.70",
+          "rss_bytes": 23314432
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.35",
+          "rss_bytes": 543768576
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.06",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.51",
+          "rss_bytes": 541442048
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:52.488478+00:00",
+      "elapsed_seconds": 20.90235470898915,
+      "phase": "preparation",
+      "free_disk_bytes": 35097964544,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.75",
+          "rss_bytes": 23314432
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.37",
+          "rss_bytes": 543768576
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.08",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.53",
+          "rss_bytes": 541442048
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:53.552492+00:00",
+      "elapsed_seconds": 21.966308875009418,
+      "phase": "preparation",
+      "free_disk_bytes": 35097374720,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.79",
+          "rss_bytes": 23314432
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.38",
+          "rss_bytes": 543768576
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.10",
+          "rss_bytes": 545554432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.55",
+          "rss_bytes": 541442048
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:54.612952+00:00",
+      "elapsed_seconds": 23.02674666699022,
+      "phase": "preparation",
+      "free_disk_bytes": 35097296896,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.82",
+          "rss_bytes": 23314432
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 18399232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.40",
+          "rss_bytes": 539738112
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.12",
+          "rss_bytes": 541229056
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.70",
+          "rss_bytes": 538951680
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:55.659944+00:00",
+      "elapsed_seconds": 24.07383662497159,
+      "phase": "preparation",
+      "free_disk_bytes": 35097038848,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.87",
+          "rss_bytes": 21233664
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 14368768
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.42",
+          "rss_bytes": 539738112
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.14",
+          "rss_bytes": 541261824
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.72",
+          "rss_bytes": 538820608
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:56.729164+00:00",
+      "elapsed_seconds": 25.143078249995597,
+      "phase": "preparation",
+      "free_disk_bytes": 35095113728,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.91",
+          "rss_bytes": 16793600
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 9928704
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.44",
+          "rss_bytes": 538132480
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.16",
+          "rss_bytes": 538951680
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.74",
+          "rss_bytes": 538132480
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:57.801038+00:00",
+      "elapsed_seconds": 26.21494391700253,
+      "phase": "preparation",
+      "free_disk_bytes": 35094642688,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.95",
+          "rss_bytes": 16793600
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 9928704
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.46",
+          "rss_bytes": 537657344
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.18",
+          "rss_bytes": 538918912
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.76",
+          "rss_bytes": 537559040
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:58.866373+00:00",
+      "elapsed_seconds": 27.280257041973528,
+      "phase": "preparation",
+      "free_disk_bytes": 35093856256,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:00.98",
+          "rss_bytes": 16859136
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 9928704
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.48",
+          "rss_bytes": 536887296
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.20",
+          "rss_bytes": 537870336
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.77",
+          "rss_bytes": 536838144
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:24:59.941111+00:00",
+      "elapsed_seconds": 28.355030709004495,
+      "phase": "preparation",
+      "free_disk_bytes": 35091042304,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:01.02",
+          "rss_bytes": 16957440
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 9928704
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.50",
+          "rss_bytes": 526974976
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.23",
+          "rss_bytes": 532905984
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.80",
+          "rss_bytes": 520437760
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:01.020113+00:00",
+      "elapsed_seconds": 29.43404920899775,
+      "phase": "preparation",
+      "free_disk_bytes": 35089301504,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:01.06",
+          "rss_bytes": 16957440
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 9928704
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.52",
+          "rss_bytes": 527040512
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.25",
+          "rss_bytes": 532922368
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.82",
+          "rss_bytes": 520486912
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:02.077495+00:00",
+      "elapsed_seconds": 30.491447084001265,
+      "phase": "preparation",
+      "free_disk_bytes": 35089162240,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:01.10",
+          "rss_bytes": 17645568
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 9928704
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.54",
+          "rss_bytes": 527106048
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.27",
+          "rss_bytes": 532938752
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.84",
+          "rss_bytes": 520536064
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:03.139037+00:00",
+      "elapsed_seconds": 31.553001208987553,
+      "phase": "preparation",
+      "free_disk_bytes": 35088936960,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:01.14",
+          "rss_bytes": 17661952
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 10911744
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.56",
+          "rss_bytes": 527106048
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.29",
+          "rss_bytes": 533004288
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.86",
+          "rss_bytes": 520601600
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:04.203382+00:00",
+      "elapsed_seconds": 32.61737304198323,
+      "phase": "preparation",
+      "free_disk_bytes": 35088781312,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:01.17",
+          "rss_bytes": 17661952
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 10911744
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.58",
+          "rss_bytes": 527106048
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.32",
+          "rss_bytes": 533004288
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.88",
+          "rss_bytes": 520749056
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:05.266925+00:00",
+      "elapsed_seconds": 33.680936499964446,
+      "phase": "preparation",
+      "free_disk_bytes": 35088564224,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:01.21",
+          "rss_bytes": 17678336
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 10911744
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.60",
+          "rss_bytes": 527122432
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.34",
+          "rss_bytes": 533053440
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.90",
+          "rss_bytes": 520798208
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:06.322982+00:00",
+      "elapsed_seconds": 34.73698454198893,
+      "phase": "preparation",
+      "free_disk_bytes": 35088416768,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:01.25",
+          "rss_bytes": 17743872
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.03",
+          "rss_bytes": 10911744
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.62",
+          "rss_bytes": 527269888
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.36",
+          "rss_bytes": 533135360
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:56.92",
+          "rss_bytes": 520814592
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:07.380817+00:00",
+      "elapsed_seconds": 35.79479824996088,
+      "phase": "workload",
+      "free_disk_bytes": 35087900672,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:01.42",
+          "rss_bytes": 33767424
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.18",
+          "rss_bytes": 40321024
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:52.85",
+          "rss_bytes": 528482304
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.52",
+          "rss_bytes": 535216128
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:57.07",
+          "rss_bytes": 522240000
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:08.427420+00:00",
+      "elapsed_seconds": 36.84142037498532,
+      "phase": "workload",
+      "free_disk_bytes": 35087339520,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:01.67",
+          "rss_bytes": 36290560
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.39",
+          "rss_bytes": 52625408
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:53.02",
+          "rss_bytes": 531677184
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:30.78",
+          "rss_bytes": 535248896
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:57.31",
+          "rss_bytes": 523730944
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:09.479376+00:00",
+      "elapsed_seconds": 37.89341829199111,
+      "phase": "workload",
+      "free_disk_bytes": 35083816960,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:01.92",
+          "rss_bytes": 36831232
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.61",
+          "rss_bytes": 53903360
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:53.20",
+          "rss_bytes": 543981568
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:31.09",
+          "rss_bytes": 545161216
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:57.57",
+          "rss_bytes": 527990784
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:10.522309+00:00",
+      "elapsed_seconds": 38.9363884999766,
+      "phase": "workload",
+      "free_disk_bytes": 35082469376,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:02.18",
+          "rss_bytes": 37289984
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:00.83",
+          "rss_bytes": 54968320
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:53.38",
+          "rss_bytes": 544014336
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:31.37",
+          "rss_bytes": 545243136
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:57.85",
+          "rss_bytes": 538574848
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:11.572704+00:00",
+      "elapsed_seconds": 39.9868175839656,
+      "phase": "workload",
+      "free_disk_bytes": 35081420800,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:02.45",
+          "rss_bytes": 37355520
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:01.05",
+          "rss_bytes": 55394304
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:53.55",
+          "rss_bytes": 543719424
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:31.74",
+          "rss_bytes": 544849920
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:58.10",
+          "rss_bytes": 537886720
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:12.615912+00:00",
+      "elapsed_seconds": 41.0299674589769,
+      "phase": "workload",
+      "free_disk_bytes": 35080536064,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:02.73",
+          "rss_bytes": 37748736
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:01.28",
+          "rss_bytes": 56000512
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:53.75",
+          "rss_bytes": 543719424
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:32.01",
+          "rss_bytes": 544866304
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:58.35",
+          "rss_bytes": 537886720
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:13.655493+00:00",
+      "elapsed_seconds": 42.06959379196633,
+      "phase": "workload",
+      "free_disk_bytes": 35078709248,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:02.96",
+          "rss_bytes": 38043648
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:01.48",
+          "rss_bytes": 56819712
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:53.91",
+          "rss_bytes": 533676032
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:32.26",
+          "rss_bytes": 532742144
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:58.61",
+          "rss_bytes": 526974976
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:14.704906+00:00",
+      "elapsed_seconds": 43.11906499997713,
+      "phase": "workload",
+      "free_disk_bytes": 35073966080,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:03.19",
+          "rss_bytes": 38109184
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:01.69",
+          "rss_bytes": 57769984
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:54.08",
+          "rss_bytes": 532086784
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:32.55",
+          "rss_bytes": 528269312
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:58.84",
+          "rss_bytes": 519159808
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:15.754196+00:00",
+      "elapsed_seconds": 44.16829041700112,
+      "phase": "workload",
+      "free_disk_bytes": 35071684608,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:03.44",
+          "rss_bytes": 38125568
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:01.90",
+          "rss_bytes": 58310656
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:54.26",
+          "rss_bytes": 527384576
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:32.83",
+          "rss_bytes": 520355840
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:59.11",
+          "rss_bytes": 496369664
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:16.796641+00:00",
+      "elapsed_seconds": 45.21076029201504,
+      "phase": "workload",
+      "free_disk_bytes": 35069796352,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:03.66",
+          "rss_bytes": 38273024
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:02.08",
+          "rss_bytes": 58785792
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:54.44",
+          "rss_bytes": 527384576
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:33.12",
+          "rss_bytes": 520847360
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:59.49",
+          "rss_bytes": 510246912
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:17.842376+00:00",
+      "elapsed_seconds": 46.25654024997493,
+      "phase": "workload",
+      "free_disk_bytes": 35068043264,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:03.93",
+          "rss_bytes": 38273024
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:02.31",
+          "rss_bytes": 59932672
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:54.66",
+          "rss_bytes": 529465344
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:33.39",
+          "rss_bytes": 520847360
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:59.73",
+          "rss_bytes": 510246912
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:18.892641+00:00",
+      "elapsed_seconds": 47.30678479198832,
+      "phase": "workload",
+      "free_disk_bytes": 35065806848,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:04.19",
+          "rss_bytes": 38273024
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:02.52",
+          "rss_bytes": 60129280
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:54.83",
+          "rss_bytes": 529465344
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:33.68",
+          "rss_bytes": 520847360
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "46:59.97",
+          "rss_bytes": 510246912
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:19.941640+00:00",
+      "elapsed_seconds": 48.355802749982104,
+      "phase": "workload",
+      "free_disk_bytes": 35064434688,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:04.48",
+          "rss_bytes": 38289408
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:02.76",
+          "rss_bytes": 60358656
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:55.03",
+          "rss_bytes": 529465344
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:34.08",
+          "rss_bytes": 521109504
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:00.28",
+          "rss_bytes": 512327680
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:20.987788+00:00",
+      "elapsed_seconds": 49.40199079201557,
+      "phase": "workload",
+      "free_disk_bytes": 35062702080,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:04.74",
+          "rss_bytes": 38305792
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:02.98",
+          "rss_bytes": 60473344
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:55.20",
+          "rss_bytes": 528482304
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:34.37",
+          "rss_bytes": 518144000
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:00.54",
+          "rss_bytes": 511049728
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:22.034393+00:00",
+      "elapsed_seconds": 50.44859370897757,
+      "phase": "workload",
+      "free_disk_bytes": 35061334016,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:04.97",
+          "rss_bytes": 38322176
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:03.17",
+          "rss_bytes": 60751872
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:55.37",
+          "rss_bytes": 528482304
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:34.71",
+          "rss_bytes": 520536064
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:00.78",
+          "rss_bytes": 511049728
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:23.075606+00:00",
+      "elapsed_seconds": 51.48981483397074,
+      "phase": "workload",
+      "free_disk_bytes": 35060060160,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:05.23",
+          "rss_bytes": 38354944
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:03.39",
+          "rss_bytes": 61407232
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:55.65",
+          "rss_bytes": 529072128
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:34.98",
+          "rss_bytes": 520536064
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:01.05",
+          "rss_bytes": 511180800
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:24.120975+00:00",
+      "elapsed_seconds": 52.53523858397966,
+      "phase": "workload",
+      "free_disk_bytes": 35059527680,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:05.48",
+          "rss_bytes": 38354944
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:03.61",
+          "rss_bytes": 61603840
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:55.81",
+          "rss_bytes": 528596992
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:35.30",
+          "rss_bytes": 520470528
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:01.30",
+          "rss_bytes": 509739008
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:25.175165+00:00",
+      "elapsed_seconds": 53.589397833973635,
+      "phase": "workload",
+      "free_disk_bytes": 35055394816,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:05.73",
+          "rss_bytes": 38387712
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:03.81",
+          "rss_bytes": 61980672
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:56.00",
+          "rss_bytes": 528596992
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:35.58",
+          "rss_bytes": 520470528
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:01.65",
+          "rss_bytes": 510476288
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:26.215045+00:00",
+      "elapsed_seconds": 54.629342667001765,
+      "phase": "workload",
+      "free_disk_bytes": 35054321664,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:05.97",
+          "rss_bytes": 38387712
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:04.02",
+          "rss_bytes": 62275584
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:56.17",
+          "rss_bytes": 527286272
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:35.84",
+          "rss_bytes": 514473984
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:01.92",
+          "rss_bytes": 507920384
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:27.266595+00:00",
+      "elapsed_seconds": 55.680841791967396,
+      "phase": "workload",
+      "free_disk_bytes": 35051601920,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:06.19",
+          "rss_bytes": 38387712
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:04.22",
+          "rss_bytes": 62652416
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:56.35",
+          "rss_bytes": 527286272
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:36.25",
+          "rss_bytes": 515948544
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:02.17",
+          "rss_bytes": 507920384
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:28.306148+00:00",
+      "elapsed_seconds": 56.72040541697061,
+      "phase": "workload",
+      "free_disk_bytes": 35051134976,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:06.50",
+          "rss_bytes": 38387712
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:04.46",
+          "rss_bytes": 62996480
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:56.56",
+          "rss_bytes": 528515072
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:36.54",
+          "rss_bytes": 515948544
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:02.45",
+          "rss_bytes": 507985920
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:29.343718+00:00",
+      "elapsed_seconds": 57.75799700000789,
+      "phase": "workload",
+      "free_disk_bytes": 35049861120,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:06.72",
+          "rss_bytes": 38404096
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:04.65",
+          "rss_bytes": 63438848
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:56.72",
+          "rss_bytes": 528515072
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:36.84",
+          "rss_bytes": 516243456
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:02.68",
+          "rss_bytes": 508018688
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:30.382435+00:00",
+      "elapsed_seconds": 58.796772166970186,
+      "phase": "workload",
+      "free_disk_bytes": 35047886848,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:07.00",
+          "rss_bytes": 38404096
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:04.88",
+          "rss_bytes": 63782912
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:56.90",
+          "rss_bytes": 528515072
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:37.12",
+          "rss_bytes": 516259840
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:02.93",
+          "rss_bytes": 508018688
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:31.435168+00:00",
+      "elapsed_seconds": 59.84951600001659,
+      "phase": "workload",
+      "free_disk_bytes": 35046219776,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:07.24",
+          "rss_bytes": 38404096
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:05.08",
+          "rss_bytes": 64143360
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:57.08",
+          "rss_bytes": 528515072
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:37.43",
+          "rss_bytes": 516440064
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:03.19",
+          "rss_bytes": 508116992
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:32.487523+00:00",
+      "elapsed_seconds": 60.90186104201712,
+      "phase": "workload",
+      "free_disk_bytes": 35080765440,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:07.49",
+          "rss_bytes": 38420480
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:05.31",
+          "rss_bytes": 64536576
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:57.30",
+          "rss_bytes": 528580608
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:37.71",
+          "rss_bytes": 516440064
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:03.46",
+          "rss_bytes": 508116992
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:33.534455+00:00",
+      "elapsed_seconds": 61.94881037500454,
+      "phase": "workload",
+      "free_disk_bytes": 35079282688,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:07.71",
+          "rss_bytes": 38535168
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:05.50",
+          "rss_bytes": 64815104
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:57.49",
+          "rss_bytes": 528580608
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:38.12",
+          "rss_bytes": 516997120
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:03.72",
+          "rss_bytes": 508116992
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:34.585070+00:00",
+      "elapsed_seconds": 62.99944233399583,
+      "phase": "workload",
+      "free_disk_bytes": 35051077632,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:07.97",
+          "rss_bytes": 38535168
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:05.71",
+          "rss_bytes": 65257472
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:57.68",
+          "rss_bytes": 528580608
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:38.39",
+          "rss_bytes": 516997120
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:04.07",
+          "rss_bytes": 508198912
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:35.624259+00:00",
+      "elapsed_seconds": 64.03867375000846,
+      "phase": "workload",
+      "free_disk_bytes": 35049938944,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:08.24",
+          "rss_bytes": 38535168
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:05.93",
+          "rss_bytes": 65486848
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:57.85",
+          "rss_bytes": 528580608
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:38.65",
+          "rss_bytes": 516997120
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:04.31",
+          "rss_bytes": 508198912
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:36.672969+00:00",
+      "elapsed_seconds": 65.08736274996772,
+      "phase": "workload",
+      "free_disk_bytes": 35049308160,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:08.49",
+          "rss_bytes": 38535168
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:06.16",
+          "rss_bytes": 65814528
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:58.01",
+          "rss_bytes": 528580608
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:38.95",
+          "rss_bytes": 517324800
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:04.54",
+          "rss_bytes": 508198912
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:37.725457+00:00",
+      "elapsed_seconds": 66.1398878750042,
+      "phase": "workload",
+      "free_disk_bytes": 35054325760,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:08.70",
+          "rss_bytes": 38535168
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:06.34",
+          "rss_bytes": 66158592
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:58.28",
+          "rss_bytes": 528564224
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:39.22",
+          "rss_bytes": 510443520
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:04.83",
+          "rss_bytes": 508297216
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:38.765774+00:00",
+      "elapsed_seconds": 67.18018820899306,
+      "phase": "workload",
+      "free_disk_bytes": 35050881024,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:08.96",
+          "rss_bytes": 38846464
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:06.55",
+          "rss_bytes": 66551808
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:58.46",
+          "rss_bytes": 528596992
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:39.54",
+          "rss_bytes": 510525440
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:05.07",
+          "rss_bytes": 508297216
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:39.813133+00:00",
+      "elapsed_seconds": 68.22759849997237,
+      "phase": "workload",
+      "free_disk_bytes": 35050336256,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:09.20",
+          "rss_bytes": 38862848
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:06.76",
+          "rss_bytes": 66846720
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:58.62",
+          "rss_bytes": 528596992
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:39.80",
+          "rss_bytes": 510525440
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:05.31",
+          "rss_bytes": 508297216
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:40.850717+00:00",
+      "elapsed_seconds": 69.26517920900369,
+      "phase": "workload",
+      "free_disk_bytes": 35047034880,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:09.43",
+          "rss_bytes": 38862848
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:06.95",
+          "rss_bytes": 67010560
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:58.77",
+          "rss_bytes": 528596992
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:40.05",
+          "rss_bytes": 510525440
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:05.57",
+          "rss_bytes": 508346368
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:41.889742+00:00",
+      "elapsed_seconds": 70.3043317499687,
+      "phase": "workload",
+      "free_disk_bytes": 35046764544,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:09.67",
+          "rss_bytes": 38862848
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:07.16",
+          "rss_bytes": 67371008
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:58.94",
+          "rss_bytes": 528596992
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:40.44",
+          "rss_bytes": 510738432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:05.80",
+          "rss_bytes": 508346368
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:42.944441+00:00",
+      "elapsed_seconds": 71.35913270898163,
+      "phase": "workload",
+      "free_disk_bytes": 35033640960,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:09.89",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:07.35",
+          "rss_bytes": 67698688
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:59.15",
+          "rss_bytes": 529432576
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:40.69",
+          "rss_bytes": 510738432
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:06.04",
+          "rss_bytes": 508346368
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:43.987691+00:00",
+      "elapsed_seconds": 72.40219383401563,
+      "phase": "workload",
+      "free_disk_bytes": 35033337856,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:10.16",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:07.57",
+          "rss_bytes": 67928064
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:59.33",
+          "rss_bytes": 529432576
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:40.97",
+          "rss_bytes": 510951424
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:06.39",
+          "rss_bytes": 508379136
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:45.030781+00:00",
+      "elapsed_seconds": 73.44533416698687,
+      "phase": "workload",
+      "free_disk_bytes": 35032793088,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:10.36",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:07.75",
+          "rss_bytes": 68173824
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:59.48",
+          "rss_bytes": 529432576
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:41.22",
+          "rss_bytes": 510951424
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:06.61",
+          "rss_bytes": 508379136
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:46.078842+00:00",
+      "elapsed_seconds": 74.49337366700638,
+      "phase": "workload",
+      "free_disk_bytes": 35032457216,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:10.61",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:07.96",
+          "rss_bytes": 68435968
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:59.65",
+          "rss_bytes": 529432576
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:41.50",
+          "rss_bytes": 510951424
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:06.86",
+          "rss_bytes": 508379136
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:47.119779+00:00",
+      "elapsed_seconds": 75.53433933400083,
+      "phase": "workload",
+      "free_disk_bytes": 35032043520,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:10.84",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:08.15",
+          "rss_bytes": 68648960
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "40:59.81",
+          "rss_bytes": 529432576
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:41.80",
+          "rss_bytes": 511328256
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:07.12",
+          "rss_bytes": 508395520
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:48.159129+00:00",
+      "elapsed_seconds": 76.57368754199706,
+      "phase": "workload",
+      "free_disk_bytes": 35031523328,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:11.07",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:08.35",
+          "rss_bytes": 68763648
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:00.03",
+          "rss_bytes": 529580032
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:42.07",
+          "rss_bytes": 511852544
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:07.37",
+          "rss_bytes": 508395520
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:49.207290+00:00",
+      "elapsed_seconds": 77.62185324996244,
+      "phase": "workload",
+      "free_disk_bytes": 35030675456,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:11.32",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:08.57",
+          "rss_bytes": 68894720
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:00.22",
+          "rss_bytes": 529776640
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:42.45",
+          "rss_bytes": 511967232
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:07.63",
+          "rss_bytes": 509018112
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:50.246197+00:00",
+      "elapsed_seconds": 78.66081695898902,
+      "phase": "workload",
+      "free_disk_bytes": 35029004288,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:11.61",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:08.81",
+          "rss_bytes": 69058560
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:00.39",
+          "rss_bytes": 529776640
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:42.73",
+          "rss_bytes": 511967232
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:07.90",
+          "rss_bytes": 509116416
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:51.293269+00:00",
+      "elapsed_seconds": 79.70787724998081,
+      "phase": "workload",
+      "free_disk_bytes": 35026391040,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:11.87",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:09.03",
+          "rss_bytes": 69222400
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:00.58",
+          "rss_bytes": 529776640
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:43.00",
+          "rss_bytes": 511967232
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:08.15",
+          "rss_bytes": 509116416
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:52.345390+00:00",
+      "elapsed_seconds": 80.7600025839638,
+      "phase": "workload",
+      "free_disk_bytes": 35022381056,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:12.13",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:09.25",
+          "rss_bytes": 69271552
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:00.87",
+          "rss_bytes": 529924096
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:43.33",
+          "rss_bytes": 511967232
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:08.41",
+          "rss_bytes": 509116416
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:53.390403+00:00",
+      "elapsed_seconds": 81.8050509999739,
+      "phase": "workload",
+      "free_disk_bytes": 35020165120,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:12.38",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:09.47",
+          "rss_bytes": 69320704
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:01.04",
+          "rss_bytes": 529924096
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:43.59",
+          "rss_bytes": 511967232
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:08.75",
+          "rss_bytes": 509116416
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:54.431848+00:00",
+      "elapsed_seconds": 82.84649383398937,
+      "phase": "workload",
+      "free_disk_bytes": 35015704576,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:12.60",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:09.67",
+          "rss_bytes": 69402624
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:01.21",
+          "rss_bytes": 529924096
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:43.91",
+          "rss_bytes": 512016384
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:08.99",
+          "rss_bytes": 509116416
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:55.484194+00:00",
+      "elapsed_seconds": 83.89885816699825,
+      "phase": "workload",
+      "free_disk_bytes": 35012366336,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:12.84",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:09.88",
+          "rss_bytes": 69419008
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:01.38",
+          "rss_bytes": 529924096
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:44.18",
+          "rss_bytes": 512016384
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:09.23",
+          "rss_bytes": 509116416
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:56.529368+00:00",
+      "elapsed_seconds": 84.94404633401427,
+      "phase": "workload",
+      "free_disk_bytes": 35009327104,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:13.10",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:10.10",
+          "rss_bytes": 69468160
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:01.56",
+          "rss_bytes": 529924096
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:44.57",
+          "rss_bytes": 512114688
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:09.52",
+          "rss_bytes": 509902848
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:57.568942+00:00",
+      "elapsed_seconds": 85.9836724170018,
+      "phase": "workload",
+      "free_disk_bytes": 35007098880,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:13.37",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:10.34",
+          "rss_bytes": 69484544
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:01.76",
+          "rss_bytes": 529924096
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:44.85",
+          "rss_bytes": 512114688
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:09.76",
+          "rss_bytes": 509902848
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:58.618123+00:00",
+      "elapsed_seconds": 87.03283762501087,
+      "phase": "workload",
+      "free_disk_bytes": 34981806080,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:13.66",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:10.59",
+          "rss_bytes": 69517312
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:01.95",
+          "rss_bytes": 529924096
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:45.16",
+          "rss_bytes": 512114688
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:10.03",
+          "rss_bytes": 509902848
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:25:59.660876+00:00",
+      "elapsed_seconds": 88.07558862498263,
+      "phase": "workload",
+      "free_disk_bytes": 35002916864,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:13.90",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:10.79",
+          "rss_bytes": 69550080
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:02.12",
+          "rss_bytes": 529924096
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:45.46",
+          "rss_bytes": 512131072
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:10.31",
+          "rss_bytes": 509935616
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:26:00.699484+00:00",
+      "elapsed_seconds": 89.11421966698254,
+      "phase": "workload",
+      "free_disk_bytes": 35001479168,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:14.15",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:11.00",
+          "rss_bytes": 69582848
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:02.28",
+          "rss_bytes": 529924096
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:45.72",
+          "rss_bytes": 512131072
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:10.54",
+          "rss_bytes": 509935616
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:26:01.748751+00:00",
+      "elapsed_seconds": 90.16350691701518,
+      "phase": "workload",
+      "free_disk_bytes": 35000483840,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:14.39",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:11.21",
+          "rss_bytes": 69582848
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:02.46",
+          "rss_bytes": 529940480
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:46.02",
+          "rss_bytes": 512147456
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:10.79",
+          "rss_bytes": 509952000
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:26:02.790095+00:00",
+      "elapsed_seconds": 91.20485316700069,
+      "phase": "workload",
+      "free_disk_bytes": 34996461568,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:14.66",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:11.44",
+          "rss_bytes": 69582848
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:02.68",
+          "rss_bytes": 529989632
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:46.31",
+          "rss_bytes": 512147456
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:11.16",
+          "rss_bytes": 510033920
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:26:03.831390+00:00",
+      "elapsed_seconds": 92.24616958398838,
+      "phase": "workload",
+      "free_disk_bytes": 34994688000,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:14.91",
+          "rss_bytes": 39026688
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:11.65",
+          "rss_bytes": 69582848
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:02.84",
+          "rss_bytes": 529989632
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:46.59",
+          "rss_bytes": 512147456
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:11.41",
+          "rss_bytes": 510033920
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:26:04.879137+00:00",
+      "elapsed_seconds": 93.2939355839626,
+      "phase": "workload",
+      "free_disk_bytes": 34989690880,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:15.13",
+          "rss_bytes": 39043072
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:11.84",
+          "rss_bytes": 69582848
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:03.00",
+          "rss_bytes": 529989632
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:46.99",
+          "rss_bytes": 512163840
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:11.65",
+          "rss_bytes": 510033920
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:26:05.924547+00:00",
+      "elapsed_seconds": 94.33940054196864,
+      "phase": "workload",
+      "free_disk_bytes": 34986860544,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:15.37",
+          "rss_bytes": 39059456
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:12.05",
+          "rss_bytes": 69582848
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:03.17",
+          "rss_bytes": 529989632
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:47.24",
+          "rss_bytes": 512163840
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:11.92",
+          "rss_bytes": 510033920
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:26:06.965429+00:00",
+      "elapsed_seconds": 95.38030487496872,
+      "phase": "drain",
+      "free_disk_bytes": 34983268352,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:15.64",
+          "rss_bytes": 39059456
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:12.29",
+          "rss_bytes": 69582848
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:03.33",
+          "rss_bytes": 529989632
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:47.53",
+          "rss_bytes": 512180224
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:12.14",
+          "rss_bytes": 510033920
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:26:08.024328+00:00",
+      "elapsed_seconds": 96.43924387497827,
+      "phase": "drain",
+      "free_disk_bytes": 34968625152,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 47460,
+          "cpu_time": "0:15.72",
+          "rss_bytes": 51118080
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 47494,
+          "cpu_time": "0:12.36",
+          "rss_bytes": 69582848
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:03.36",
+          "rss_bytes": 532414464
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:47.56",
+          "rss_bytes": 513916928
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:12.18",
+          "rss_bytes": 512540672
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:26:09.348515+00:00",
+      "elapsed_seconds": 97.7633492500172,
+      "phase": "independent_reader",
+      "free_disk_bytes": 34961330176,
+      "processes": [
+        {
+          "role": "generator_or_reader",
+          "pid": 51838,
+          "cpu_time": "0:00.01",
+          "rss_bytes": 6766592
+        },
+        {
+          "role": "shared_kafka_1",
+          "pid": 74403,
+          "cpu_time": "41:03.38",
+          "rss_bytes": 532414464
+        },
+        {
+          "role": "shared_kafka_2",
+          "pid": 74472,
+          "cpu_time": "40:47.59",
+          "rss_bytes": 513916928
+        },
+        {
+          "role": "shared_kafka_3",
+          "pid": 74603,
+          "cpu_time": "47:12.20",
+          "rss_bytes": 512540672
+        }
+      ]
+    }
+  ],
+  "checks": [
+    "real_60_second_window",
+    "production_final_result_ready",
+    "final_result_unchanged_after_process_restart",
+    "late_post_410",
+    "independent_exact_journal_audit"
+  ],
+  "errors": [],
+  "poll_window": {
+    "starts_at": "2026-09-12T20:25:06.839899Z",
+    "ends_at": "2026-09-12T20:26:06.839899Z"
+  },
+  "load": {
+    "mode": "http-post",
+    "complete": true,
+    "cancelled": false,
+    "planned_unique_per_second": 5000,
+    "planned_attempts": 300000,
+    "planned_unique_keys": 300000,
+    "repeat_every": 0,
+    "workers": 256,
+    "queue": 4096,
+    "max_lag_ms": 100,
+    "scheduled_seconds": 60,
+    "wall_seconds_including_drain": 61.39422925,
+    "http_post_sent": 195501,
+    "valid_recorded_ack": 195070,
+    "unknown": 0,
+    "closed": 431,
+    "not_admitted": 0,
+    "not_open": 0,
+    "rejected": 0,
+    "generator_skipped": 104499,
+    "invalid_successful_responses": 0,
+    "ledger_bytes": 19200000,
+    "latency_p50_upper_bound_ms": 67.108864,
+    "latency_p95_upper_bound_ms": 268.435456,
+    "latency_p99_upper_bound_ms": 268.435456,
+    "latency_max_ms": 472.306459,
+    "latency_mean_ms": 78.58026705571326,
+    "post_sent_per_scheduled_second": [
+      2866,
+      3281,
+      3278,
+      3409,
+      3702,
+      3464,
+      3155,
+      2622,
+      3484,
+      2562,
+      3466,
+      3563,
+      3638,
+      3262,
+      3254,
+      3417,
+      3094,
+      3413,
+      3052,
+      3013,
+      3437,
+      3436,
+      3540,
+      3363,
+      3265,
+      2866,
+      3129,
+      3544,
+      3711,
+      3016,
+      2832,
+      3340,
+      3387,
+      2804,
+      3296,
+      2740,
+      3335,
+      2546,
+      3129,
+      3133,
+      2563,
+      3080,
+      3627,
+      3842,
+      3402,
+      3469,
+      3346,
+      2754,
+      3142,
+      3625,
+      3881,
+      3980,
+      3274,
+      2990,
+      3056,
+      3881,
+      3140,
+      2874,
+      2895,
+      3405
+    ],
+    "ack_received_per_scheduled_second": [
+      2610,
+      3281,
+      3278,
+      3409,
+      3702,
+      3464,
+      3155,
+      2622,
+      3484,
+      2562,
+      3466,
+      3563,
+      3638,
+      3262,
+      3254,
+      3417,
+      3094,
+      3413,
+      3052,
+      3013,
+      3437,
+      3436,
+      3540,
+      3363,
+      3265,
+      2866,
+      3129,
+      3544,
+      3711,
+      3016,
+      2832,
+      3340,
+      3387,
+      2804,
+      3296,
+      2740,
+      3335,
+      2546,
+      3129,
+      3133,
+      2563,
+      3080,
+      3627,
+      3842,
+      3403,
+      3468,
+      3346,
+      2754,
+      3142,
+      3625,
+      3881,
+      3980,
+      3274,
+      2990,
+      3056,
+      3881,
+      3140,
+      2874,
+      2895,
+      3405
+    ],
+    "method": "Uniform scheduled unique IDs; one independent POST per attempt; bounded workers and queue; stale/full attempts are skips; no request retries. Each worker buffers its private 64-byte full-ID/choice/admission/outcome ledger. 202 recorded is a durable attempt, not canonical uniqueness. No journal reconciliation occurs in this process."
+  },
+  "final_unique_votes": 195070,
+  "final_choice_counts": [
+    195070,
+    0
+  ],
+  "application_metrics": {
+    "accepted_responses": 0,
+    "conflict_responses": 0,
+    "duplicate_responses": 0,
+    "inflight": 0,
+    "recorded_responses": 195070,
+    "rejected_attempts": 431,
+    "storage_errors": 0,
+    "unknown_outcomes": 0,
+    "vote_http_attempts": 195501
+  },
+  "audit": {
+    "mode": "independent-http-audit",
+    "correct": true,
+    "ledger_valid": true,
+    "journal_closed": true,
+    "saved_service_results_matched": true,
+    "planned_attempts": 300000,
+    "confirmed_attempts": 195070,
+    "matched_ack_attempts": 195070,
+    "missing_ack_attempts": 0,
+    "unverified_ack_attempts": 0,
+    "unknown_client_attempts": 0,
+    "unknown_attempts_found_committed": 0,
+    "journal_attempts": 195070,
+    "canonical_unique_keys": 195070,
+    "duplicate_logical_attempts": 0,
+    "unexpected_records": 0,
+    "unexpected_physical_copies": 0,
+    "receipt_mismatches": 0,
+    "canonical_choice_counts": [
+      195070,
+      0
+    ],
+    "invalid_successful_responses": 0,
+    "compact_state_bytes": 3000000,
+    "wall_seconds": 0.121181083,
+    "method": "Separate process reads every CRC/SHA256-checked full-ID client record and the journal through CLOSED. AES inversion validates all 128 token bits and synthetic key range; dense flags are exact, not a probabilistic hash. Each ACK matches token+choice+admitted_at with multiplicity one. Only unknown attempts can explain additional records. Canonical first journal occurrence is compared to saved final service counts. No HTTP positions or receipt cache required."
+  },
+  "finished_at": "2026-09-12T20:26:10.386906+00:00",
+  "strict_reaudit": {
+    "journal_inspection": {
+      "method": "kafka-stable-snapshot",
+      "strict_snapshot_complete": true,
+      "recovery_boot_records": 0,
+      "snapshot_partitions": 4
+    },
+    "mode": "independent-http-audit",
+    "correct": true,
+    "ledger_valid": true,
+    "journal_closed": true,
+    "saved_service_results_matched": true,
+    "planned_attempts": 300000,
+    "confirmed_attempts": 195070,
+    "matched_ack_attempts": 195070,
+    "missing_ack_attempts": 0,
+    "unverified_ack_attempts": 0,
+    "unknown_client_attempts": 0,
+    "journey_failed_client_attempts": 0,
+    "unknown_attempts_found_committed": 0,
+    "journal_attempts": 195070,
+    "canonical_unique_keys": 195070,
+    "duplicate_logical_attempts": 0,
+    "unexpected_records": 0,
+    "unexpected_physical_copies": 0,
+    "receipt_mismatches": 0,
+    "canonical_choice_counts": [
+      195070,
+      0
+    ],
+    "invalid_successful_responses": 0,
+    "compact_state_bytes": 3000000,
+    "wall_seconds": 0.1922055,
+    "method": "Separate process reads every CRC/SHA256-checked full-ID client record and the journal through CLOSED. AES inversion validates all 128 token bits and synthetic key range; dense flags are exact, not a probabilistic hash. Each ACK matches token+choice+admitted_at with multiplicity one. Only unknown attempts can explain additional records. Canonical first journal occurrence is compared to saved final service counts. No HTTP positions or receipt cache required. Kafka inspection additionally scans the entire captured stable raw-offset snapshot beyond CLOSED, including transaction markers and aborted data; only valid recovery BOOT controls may follow CLOSED. Any open transaction, changing snapshot or unread tail prevents a successful audit. This certifies the inspected snapshot, not future writes."
+  },
+  "strict_reaudit_binary_sha256": "875b59cebfad6e7716b8fd241b415752fb3f96999d12b0a12b559ce922756060",
+  "rates": {
+    "planned_attempt_s": 5000.0,
+    "post_sent_s": 3258.35,
+    "recorded_ack_per_scheduled_second": 3251.1666666666665,
+    "planned_attempts_without_ACK": 104930,
+    "generator_skip_percent": 34.833
+  },
+  "resource_summary": {
+    "application": {
+      "sample_interval_seconds": 58.54460229200777,
+      "cpu_seconds_during_sample_interval": 13.95,
+      "mean_CPU_cores_during_sample_interval": 0.23827986618510838,
+      "peak_sampled_RSS_bytes_during_workload": 39059456
+    },
+    "shared_kafka_3": {
+      "sample_interval_seconds": 58.54460229200777,
+      "cpu_seconds_during_sample_interval": 14.849999999999909,
+      "mean_CPU_cores_during_sample_interval": 0.25365276077769444,
+      "peak_sampled_RSS_bytes_during_workload": 538574848
+    },
+    "generator_or_reader": {
+      "sample_interval_seconds": 58.54460229200777,
+      "cpu_seconds_during_sample_interval": 11.870000000000001,
+      "mean_CPU_cores_during_sample_interval": 0.20275139868223918,
+      "peak_sampled_RSS_bytes_during_workload": 69582848
+    },
+    "shared_kafka_1": {
+      "sample_interval_seconds": 58.54460229200777,
+      "cpu_seconds_during_sample_interval": 10.320000000000164,
+      "mean_CPU_cores_during_sample_interval": 0.1762758579950077,
+      "peak_sampled_RSS_bytes_during_workload": 544014336
+    },
+    "shared_kafka_2": {
+      "sample_interval_seconds": 58.54460229200777,
+      "cpu_seconds_during_sample_interval": 16.7199999999998,
+      "mean_CPU_cores_during_sample_interval": 0.28559421954229136,
+      "peak_sampled_RSS_bytes_during_workload": 545243136
+    }
+  },
+  "storage_observation": {
+    "after_admission_deadline": true,
+    "allocated_directory_bytes": 0,
+    "allocated_file_bytes": 50479104,
+    "by_extension": {
+      ".index": {
+        "allocated_bytes": 12582912,
+        "files": 12,
+        "logical_bytes": 12582912
+      },
+      ".log": {
+        "allocated_bytes": 25214976,
+        "files": 12,
+        "logical_bytes": 21364284
+      },
+      ".timeindex": {
+        "allocated_bytes": 12582912,
+        "files": 12,
+        "logical_bytes": 12582864
+      },
+      ".txnindex": {
+        "allocated_bytes": 0,
+        "files": 0,
+        "logical_bytes": 0
+      },
+      "other": {
+        "allocated_bytes": 98304,
+        "files": 24,
+        "logical_bytes": 612
+      }
+    },
+    "closed_barriers_verified": false,
+    "files": 60,
+    "limitations": [
+      "Requires a separately successful independent CLOSED journal audit; elapsed admission time and present replica directories do not prove CLOSED, ISR health or ACK durability.",
+      "This is a non-atomic filesystem snapshot. Retention, background writes or replica movement can change it; it does not prove the original event's peak or cumulative bytes.",
+      ".log includes Kafka record/batch overhead, transaction markers and any retained aborted data. Indexes may be preallocated; other includes producer snapshots, partition metadata and temporary/deletion files.",
+      "Bytes are already summed across three replicas: do not multiply them by RF3 again. Shared controller/transaction topics, broker logs and checkpoints outside these topic directories are excluded.",
+      "Allocated bytes are st_blocks multiplied by 512. Filesystem compression or shared/cloned extents may prevent interpreting their sum as exclusively owned physical device space.",
+      "No payload-byte, committed-record-count or vote-count claim is inferred from these file sizes."
+    ],
+    "limits": {
+      "deadline_seconds": 10,
+      "maximum_files": 20000
+    },
+    "logical_file_bytes": 46530672,
+    "mode": "one-http-poll-kafka-replica-file-stat",
+    "partitions": 4,
+    "replica_directories_present": 12,
+    "replicas_per_partition": 3,
+    "scope": "All regular files currently retained in this poll's exact partition directories, summed across three local replicas. Metadata-only stat; no record contents read.",
+    "snapshot_started_at": "2026-09-12T20:31:23.499475+00:00",
+    "wall_seconds": 0.004084500018507242
+  }
+}

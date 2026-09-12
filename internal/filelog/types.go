@@ -55,6 +55,15 @@ type Vote struct {
 	Choice     uint32
 	AdmittedAt time.Time
 }
+
+// Receipt identifies one persisted attempt. Singles may share a frame offset;
+// Index and Offset together identify the entry returned by Replay.
+type Receipt struct {
+	Partition  int32     `json:"partition"`
+	Offset     int64     `json:"offset"`
+	Index      uint32    `json:"index"`
+	AdmittedAt time.Time `json:"admitted_at"`
+}
 type FrameReceipt struct {
 	Partition  int32     `json:"partition"`
 	Offset     int64     `json:"offset"`

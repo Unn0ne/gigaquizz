@@ -1,0 +1,1726 @@
+{
+  "mode": "simple-files",
+  "label": "journey_files_5000",
+  "started_at": "2026-09-12T20:53:23.895893+00:00",
+  "correct": true,
+  "scope": "Real local HTTP application, isolated real 60-second poll, exact private-ledger audit, process restart; no TLS/CDN capacity claim",
+  "diagnostic_cpu_profile": false,
+  "configuration": {
+    "rate_unique_s": 5000,
+    "planned_attempts": 300000,
+    "workers": 1024,
+    "generator_queue": 4096,
+    "max_lag_ms": 100,
+    "repeat_every": 0,
+    "journey": true,
+    "max_inflight": 4096,
+    "kafka_partitions": null,
+    "batch_votes_override": null,
+    "queue_votes_override": null,
+    "linger_ms_override": null,
+    "app_GOMEMLIMIT": "3GiB",
+    "generator_GOMEMLIMIT": "2GiB",
+    "GOGC": "100",
+    "GOMAXPROCS": 10,
+    "owned_child_open_file_limit": 16384
+  },
+  "binary_sha256": {
+    "application": "9b0698b6f508606f384eb85bf4fc068a76fb48a91d3d6112c589c865133386bd",
+    "generator_and_reader": "c0a44866cb36312d2a41b6cd90383b0cd2bd30a49056d82ae3ccc1b22842584f"
+  },
+  "disk": {
+    "required_bytes_including_reserve": 9171205504,
+    "reserve_bytes": 8589934592,
+    "free_before": 32113545216,
+    "free_after": 32067858432
+  },
+  "samples": [
+    {
+      "at": "2026-09-12T20:53:24.146652+00:00",
+      "elapsed_seconds": 0.25082437496166676,
+      "phase": "preparation",
+      "free_disk_bytes": 32113524736,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:00.01",
+          "rss_bytes": 13123584
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:00.01",
+          "rss_bytes": 6766592
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:25.193952+00:00",
+      "elapsed_seconds": 1.2981210419675335,
+      "phase": "preparation",
+      "free_disk_bytes": 32113291264,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:00.01",
+          "rss_bytes": 13156352
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:00.06",
+          "rss_bytes": 19906560
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:26.233954+00:00",
+      "elapsed_seconds": 2.3380902920034714,
+      "phase": "preparation",
+      "free_disk_bytes": 32104566784,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:00.01",
+          "rss_bytes": 13156352
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:00.06",
+          "rss_bytes": 19906560
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:27.277995+00:00",
+      "elapsed_seconds": 3.3821765839820728,
+      "phase": "preparation",
+      "free_disk_bytes": 32094994432,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:00.01",
+          "rss_bytes": 13156352
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:00.06",
+          "rss_bytes": 19906560
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:28.321534+00:00",
+      "elapsed_seconds": 4.425681916996837,
+      "phase": "preparation",
+      "free_disk_bytes": 32061849600,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:00.01",
+          "rss_bytes": 13156352
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:00.06",
+          "rss_bytes": 19906560
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:29.368405+00:00",
+      "elapsed_seconds": 5.4725769169745035,
+      "phase": "preparation",
+      "free_disk_bytes": 32036429824,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:00.01",
+          "rss_bytes": 13156352
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:00.06",
+          "rss_bytes": 19906560
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:30.414675+00:00",
+      "elapsed_seconds": 6.518825792009011,
+      "phase": "preparation",
+      "free_disk_bytes": 32022503424,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:00.02",
+          "rss_bytes": 13156352
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:00.06",
+          "rss_bytes": 19906560
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:31.456762+00:00",
+      "elapsed_seconds": 7.560933958971873,
+      "phase": "preparation",
+      "free_disk_bytes": 32101396480,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:00.02",
+          "rss_bytes": 13156352
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:00.06",
+          "rss_bytes": 19906560
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:32.504658+00:00",
+      "elapsed_seconds": 8.608788791985717,
+      "phase": "workload",
+      "free_disk_bytes": 32100708352,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:00.88",
+          "rss_bytes": 27934720
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:00.82",
+          "rss_bytes": 97452032
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:33.547251+00:00",
+      "elapsed_seconds": 9.651411583996378,
+      "phase": "workload",
+      "free_disk_bytes": 32100925440,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:03.24",
+          "rss_bytes": 28459008
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:02.82",
+          "rss_bytes": 130449408
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:34.589913+00:00",
+      "elapsed_seconds": 10.694069666962605,
+      "phase": "workload",
+      "free_disk_bytes": 32099999744,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:05.60",
+          "rss_bytes": 28540928
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:04.81",
+          "rss_bytes": 130678784
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:35.631541+00:00",
+      "elapsed_seconds": 11.735670666967053,
+      "phase": "workload",
+      "free_disk_bytes": 32100900864,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:07.94",
+          "rss_bytes": 28622848
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:06.80",
+          "rss_bytes": 130793472
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:36.679192+00:00",
+      "elapsed_seconds": 12.783407667011488,
+      "phase": "workload",
+      "free_disk_bytes": 32097337344,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:10.33",
+          "rss_bytes": 29032448
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:08.81",
+          "rss_bytes": 130826240
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:37.722050+00:00",
+      "elapsed_seconds": 13.8261979589588,
+      "phase": "workload",
+      "free_disk_bytes": 32095916032,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:12.69",
+          "rss_bytes": 29048832
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:10.83",
+          "rss_bytes": 130859008
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:38.761934+00:00",
+      "elapsed_seconds": 14.866082708991598,
+      "phase": "workload",
+      "free_disk_bytes": 32104259584,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:14.88",
+          "rss_bytes": 33734656
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:12.71",
+          "rss_bytes": 129368064
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:39.806762+00:00",
+      "elapsed_seconds": 15.910889416991267,
+      "phase": "workload",
+      "free_disk_bytes": 32102268928,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:16.70",
+          "rss_bytes": 36388864
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:14.37",
+          "rss_bytes": 134283264
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:41.243022+00:00",
+      "elapsed_seconds": 17.347175083996262,
+      "phase": "workload",
+      "free_disk_bytes": 32101974016,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:18.12",
+          "rss_bytes": 50511872
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:15.72",
+          "rss_bytes": 158072832
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:42.316784+00:00",
+      "elapsed_seconds": 18.421000792004634,
+      "phase": "workload",
+      "free_disk_bytes": 32101888000,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:19.49",
+          "rss_bytes": 53608448
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:16.91",
+          "rss_bytes": 163069952
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:43.470660+00:00",
+      "elapsed_seconds": 19.57484133396065,
+      "phase": "workload",
+      "free_disk_bytes": 32102465536,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:21.05",
+          "rss_bytes": 53657600
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:18.31",
+          "rss_bytes": 163102720
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:44.570303+00:00",
+      "elapsed_seconds": 20.674446458986495,
+      "phase": "workload",
+      "free_disk_bytes": 32098607104,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:22.67",
+          "rss_bytes": 53673984
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:19.72",
+          "rss_bytes": 163102720
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:45.637430+00:00",
+      "elapsed_seconds": 21.7416909589665,
+      "phase": "workload",
+      "free_disk_bytes": 32096727040,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:24.16",
+          "rss_bytes": 53706752
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:21.02",
+          "rss_bytes": 163119104
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:46.788805+00:00",
+      "elapsed_seconds": 22.892952458991203,
+      "phase": "workload",
+      "free_disk_bytes": 32095035392,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:25.79",
+          "rss_bytes": 53755904
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:22.44",
+          "rss_bytes": 163135488
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:47.877325+00:00",
+      "elapsed_seconds": 23.98145600000862,
+      "phase": "workload",
+      "free_disk_bytes": 32094404608,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:27.55",
+          "rss_bytes": 53788672
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:23.98",
+          "rss_bytes": 163135488
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:48.939326+00:00",
+      "elapsed_seconds": 25.04344483400928,
+      "phase": "workload",
+      "free_disk_bytes": 32093356032,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:29.33",
+          "rss_bytes": 53788672
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:25.58",
+          "rss_bytes": 163135488
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:50.003649+00:00",
+      "elapsed_seconds": 26.10779325000476,
+      "phase": "workload",
+      "free_disk_bytes": 32093356032,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:31.09",
+          "rss_bytes": 53788672
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:27.22",
+          "rss_bytes": 163135488
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:51.076884+00:00",
+      "elapsed_seconds": 27.181314374960493,
+      "phase": "workload",
+      "free_disk_bytes": 32092307456,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:32.80",
+          "rss_bytes": 53788672
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:28.74",
+          "rss_bytes": 163135488
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:52.157028+00:00",
+      "elapsed_seconds": 28.261158292007167,
+      "phase": "workload",
+      "free_disk_bytes": 32097533952,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:34.43",
+          "rss_bytes": 53772288
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:30.18",
+          "rss_bytes": 160202752
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:53.213717+00:00",
+      "elapsed_seconds": 29.317844667006284,
+      "phase": "workload",
+      "free_disk_bytes": 32097533952,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:36.13",
+          "rss_bytes": 53772288
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:31.72",
+          "rss_bytes": 160202752
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:54.299340+00:00",
+      "elapsed_seconds": 30.403608458989765,
+      "phase": "workload",
+      "free_disk_bytes": 32097533952,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:37.86",
+          "rss_bytes": 53805056
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:33.25",
+          "rss_bytes": 160202752
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:55.362728+00:00",
+      "elapsed_seconds": 31.466862041968852,
+      "phase": "workload",
+      "free_disk_bytes": 32096489472,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:39.68",
+          "rss_bytes": 53821440
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:34.90",
+          "rss_bytes": 160235520
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:56.416937+00:00",
+      "elapsed_seconds": 32.52115404198412,
+      "phase": "workload",
+      "free_disk_bytes": 32095440896,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:41.26",
+          "rss_bytes": 53903360
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:36.33",
+          "rss_bytes": 156041216
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:57.463808+00:00",
+      "elapsed_seconds": 33.567944667011034,
+      "phase": "workload",
+      "free_disk_bytes": 32095440896,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:42.93",
+          "rss_bytes": 53903360
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:37.86",
+          "rss_bytes": 156041216
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:58.546378+00:00",
+      "elapsed_seconds": 34.650477209012024,
+      "phase": "workload",
+      "free_disk_bytes": 32095440896,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:44.71",
+          "rss_bytes": 53903360
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:39.46",
+          "rss_bytes": 164315136
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:53:59.619921+00:00",
+      "elapsed_seconds": 35.724053459009156,
+      "phase": "workload",
+      "free_disk_bytes": 32095440896,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:46.48",
+          "rss_bytes": 53903360
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:41.10",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:00.696353+00:00",
+      "elapsed_seconds": 36.8004697089782,
+      "phase": "workload",
+      "free_disk_bytes": 32095436800,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:48.21",
+          "rss_bytes": 53903360
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:42.66",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:01.756481+00:00",
+      "elapsed_seconds": 37.860611583979335,
+      "phase": "workload",
+      "free_disk_bytes": 32094388224,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:49.97",
+          "rss_bytes": 53903360
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:44.23",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:02.833106+00:00",
+      "elapsed_seconds": 38.93720995896729,
+      "phase": "workload",
+      "free_disk_bytes": 32093339648,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:51.75",
+          "rss_bytes": 52723712
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:45.82",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:03.895322+00:00",
+      "elapsed_seconds": 39.99944433401106,
+      "phase": "workload",
+      "free_disk_bytes": 32093339648,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:53.38",
+          "rss_bytes": 52396032
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:47.25",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:04.965828+00:00",
+      "elapsed_seconds": 41.06993358395994,
+      "phase": "workload",
+      "free_disk_bytes": 32093339648,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:55.20",
+          "rss_bytes": 52396032
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:48.90",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:06.046321+00:00",
+      "elapsed_seconds": 42.150459124997724,
+      "phase": "workload",
+      "free_disk_bytes": 32093339648,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:56.95",
+          "rss_bytes": 50954240
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:50.49",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:07.107429+00:00",
+      "elapsed_seconds": 43.21152404200984,
+      "phase": "workload",
+      "free_disk_bytes": 32093339648,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "0:58.71",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:52.05",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:08.169414+00:00",
+      "elapsed_seconds": 44.27354566700524,
+      "phase": "workload",
+      "free_disk_bytes": 32093339648,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:00.48",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:53.67",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:09.235341+00:00",
+      "elapsed_seconds": 45.33945195900742,
+      "phase": "workload",
+      "free_disk_bytes": 32093339648,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:02.29",
+          "rss_bytes": 50937856
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:55.28",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:10.307813+00:00",
+      "elapsed_seconds": 46.412642874987796,
+      "phase": "workload",
+      "free_disk_bytes": 32092291072,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:04.01",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:56.83",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:11.403935+00:00",
+      "elapsed_seconds": 47.508068249968346,
+      "phase": "workload",
+      "free_disk_bytes": 32092270592,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:05.85",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "0:58.48",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:12.471726+00:00",
+      "elapsed_seconds": 48.57585137500428,
+      "phase": "workload",
+      "free_disk_bytes": 32092270592,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:07.62",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:00.09",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:13.537888+00:00",
+      "elapsed_seconds": 49.6420260000159,
+      "phase": "workload",
+      "free_disk_bytes": 32092270592,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:09.32",
+          "rss_bytes": 50905088
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:01.61",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:14.646149+00:00",
+      "elapsed_seconds": 50.7503073340049,
+      "phase": "workload",
+      "free_disk_bytes": 32092262400,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:11.05",
+          "rss_bytes": 50872320
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:03.12",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:15.697169+00:00",
+      "elapsed_seconds": 51.801276416983455,
+      "phase": "workload",
+      "free_disk_bytes": 32092270592,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:12.70",
+          "rss_bytes": 50872320
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:04.63",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:16.757957+00:00",
+      "elapsed_seconds": 52.86206916696392,
+      "phase": "workload",
+      "free_disk_bytes": 32091222016,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:14.39",
+          "rss_bytes": 50872320
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:06.14",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:17.835693+00:00",
+      "elapsed_seconds": 53.93981099996017,
+      "phase": "workload",
+      "free_disk_bytes": 32091222016,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:16.16",
+          "rss_bytes": 50888704
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:07.77",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:18.891610+00:00",
+      "elapsed_seconds": 54.99571670900332,
+      "phase": "workload",
+      "free_disk_bytes": 32091222016,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:17.73",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:09.16",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:19.942385+00:00",
+      "elapsed_seconds": 56.046467959007714,
+      "phase": "workload",
+      "free_disk_bytes": 32091222016,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:19.52",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:10.79",
+          "rss_bytes": 165527552
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:21.024186+00:00",
+      "elapsed_seconds": 57.128321999975014,
+      "phase": "workload",
+      "free_disk_bytes": 32091222016,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:21.31",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:12.40",
+          "rss_bytes": 165543936
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:22.109834+00:00",
+      "elapsed_seconds": 58.21393220900791,
+      "phase": "workload",
+      "free_disk_bytes": 32091217920,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:23.01",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:13.91",
+          "rss_bytes": 165543936
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:23.199539+00:00",
+      "elapsed_seconds": 59.30367166700307,
+      "phase": "workload",
+      "free_disk_bytes": 32091217920,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:24.73",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:15.44",
+          "rss_bytes": 165543936
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:24.262562+00:00",
+      "elapsed_seconds": 60.36667295900406,
+      "phase": "workload",
+      "free_disk_bytes": 32090169344,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:26.48",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:17.02",
+          "rss_bytes": 165543936
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:25.333685+00:00",
+      "elapsed_seconds": 61.43777662498178,
+      "phase": "workload",
+      "free_disk_bytes": 32090169344,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:28.24",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:18.56",
+          "rss_bytes": 172834816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:26.391546+00:00",
+      "elapsed_seconds": 62.49564479198307,
+      "phase": "workload",
+      "free_disk_bytes": 32090169344,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:30.13",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:20.29",
+          "rss_bytes": 172834816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:27.459093+00:00",
+      "elapsed_seconds": 63.56318574998295,
+      "phase": "workload",
+      "free_disk_bytes": 32090161152,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:31.93",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:21.90",
+          "rss_bytes": 172834816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:28.515718+00:00",
+      "elapsed_seconds": 64.61981566698523,
+      "phase": "workload",
+      "free_disk_bytes": 32090161152,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:33.71",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:23.54",
+          "rss_bytes": 172834816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:29.571839+00:00",
+      "elapsed_seconds": 65.67594387498684,
+      "phase": "workload",
+      "free_disk_bytes": 32090103808,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:35.42",
+          "rss_bytes": 50921472
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:25.05",
+          "rss_bytes": 172834816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:30.627310+00:00",
+      "elapsed_seconds": 66.7314425840159,
+      "phase": "workload",
+      "free_disk_bytes": 32090103808,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:37.18",
+          "rss_bytes": 50937856
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:26.64",
+          "rss_bytes": 172834816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:31.685678+00:00",
+      "elapsed_seconds": 67.78976899996633,
+      "phase": "workload",
+      "free_disk_bytes": 32089055232,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:38.96",
+          "rss_bytes": 50937856
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:28.22",
+          "rss_bytes": 172834816
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:32.747626+00:00",
+      "elapsed_seconds": 68.8517622089712,
+      "phase": "drain",
+      "free_disk_bytes": 32086253568,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:39.66",
+          "rss_bytes": 50872320
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:28.90",
+          "rss_bytes": 172851200
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:33.802185+00:00",
+      "elapsed_seconds": 69.90630604198668,
+      "phase": "drain",
+      "free_disk_bytes": 32082087936,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:39.73",
+          "rss_bytes": 53477376
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:28.97",
+          "rss_bytes": 172851200
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:34.849134+00:00",
+      "elapsed_seconds": 70.9532567919814,
+      "phase": "drain",
+      "free_disk_bytes": 32077971456,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:39.73",
+          "rss_bytes": 53460992
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:29.03",
+          "rss_bytes": 172851200
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:35.916864+00:00",
+      "elapsed_seconds": 72.02097462496022,
+      "phase": "drain",
+      "free_disk_bytes": 32073625600,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:39.73",
+          "rss_bytes": 53460992
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:29.11",
+          "rss_bytes": 172851200
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:36.968748+00:00",
+      "elapsed_seconds": 73.0728702499764,
+      "phase": "drain",
+      "free_disk_bytes": 32069455872,
+      "processes": [
+        {
+          "role": "application",
+          "pid": 21472,
+          "cpu_time": "1:39.73",
+          "rss_bytes": 53460992
+        },
+        {
+          "role": "generator_or_reader",
+          "pid": 21487,
+          "cpu_time": "1:29.19",
+          "rss_bytes": 172851200
+        }
+      ]
+    },
+    {
+      "at": "2026-09-12T20:54:38.258438+00:00",
+      "elapsed_seconds": 74.36253320897231,
+      "phase": "independent_reader",
+      "free_disk_bytes": 32067575808,
+      "processes": [
+        {
+          "role": "generator_or_reader",
+          "pid": 22984,
+          "cpu_time": "0:00.01",
+          "rss_bytes": 12550144
+        }
+      ]
+    }
+  ],
+  "checks": [
+    "real_60_second_window",
+    "production_final_result_ready",
+    "final_result_unchanged_after_process_restart",
+    "late_post_410",
+    "independent_exact_journal_audit"
+  ],
+  "errors": [],
+  "poll_window": {
+    "starts_at": "2026-09-12T20:53:32.122394Z",
+    "ends_at": "2026-09-12T20:54:32.122394Z"
+  },
+  "load": {
+    "mode": "http-journey",
+    "complete": true,
+    "cancelled": false,
+    "planned_unique_per_second": 5000,
+    "planned_attempts": 300000,
+    "planned_unique_keys": 300000,
+    "repeat_every": 0,
+    "workers": 1024,
+    "queue": 4096,
+    "max_lag_ms": 100,
+    "scheduled_seconds": 60,
+    "wall_seconds_including_drain": 65.296217625,
+    "http_post_sent": 292619,
+    "valid_recorded_ack": 292613,
+    "unknown": 0,
+    "closed": 6,
+    "not_admitted": 0,
+    "not_open": 0,
+    "rejected": 0,
+    "generator_skipped": 383,
+    "journey_failed": 6998,
+    "journey_started": 299617,
+    "journey_completed_before_post": 292619,
+    "http_get_sent": 1484689,
+    "http_get_failures": 6561,
+    "http_get_body_bytes": 11444574558,
+    "http_get_stages": [
+      {
+        "stage": "html",
+        "sent": 299492,
+        "failures": 1275,
+        "response_body_bytes": 902702859,
+        "mean_latency_ms": 2.566664520401213,
+        "max_latency_ms": 266.095625
+      },
+      {
+        "stage": "css",
+        "sent": 298213,
+        "failures": 1122,
+        "response_body_bytes": 5156924506,
+        "mean_latency_ms": 1.776128897844829,
+        "max_latency_ms": 268.488
+      },
+      {
+        "stage": "common_js",
+        "sent": 297075,
+        "failures": 1476,
+        "response_body_bytes": 693183239,
+        "mean_latency_ms": 1.5523801953345115,
+        "max_latency_ms": 270.571292
+      },
+      {
+        "stage": "poll_js",
+        "sent": 295540,
+        "failures": 1131,
+        "response_body_bytes": 4587230057,
+        "mean_latency_ms": 1.417128445621574,
+        "max_latency_ms": 271.758
+      },
+      {
+        "stage": "question",
+        "sent": 294369,
+        "failures": 1557,
+        "response_body_bytes": 104533897,
+        "mean_latency_ms": 1.2713021125763921,
+        "max_latency_ms": 282.147709
+      }
+    ],
+    "journey_mean_ms": 8.638849692714365,
+    "journey_max_ms": 334.69625,
+    "invalid_successful_responses": 0,
+    "ledger_bytes": 19200000,
+    "latency_p50_upper_bound_ms": 8.388608,
+    "latency_p95_upper_bound_ms": 33.554432,
+    "latency_p99_upper_bound_ms": 67.108864,
+    "latency_max_ms": 301.574375,
+    "latency_mean_ms": 9.49032537242626,
+    "post_sent_per_scheduled_second": [
+      4828,
+      5001,
+      4998,
+      5002,
+      4998,
+      5001,
+      4999,
+      2629,
+      2192,
+      4739,
+      3894,
+      4782,
+      4769,
+      5196,
+      4982,
+      4996,
+      4899,
+      5092,
+      5035,
+      5001,
+      4998,
+      4906,
+      5070,
+      4670,
+      4996,
+      5001,
+      4994,
+      5001,
+      4982,
+      4997,
+      4905,
+      5114,
+      4976,
+      5007,
+      5017,
+      5003,
+      4969,
+      4992,
+      5036,
+      5001,
+      4964,
+      5035,
+      4996,
+      5006,
+      4992,
+      4981,
+      4962,
+      5011,
+      4997,
+      4997,
+      5001,
+      4997,
+      5006,
+      5000,
+      4998,
+      4998,
+      4996,
+      5008,
+      4997,
+      5003
+    ],
+    "ack_received_per_scheduled_second": [
+      4791,
+      4990,
+      4999,
+      5003,
+      4995,
+      5010,
+      5010,
+      2658,
+      1982,
+      4851,
+      3969,
+      4741,
+      4722,
+      5279,
+      4935,
+      5047,
+      4857,
+      5138,
+      4989,
+      5034,
+      5010,
+      4861,
+      5064,
+      4695,
+      5027,
+      4997,
+      4982,
+      4990,
+      5007,
+      4991,
+      4732,
+      5291,
+      4972,
+      5011,
+      4999,
+      4999,
+      4951,
+      5021,
+      5034,
+      5010,
+      4972,
+      5003,
+      4947,
+      5063,
+      4984,
+      4994,
+      4964,
+      5016,
+      4869,
+      5119,
+      4962,
+      5037,
+      4998,
+      5025,
+      4985,
+      4903,
+      5101,
+      4996,
+      5004,
+      4991
+    ],
+    "method": "Uniform scheduled unique IDs; one independent POST per attempt; bounded workers and queue; stale/full attempts are skips; no request retries. Each worker buffers its private 64-byte full-ID/choice/admission/outcome ledger. 202 recorded is a durable attempt, not canonical uniqueness. No journal reconciliation occurs in this process. Each original attempt first fetches HTML, app.css, common.js, poll.js and the original question sequentially with no browser cache or JS execution. Repeats send only POST. The GET chain must finish before the original scheduled slot plus max-lag; a failed/expired chain is journey_failed and sends no POST. GET metrics count client.Do calls and actually read response-body bytes, excluding headers, transport/TLS overhead and the one setup validation GET; they do not include any transparent GET connection repair inside Go Transport.",
+    "post_latency_scope": "POST dispatch through response body read; excludes scheduler and preceding GETs"
+  },
+  "final_unique_votes": 292613,
+  "final_choice_counts": [
+    292613,
+    0
+  ],
+  "application_metrics": {
+    "accepted_responses": 0,
+    "conflict_responses": 0,
+    "duplicate_responses": 0,
+    "inflight": 0,
+    "recorded_responses": 292613,
+    "rejected_attempts": 6,
+    "storage_errors": 6,
+    "unknown_outcomes": 0,
+    "vote_http_attempts": 292619
+  },
+  "audit": {
+    "mode": "independent-http-audit",
+    "correct": true,
+    "ledger_valid": true,
+    "journal_closed": true,
+    "saved_service_results_matched": true,
+    "planned_attempts": 300000,
+    "confirmed_attempts": 292613,
+    "matched_ack_attempts": 292613,
+    "missing_ack_attempts": 0,
+    "unverified_ack_attempts": 0,
+    "unknown_client_attempts": 0,
+    "journey_failed_client_attempts": 6998,
+    "unknown_attempts_found_committed": 0,
+    "journal_attempts": 292613,
+    "canonical_unique_keys": 292613,
+    "duplicate_logical_attempts": 0,
+    "unexpected_records": 0,
+    "unexpected_physical_copies": 0,
+    "receipt_mismatches": 0,
+    "canonical_choice_counts": [
+      292613,
+      0
+    ],
+    "invalid_successful_responses": 0,
+    "compact_state_bytes": 3000000,
+    "wall_seconds": 0.267135958,
+    "method": "Separate process reads every CRC/SHA256-checked full-ID client record and the journal through CLOSED. AES inversion validates all 128 token bits and synthetic key range; dense flags are exact, not a probabilistic hash. Each ACK matches token+choice+admitted_at with multiplicity one. Only unknown attempts can explain additional records. Canonical first journal occurrence is compared to saved final service counts. No HTTP positions or receipt cache required."
+  },
+  "finished_at": "2026-09-12T20:54:39.280024+00:00",
+  "rates": {
+    "planned_attempt_s": 5000.0,
+    "post_sent_s": 4876.983333333334,
+    "recorded_ack_per_scheduled_second": 4876.883333333333,
+    "planned_attempts_without_ACK": 7387,
+    "generator_skip_percent": 0.12766666666666668
+  },
+  "resource_summary": {
+    "generator_or_reader": {
+      "sample_interval_seconds": 59.18098020798061,
+      "cpu_seconds_during_sample_interval": 87.4,
+      "mean_CPU_cores_during_sample_interval": 1.4768258263524678,
+      "peak_sampled_RSS_bytes_during_workload": 172834816
+    },
+    "application": {
+      "sample_interval_seconds": 59.18098020798061,
+      "cpu_seconds_during_sample_interval": 98.08000000000001,
+      "mean_CPU_cores_during_sample_interval": 1.6572892110829525,
+      "peak_sampled_RSS_bytes_during_workload": 53903360
+    }
+  },
+  "storage_observation": {
+    "closed_WAL_logical_bytes": 8578444,
+    "closed_WAL_allocated_bytes": 9441280,
+    "attempts": 292613,
+    "vote_frames": 9629,
+    "attempts_per_frame": 30.388721570256518,
+    "logical_bytes_per_recorded_attempt": 29.316687912020313,
+    "method": "After independent CRC/closed-prefix audit: WAL size = 80-byte file header + 40-byte CLOSED + 28*attempts + 40*vote_frames. One physical local WAL. No filesystem content is published."
+  }
+}

@@ -437,7 +437,7 @@ func (s *Store) Vote(ctx context.Context, id, token string, choices []int) (poll
 	}
 	w := e.writer
 	e.mu.Unlock()
-	r, err := w.SubmitFrame(ctx, []filelog.Input{{Token: key, Choice: mask}})
+	r, err := w.Submit(ctx, filelog.Input{Token: key, Choice: mask})
 	if err != nil {
 		switch {
 		case errors.Is(err, filelog.ErrNotOpen):
