@@ -1,0 +1,33 @@
+{
+  "date": "2026-09-12",
+  "planned_profile": {
+    "rate_unique_per_second": 1700000,
+    "window_seconds": 60,
+    "planned_unique": 102000000,
+    "mode": "packed direct journal; not HTTP"
+  },
+  "free_disk_bytes": 33738338304,
+  "reserve_bytes": 8589934592,
+  "retained": {
+    ".local/filebench/logs": {
+      "logical_bytes": 6080753694,
+      "allocated_bytes": 6080778240,
+      "files": 8
+    },
+    ".local/filebench/ledgers": {
+      "logical_bytes": 322048802,
+      "allocated_bytes": 322076672,
+      "files": 14
+    },
+    ".local/framebench": {
+      "logical_bytes": 117832718,
+      "allocated_bytes": 117854208,
+      "files": 10
+    },
+    ".local/kafka-lab": {
+      "logical_bytes": 2069584781,
+      "allocated_bytes": 1067065344,
+      "files": 5046
+    }
+  }
+}

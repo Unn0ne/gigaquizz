@@ -1,0 +1,2 @@
+# Preserve the upstream QR release bytes, including its trailing spaces.
+internal/web/static/qrcodegen.js whitespace=-blank-at-eol

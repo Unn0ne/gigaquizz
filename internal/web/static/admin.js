@@ -8,6 +8,106 @@
   let listSequence = 0;
   let resultsSequence = 0;
   let authenticated = false;
+  let qrSequence = 0;
+  let qrLink = '';
+  let qrDownloadURL = null;
+
+  // Keep rendering separate from UI state so the exact PNG pixels can be
+  // verified independently. All dimensions are integer multiples of a module.
+  function renderQRCode(canvas, text) {
+    const qr = qrcodegen.QrCode.encodeText(text, qrcodegen.QrCode.Ecc.MEDIUM);
+    const quietZone = 4;
+    const scale = 8;
+    const pixels = (qr.size + quietZone * 2) * scale;
+    canvas.width = pixels;
+    canvas.height = pixels;
+    const context = canvas.getContext('2d');
+    if (!context) throw new Error('Canvas unavailable');
+    context.imageSmoothingEnabled = false;
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, pixels, pixels);
+    context.fillStyle = '#000000';
+    for (let y = 0; y < qr.size; y++) {
+      for (let x = 0; x < qr.size; x++) {
+        if (qr.getModule(x, y)) context.fillRect((x + quietZone) * scale, (y + quietZone) * scale, scale, scale);
+      }
+    }
+    return { modules: qr.size, scale, quietZone, pixels };
+  }
+  window.GigaquizzQR = Object.freeze({ render: renderQRCode });
+
+  function resetQR() {
+    qrSequence++;
+    qrLink = '';
+    if (qrDownloadURL) URL.revokeObjectURL(qrDownloadURL);
+    qrDownloadURL = null;
+    byId('poll-qr').width = 0;
+    byId('poll-qr').height = 0;
+    byId('qr-panel').hidden = true;
+    byId('toggle-qr').setAttribute('aria-expanded', 'false');
+    byId('toggle-qr').textContent = 'Показать QR-код';
+    byId('download-qr').disabled = true;
+    ui.notice(byId('qr-message'), '');
+  }
+
+  function toggleQR() {
+    if (!authenticated || !selectedID) return;
+    if (!byId('qr-panel').hidden) { resetQR(); return; }
+    try {
+      const link = byId('share-link').value;
+      if (!link) return;
+      renderQRCode(byId('poll-qr'), link);
+      qrLink = link;
+      const host = new URL(link).hostname;
+      const local = host === 'localhost' || host.endsWith('.localhost') || host.startsWith('127.') || host === '[::1]';
+      byId('qr-hint').textContent = local
+        ? 'Эта локальная ссылка доступна только на этом устройстве. Для телефона используйте доступный ему адрес сервиса.'
+        : 'Отсканируйте камерой, чтобы открыть этот опрос.';
+      byId('qr-panel').hidden = false;
+      byId('toggle-qr').setAttribute('aria-expanded', 'true');
+      byId('toggle-qr').textContent = 'Скрыть QR-код';
+      byId('download-qr').disabled = false;
+      ui.notice(byId('qr-message'), '');
+    } catch {
+      resetQR();
+      ui.notice(byId('qr-message'), 'Не удалось создать QR-код. Скопируйте ссылку на опрос.', 'error');
+    }
+  }
+
+  function downloadQR() {
+    const button = byId('download-qr');
+    if (!authenticated || !selectedID || button.disabled || byId('qr-panel').hidden || !qrLink || qrLink !== byId('share-link').value) return;
+    const sequence = qrSequence;
+    const id = selectedID;
+    const link = qrLink;
+    button.disabled = true;
+    const stillCurrent = () => sequence === qrSequence && authenticated && selectedID === id && qrLink === link && byId('share-link').value === link && !byId('qr-panel').hidden;
+    try {
+      byId('poll-qr').toBlob(blob => {
+        // A switch, hide or logout can happen while PNG encoding is pending.
+        if (!stillCurrent()) return;
+        try {
+          if (!blob) throw new Error('PNG export unavailable');
+          if (qrDownloadURL) URL.revokeObjectURL(qrDownloadURL);
+          qrDownloadURL = URL.createObjectURL(blob);
+          const download = document.createElement('a');
+          download.href = qrDownloadURL;
+          download.download = 'gigaquizz-qr.png';
+          document.body.append(download);
+          download.click();
+          download.remove();
+          ui.notice(byId('qr-message'), 'PNG готов к скачиванию.');
+        } catch {
+          ui.notice(byId('qr-message'), 'Не удалось скачать PNG. Попробуйте ещё раз.', 'error');
+        } finally { button.disabled = false; }
+      }, 'image/png');
+    } catch {
+      if (stillCurrent()) {
+        button.disabled = false;
+        ui.notice(byId('qr-message'), 'Не удалось скачать PNG. Попробуйте ещё раз.', 'error');
+      }
+    }
+  }
 
   function showLogin(message = '') {
     authenticated = false;
@@ -15,6 +115,9 @@
     resultsSequence++;
     polls = [];
     selectedID = null;
+    resetQR();
+    byId('share-link').value = '';
+    byId('open-poll').href = '/';
     byId('session-loading').hidden = true;
     byId('dashboard').hidden = true;
     byId('logout').hidden = true;
@@ -117,6 +220,7 @@
   async function selectPoll(id) {
     const poll = polls.find((item) => item.id === id);
     if (!poll) return;
+    resetQR();
     selectedID = id;
     renderPollList();
     byId('results-placeholder').hidden = true;
@@ -279,6 +383,8 @@
   byId('new-type').addEventListener('change', updateOptionsHint);
   byId('refresh-polls').addEventListener('click', async () => { ui.notice(byId('admin-message'), ''); await loadPolls(); });
   byId('refresh-results').addEventListener('click', loadResults);
+  byId('toggle-qr').addEventListener('click', toggleQR);
+  byId('download-qr').addEventListener('click', downloadQR);
   resetSchedule();
   (async () => {
     try {

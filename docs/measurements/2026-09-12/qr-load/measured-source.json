@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-12",
+  "definition": "SHA256 of sorted paths + NUL + bytes + NUL for existing cmd/internal/scripts/tests files and listed build/config manifests; excludes docs, private data, node_modules and local binaries.",
+  "branches": {
+    "simple-files": {
+      "base_commit": "751144f6be4cd76384d7c3557e672e15d0229423",
+      "source_files": 68,
+      "source_sha256": "4382df11157bcbbaf07085a9c8b0ed0484ef561b563623013899460a4529dbd5",
+      "binaries_sha256": {
+        "gigaquizz": "04d3c25cf9eb8ef449eb004b9a0d209bf7c6d0e7a957c9e8be9508a6c3aaee78",
+        "filebench": "217e83e70e7374aed29889e4fb6676c5f8af2920218580f8039e8a60eb3e3199"
+      }
+    },
+    "postgres-kafka": {
+      "base_commit": "9d2ddccfef01a90e4ca08aac3c4fffabc4b1e387",
+      "source_files": 117,
+      "source_sha256": "985ab4879555c45197f734b80d12f88085b96442e8ab27348a8aa71aecca638b",
+      "binaries_sha256": {
+        "gigaquizz": "ca493a0c916dcdf53eb6504879d6d3ce3c86cb625562b41424d22a94b9a854bd",
+        "framebench": "50e303561f5b7fdb892d7a8a7ecca5092937500357b1f058cdc4485819e2acf6"
+      }
+    }
+  }
+}

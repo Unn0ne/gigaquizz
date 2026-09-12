@@ -1,0 +1,7 @@
+go build -o bin/gigaquizz ./cmd/gigaquizz
+go build -o bin/loadtest ./cmd/loadtest
+go build -o bin/storagebench ./cmd/storagebench
+go build -o bin/logbench ./cmd/logbench
+go build -o bin/corebench ./cmd/corebench
+go build -o bin/framebench ./cmd/framebench
+go build -o bin/filebench ./cmd/filebench

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Bounded local journal profile with aggregate process samples and optional broker crash."""
 import argparse
+from contextlib import ExitStack
 from datetime import datetime, timezone
 import fcntl
 import hashlib
@@ -9,12 +10,12 @@ import os
 from pathlib import Path
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import time
 
-ROOT = Path(__file__).resolve().parents[1]
-LAB = ROOT / ".local/kafka-lab"
+SOURCE_ROOT = Path(__file__).resolve().parents[1]
 
 
 def utc():
@@ -29,8 +30,8 @@ def cpu_seconds(value):
     return int(days) * 86400 + result
 
 
-def sample(bench_pid):
-    meta = json.loads((LAB / "metadata.json").read_text())
+def sample(bench_pid, lab):
+    meta = json.loads((lab / "metadata.json").read_text())
     pids = {bench_pid: "go_benchmark_and_service"}
     for key, node in meta["nodes"].items():
         if node.get("pid"):
@@ -41,11 +42,31 @@ def sample(bench_pid):
         fields = line.split()
         if len(fields) == 3 and int(fields[0]) in pids:
             processes[pids[int(fields[0])]] = {"pid": int(fields[0]), "cpu_seconds": cpu_seconds(fields[1]), "rss_bytes": int(fields[2]) * 1024}
-    return {"at": utc(), "processes": processes, "free_disk_bytes": shutil.disk_usage(LAB).free}
+    return {"at": utc(), "processes": processes, "free_disk_bytes": shutil.disk_usage(lab).free}
 
 
-def main():
+def inventory(directory):
+    """Metadata only: do not read or copy private ledgers or Kafka records."""
+    result = {"entries": 0, "files": 0, "logical_bytes": 0, "allocated_bytes": 0}
+    if not directory.exists():
+        return result
+    for base, dirs, files in os.walk(directory, followlinks=False):
+        for name in [*dirs, *files]:
+            info = (Path(base) / name).lstat()
+            result["entries"] += 1
+            if result["entries"] > 100000:
+                raise RuntimeError("runtime inventory exceeds bounded 100000 entries")
+            if stat.S_ISREG(info.st_mode):
+                result["files"] += 1
+                result["logical_bytes"] += info.st_size
+                result["allocated_bytes"] += info.st_blocks * 512
+    return result
+
+
+def parse_arguments(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--runtime-root", type=Path, default=SOURCE_ROOT,
+                        help="existing owned lab/client ledgers root; binary always comes from this script's source worktree")
     parser.add_argument("--label", required=True)
     parser.add_argument("--benchmark", choices=("logbench", "framebench"), default="logbench", help="per-attempt legacy journal or packed frames")
     parser.add_argument("--cpu-profile", action="store_true", help="sample CPU of the combined Go generator/service during workload, excluding audit")
@@ -53,7 +74,24 @@ def main():
     parser.add_argument("--fault-after", type=float, default=40)
     parser.add_argument("--fault-duration", type=float, default=10)
     parser.add_argument("bench_args", nargs=argparse.REMAINDER)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+    args.runtime_root = args.runtime_root.expanduser().resolve()
+    if args.fault_node and args.runtime_root != SOURCE_ROOT:
+        parser.error("--fault-node is unavailable with an external --runtime-root; use a separate explicitly owned recovery procedure")
+    return parser, args
+
+
+def main():
+    with ExitStack() as resources:
+        return run_profile(resources)
+
+
+def run_profile(resources):
+    parser, args = parse_arguments()
+    runtime_root = args.runtime_root
+    lab = runtime_root / ".local/kafka-lab"
+    ledger_dir = runtime_root / ".local" / args.benchmark
+    binary = SOURCE_ROOT / "bin" / args.benchmark
     if args.cpu_profile and args.benchmark != "logbench":
         parser.error("CPU pprof is currently supported only by logbench")
     if not re.fullmatch(r"[a-z0-9_]{1,70}", args.label):
@@ -62,33 +100,44 @@ def main():
         parser.error("fault timing exceeds local bounds")
     if args.fault_node and (len(args.fault_node) > 2 or len(set(args.fault_node)) != len(args.fault_node)):
         parser.error("choose one or two distinct owned brokers")
-    if (LAB / ".gigaquizz-kafka-lab").read_text() != "gigaquizz native Kafka lab v1\n":
+    if not binary.is_file() or not os.access(binary, os.X_OK):
+        parser.error("build the benchmark executable in this script's source worktree first")
+    marker = lab / ".gigaquizz-kafka-lab"
+    if lab.is_symlink() or marker.is_symlink() or not marker.is_file() or marker.read_text() != "gigaquizz native Kafka lab v1\n":
         parser.error("owned lab marker required")
-    profile_guard = (LAB / "profile.lock").open("a")
+    profile_guard = resources.enter_context((lab / "profile.lock").open("a"))
     try:
         fcntl.flock(profile_guard, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except BlockingIOError:
         parser.error("another owned log profile is active")
-    if shutil.disk_usage(LAB).free < 8 * 1024**3:
+    if shutil.disk_usage(lab).free < 8 * 1024**3:
         parser.error("less than 8GiB free; preserve existing data")
-    meta = json.loads((LAB / "metadata.json").read_text())
+    meta = json.loads((lab / "metadata.json").read_text())
+    if Path(meta.get("lab_dir", "")).resolve() != lab:
+        parser.error("lab metadata does not match the selected runtime root")
     if any(not n.get("pid") for n in meta["nodes"].values()):
         parser.error("start all owned brokers before profiling")
-    destination = LAB / "profiles"
+    destination = lab / "profiles"
     destination.mkdir(mode=0o700, exist_ok=True)
     paths = {suffix: destination / (args.label + suffix) for suffix in (".json", "_telemetry.json", ".stderr")}
     if any(p.exists() for p in paths.values()):
         parser.error("profile label already exists")
     bench_args = args.bench_args[1:] if args.bench_args[:1] == ["--"] else args.bench_args
-    command = [str(ROOT / "bin" / args.benchmark), *bench_args]
+    command = [str(binary), *bench_args]
     child_env = os.environ.copy()
     child_env.pop("LOGBENCH_CPU_PROFILE", None)
     if args.cpu_profile:
         profile_path = destination / (args.label + ".cpu.pprof")
         if profile_path.exists():
             parser.error("CPU profile already exists")
-        child_env["LOGBENCH_CPU_PROFILE"] = str(profile_path.relative_to(ROOT))
-    telemetry = {"command": ["bin/" + args.benchmark, *bench_args], "started_at": utc(), "binary_sha256": hashlib.file_digest(Path(command[0]).open("rb"), "sha256").hexdigest(), "environment": {"kafka_version": meta["version"], "java_version": meta["java_version"], "same_host": True, "cpu_profile_enabled": args.cpu_profile, "GOGC": child_env.get("GOGC", "default"), "GOMEMLIMIT": child_env.get("GOMEMLIMIT", "default"), "GOMAXPROCS": child_env.get("GOMAXPROCS", "default")}, "samples": [], "faults": []}
+        child_env["LOGBENCH_CPU_PROFILE"] = str(profile_path.relative_to(runtime_root))
+    with binary.open("rb") as executable:
+        binary_sha256 = hashlib.file_digest(executable, "sha256").hexdigest()
+    telemetry = {"command": command, "started_at": utc(), "binary_sha256": binary_sha256,
+                 "paths": {"source_root": str(SOURCE_ROOT), "runtime_root": str(runtime_root), "lab": str(lab),
+                           "client_ledgers": str(ledger_dir), "profiles": str(destination), "binary": str(binary)},
+                 "inventory_before": {"lab": inventory(lab), "client_ledgers": inventory(ledger_dir)},
+                 "environment": {"kafka_version": meta["version"], "java_version": meta["java_version"], "same_host": True, "cpu_profile_enabled": args.cpu_profile, "GOGC": child_env.get("GOGC", "default"), "GOMEMLIMIT": child_env.get("GOMEMLIMIT", "default"), "GOMAXPROCS": child_env.get("GOMAXPROCS", "default")}, "samples": [], "faults": []}
     started = time.monotonic()
     stopped = False
     injected = False
@@ -96,7 +145,7 @@ def main():
 
     def node_action(action):
         for node in args.fault_node:
-            call = [sys.executable, str(ROOT / "scripts/kafka_lab.py"), action, "--node", str(node)]
+            call = [sys.executable, str(SOURCE_ROOT / "scripts/kafka_lab.py"), action, "--node", str(node)]
             if action == "stop-node":
                 call.append("--hard")
             event = {"action": action, "node": node, "started_at": utc()}
@@ -110,13 +159,13 @@ def main():
         output_path = paths[".json"]
         output_path.chmod(0o600)
         paths[".stderr"].chmod(0o600)
-        process = subprocess.Popen(command, cwd=ROOT, stdout=output, stderr=error, env=child_env)
+        process = subprocess.Popen(command, cwd=runtime_root, stdout=output, stderr=error, env=child_env)
         try:
             while process.poll() is None:
                 elapsed = time.monotonic() - started
                 if elapsed > 270:
                     raise RuntimeError("bounded benchmark deadline exceeded")
-                point = sample(process.pid)
+                point = sample(process.pid, lab)
                 telemetry["samples"].append(point)
                 if point["free_disk_bytes"] < 8 * 1024**3:
                     raise RuntimeError("free disk crossed 8GiB reserve; profile is incomplete")
@@ -141,10 +190,12 @@ def main():
             if stopped:
                 node_action("start-node")
             telemetry["finished_at"] = utc()
-            paths["_telemetry.json"].write_text(json.dumps(telemetry, indent=2) + "\n")
+            telemetry["inventory_after"] = {"lab": inventory(lab), "client_ledgers": inventory(ledger_dir)}
+            with paths["_telemetry.json"].open("x") as meta_output:
+                meta_output.write(json.dumps(telemetry, indent=2) + "\n")
             paths["_telemetry.json"].chmod(0o600)
     report = json.loads(paths[".json"].read_text())
-    print(json.dumps({"report": str(paths[".json"].relative_to(ROOT)), "errors": report.get("errors"), "workload": report.get("workload", {}).get("counts"), "reconciliation_correct": report.get("reconciliation", {}).get("correct")}, indent=2))
+    print(json.dumps({"report": str(paths[".json"].relative_to(runtime_root)), "errors": report.get("errors"), "workload": report.get("workload", {}).get("counts"), "reconciliation_correct": report.get("reconciliation", {}).get("correct")}, indent=2))
     return process.returncode
 
 

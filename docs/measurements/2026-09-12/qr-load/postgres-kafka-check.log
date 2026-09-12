@@ -1,0 +1,18 @@
+go vet ./...
+go test -race ./...
+ok  	gigaquizz/cmd/corebench	(cached)
+ok  	gigaquizz/cmd/filebench	7.208s
+ok  	gigaquizz/cmd/framebench	(cached)
+?   	gigaquizz/cmd/gigaquizz	[no test files]
+ok  	gigaquizz/cmd/loadtest	(cached)
+ok  	gigaquizz/cmd/logbench	(cached)
+ok  	gigaquizz/cmd/storagebench	(cached)
+?   	gigaquizz/internal/config	[no test files]
+ok  	gigaquizz/internal/filelog	(cached)
+ok  	gigaquizz/internal/httpapi	(cached)
+ok  	gigaquizz/internal/kafkapoll	7.006s
+ok  	gigaquizz/internal/poll	(cached)
+ok  	gigaquizz/internal/postgres	(cached)
+ok  	gigaquizz/internal/votecore	(cached)
+ok  	gigaquizz/internal/votelog	(cached)
+?   	gigaquizz/internal/web	[no test files]

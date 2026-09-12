@@ -1,0 +1,59 @@
+{
+  "command": [
+    "bin/filebench",
+    "-audit-only",
+    "<private-manifest>"
+  ],
+  "started_at": "2026-09-12T18:40:45.501443+00:00",
+  "binary_sha256": "217e83e70e7374aed29889e4fb6676c5f8af2920218580f8039e8a60eb3e3199",
+  "environment": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "system": "Darwin",
+    "machine": "arm64",
+    "logical_cpus": 10,
+    "python": "3.14.0",
+    "go": {
+      "exit_code": 0,
+      "stdout": "go version go1.26.1 darwin/arm64"
+    },
+    "GOGC": "default",
+    "GOMEMLIMIT": "6GiB",
+    "GOMAXPROCS": "default",
+    "hardware": {
+      "exit_code": 0,
+      "stdout": "machdep.cpu.brand_string: Apple M1 Pro\nhw.logicalcpu: 10\nhw.memsize: 34359738368"
+    }
+  },
+  "free_disk_bytes_before": 55057571840,
+  "samples": [
+    {
+      "at": "2026-09-12T18:40:45.585605+00:00",
+      "free_disk_bytes": 55057559552,
+      "profile_artifact_bytes": 297958,
+      "processes": {
+        "filebench": {
+          "pid": 55454,
+          "cpu_seconds": 0.01,
+          "rss_bytes": 5455872
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "limits": {
+    "watchdog_seconds": 300,
+    "sample_interval_seconds": 1,
+    "free_disk_reserve_bytes": 8589934592,
+    "aggregate_profiles_bytes": 1073741824,
+    "report_bytes": 67108864,
+    "stderr_bytes": 16777216
+  },
+  "scope": "One local Go filebench process includes generator, file journal and audit; no HTTP or replicated-cluster performance is inferred.",
+  "sampling_limits": "One-second observations are a watchdog, not a filesystem quota. CPU is cumulative process time; sampled RSS may miss shorter peaks. The wrapper never reads or copies private ledgers.",
+  "child_pid": 55454,
+  "exit_code": 0,
+  "finished_at": "2026-09-12T18:40:46.584536+00:00",
+  "elapsed_seconds": 1.0055024579633027,
+  "free_disk_bytes_after": 55057575936,
+  "report_complete": true
+}
