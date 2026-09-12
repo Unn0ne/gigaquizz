@@ -29,10 +29,20 @@ func main() {
 	}
 }
 
-func run() error {
+func run() (runErr error) {
 	envFile := flag.String("env", ".env", "configuration file")
+	cpuProfile := flag.String("cpu-profile", "", "write CPU profile to a new private local file (includes startup and shutdown)")
 	migrateOnly := flag.Bool("migrate-only", false, "apply migrations and exit")
 	flag.Parse()
+	stopProfile, err := startCPUProfile(*cpuProfile)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := stopProfile(); err != nil {
+			runErr = errors.Join(runErr, err)
+		}
+	}()
 	if err := config.LoadEnv(*envFile); err != nil {
 		return errors.New("cannot load environment file")
 	}
@@ -50,7 +60,7 @@ func run() error {
 		slog.Info("migrations applied")
 		return nil
 	}
-	store, err := kafkapoll.New(startup, kafkapoll.Options{DatabaseURL: cfg.DatabaseURL, Schema: cfg.DatabaseSchema, Brokers: cfg.KafkaBrokers, AllowRemoteBrokers: cfg.KafkaAllowRemote, Partitions: cfg.KafkaPartitions, MaxUnique: cfg.MaxUnique, MaxPolls: cfg.MaxPolls, PreparationLead: cfg.PreparationLead, Durability: durability})
+	store, err := kafkapoll.New(startup, kafkapoll.Options{DatabaseURL: cfg.DatabaseURL, Schema: cfg.DatabaseSchema, Brokers: cfg.KafkaBrokers, AllowRemoteBrokers: cfg.KafkaAllowRemote, Partitions: cfg.KafkaPartitions, BatchSize: cfg.KafkaBatchVotes, QueuePerPartition: cfg.KafkaQueueVotes, Linger: cfg.KafkaLinger, MaxUnique: cfg.MaxUnique, MaxPolls: cfg.MaxPolls, PreparationLead: cfg.PreparationLead, Durability: durability})
 	if err != nil {
 		return errors.New("cannot initialize PostgreSQL/Kafka controller (check broker readiness and exclusive schema ownership)")
 	}

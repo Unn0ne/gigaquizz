@@ -1,0 +1,352 @@
+{
+  "kind": "calculation, not measured production capacity",
+  "assumptions": {
+    "unique_voters": 100000000,
+    "voting_seconds": 60,
+    "additional_vote_attempt_fraction": 0.1,
+    "utilization": 0.7,
+    "post_request_http_bytes": 1024,
+    "post_response_http_bytes": 1024,
+    "question_response_http_bytes": 1536,
+    "GET_request_http_bytes": 512,
+    "static_response_headers_bytes_each": 512,
+    "wire_note": "HTTP byte assumptions; TCP/IP, TLS, packet loss and retransmits are additional",
+    "page_note": "four explicitly linked resources; optional browser requests such as favicon excluded; gzip computed offline, not currently served by Go",
+    "arrivals_note": "page opening and voting need not occur in the same window",
+    "replication": "Kafka RF3; one broker copy plus two replica copies; protocol overhead excluded"
+  },
+  "source_assets": {
+    "poll.html": {
+      "bytes": 3027,
+      "gzip_bytes": 1336,
+      "sha256": "181fa4dd4910ad85c63bb9cb4f5461c5f7773a10f699980b5fd9558dfbf00775"
+    },
+    "app.css": {
+      "bytes": 17358,
+      "gzip_bytes": 4577,
+      "sha256": "95be199cafe69ce6ce02dc70f717100f15f62263bedc04fdb2d941a8e09acde9"
+    },
+    "common.js": {
+      "bytes": 2345,
+      "gzip_bytes": 1058,
+      "sha256": "de05bb1d5c003a20294e81a7800e60f620b43e2ac4abdd456f827e1a6f0de62e"
+    },
+    "poll.js": {
+      "bytes": 15581,
+      "gzip_bytes": 4718,
+      "sha256": "62da7e74ccdbe19310a7cbc1b8a3823171e55ea32a24fd0b1deddfa1d14b0c54"
+    }
+  },
+  "workload": {
+    "unique_per_second": 1666666.6666666667,
+    "attempts": 110000000,
+    "vote_attempts_per_second": 1833333.3333333333,
+    "cold_page_and_assets_GETs": 400000000,
+    "question_GETs": 100000000,
+    "all_HTTP_requests_without_reloads": 610000000,
+    "all_HTTP_RPS_if_open_and_vote_in_same_window": 10166666.666666668,
+    "new_connections_per_second_if_one_per_cold_browser": 1666666.6666666667,
+    "timer_network_requests": 0
+  },
+  "traffic": {
+    "page_uncompressed": {
+      "bytes": 3831100000000,
+      "decimal_GB": 3831.1,
+      "mean_Gbit_s": 510.81333333333333
+    },
+    "page_gzip_estimate": {
+      "bytes": 1168900000000,
+      "decimal_GB": 1168.9,
+      "mean_Gbit_s": 155.85333333333335
+    },
+    "page_gzip_preloaded_over_10_minutes": {
+      "bytes": 1168900000000,
+      "decimal_GB": 1168.9,
+      "mean_Gbit_s": 15.585333333333335
+    },
+    "question_responses": {
+      "bytes": 153600000000,
+      "decimal_GB": 153.6,
+      "mean_Gbit_s": 20.48
+    },
+    "vote_ingress": {
+      "bytes": 112640000000,
+      "decimal_GB": 112.64,
+      "mean_Gbit_s": 15.018666666666666
+    },
+    "vote_egress": {
+      "bytes": 112640000000,
+      "decimal_GB": 112.64,
+      "mean_Gbit_s": 15.018666666666666
+    },
+    "GET_ingress": {
+      "bytes": 256000000000,
+      "decimal_GB": 256.0,
+      "mean_Gbit_s": 34.13333333333333
+    },
+    "static_response_headers": {
+      "bytes": 204800000000,
+      "decimal_GB": 204.8,
+      "mean_Gbit_s": 27.30666666666667
+    },
+    "all_ingress_HTTP_estimate": {
+      "bytes": 368640000000,
+      "decimal_GB": 368.64,
+      "mean_Gbit_s": 49.152
+    },
+    "all_egress_gzip_HTTP_estimate": {
+      "bytes": 1639940000000,
+      "decimal_GB": 1639.94,
+      "mean_Gbit_s": 218.65866666666665
+    }
+  },
+  "full_reload_scenario": {
+    "condition": "every additional vote attempt also cold-loads four resources and the question; optional, no browser cache",
+    "page_and_assets_GETs": 440000000,
+    "question_GETs": 110000000,
+    "all_HTTP_requests": 660000000,
+    "all_HTTP_RPS": 11000000.0,
+    "outgoing_gzip_HTTP_estimate": {
+      "bytes": 1792670000000,
+      "decimal_GB": 1792.67,
+      "mean_Gbit_s": 239.02266666666665
+    },
+    "incoming_HTTP_estimate": {
+      "bytes": 394240000000,
+      "decimal_GB": 394.24,
+      "mean_Gbit_s": 52.565333333333335
+    }
+  },
+  "read_cache_sensitivity": [
+    {
+      "hit_fraction": 0,
+      "origin_question_RPS": 1666666.6666666667,
+      "note": "target architecture; current question includes server_time and is no-store"
+    },
+    {
+      "hit_fraction": 0.9,
+      "origin_question_RPS": 166666.66666666663,
+      "note": "target architecture; current question includes server_time and is no-store"
+    },
+    {
+      "hit_fraction": 0.99,
+      "origin_question_RPS": 16666.666666666682,
+      "note": "target architecture; current question includes server_time and is no-store"
+    },
+    {
+      "hit_fraction": 0.999,
+      "origin_question_RPS": 1666.6666666666683,
+      "note": "target architecture; current question includes server_time and is no-store"
+    }
+  ],
+  "repeat_sensitivity": [
+    {
+      "repeat_fraction": 0,
+      "attempts": 100000000,
+      "vote_RPS": 1666666.6666666667
+    },
+    {
+      "repeat_fraction": 0.01,
+      "attempts": 101000000,
+      "vote_RPS": 1683333.3333333333
+    },
+    {
+      "repeat_fraction": 0.1,
+      "attempts": 110000000,
+      "vote_RPS": 1833333.3333333333
+    },
+    {
+      "repeat_fraction": 0.2,
+      "attempts": 120000000,
+      "vote_RPS": 2000000.0
+    },
+    {
+      "repeat_fraction": 0.3,
+      "attempts": 130000000,
+      "vote_RPS": 2166666.6666666665
+    }
+  ],
+  "arrival_sensitivity": [
+    {
+      "first_10s_fraction": 0.5,
+      "first_10s_unique_RPS": 5000000.0,
+      "remaining_50s_unique_RPS": 1000000.0,
+      "scope": "optional stress scenario; agreed baseline is uniform"
+    },
+    {
+      "first_10s_fraction": 0.8,
+      "first_10s_unique_RPS": 8000000.0,
+      "remaining_50s_unique_RPS": 399999.99999999994,
+      "scope": "optional stress scenario; agreed baseline is uniform"
+    }
+  ],
+  "storage": {
+    "legacy_files_68_bytes_per_attempt": {
+      "bytes": 7480000000,
+      "decimal_GB": 7.48,
+      "mean_Gbit_s": 0.9973333333333334
+    },
+    "legacy_kafka_key_value_96_bytes_per_attempt_one_copy": {
+      "bytes": 10560000000,
+      "decimal_GB": 10.56,
+      "mean_Gbit_s": 1.408
+    },
+    "legacy_kafka_RF3_bytes": 31680000000,
+    "packed_formula_scope": "pure v2 Kafka frames; automatic HTTP singleton stays v1 at96B. Mixed bytes =96*v1_attempts +28*v2_attempts +80*v2_frames; do not use only overall mean fill for a mixed stream",
+    "packed": [
+      {
+        "mean_votes_per_frame": 1,
+        "files_bytes_per_attempt": 68.0,
+        "kafka_bytes_per_attempt_one_copy": 108.0,
+        "files_total_bytes": 7480000000.0,
+        "kafka_RF3_total_bytes": 35640000000.0,
+        "physical_frames_per_second": 1833333.3333333333
+      },
+      {
+        "mean_votes_per_frame": 32,
+        "files_bytes_per_attempt": 29.25,
+        "kafka_bytes_per_attempt_one_copy": 30.5,
+        "files_total_bytes": 3217500000.0,
+        "kafka_RF3_total_bytes": 10065000000.0,
+        "physical_frames_per_second": 57291.666666666664
+      },
+      {
+        "mean_votes_per_frame": 256,
+        "files_bytes_per_attempt": 28.15625,
+        "kafka_bytes_per_attempt_one_copy": 28.3125,
+        "files_total_bytes": 3097187500.0,
+        "kafka_RF3_total_bytes": 9343125000.0,
+        "physical_frames_per_second": 7161.458333333333
+      },
+      {
+        "mean_votes_per_frame": 4096,
+        "files_bytes_per_attempt": 28.009765625,
+        "kafka_bytes_per_attempt_one_copy": 28.01953125,
+        "files_total_bytes": 3081074218.75,
+        "kafka_RF3_total_bytes": 9246445312.5,
+        "physical_frames_per_second": 447.5911458333333
+      }
+    ],
+    "retention_note": "multiply event storage by retained polls; add checksums, manifests, indexes and safety reserve"
+  },
+  "admission_deadline_sensitivity": [
+    {
+      "constant_client_to_admission_ms": 5,
+      "expected_late_attempts_if_client_sends_until_end": 9166.666666666666,
+      "scope": "illustrative constant pre-admission delay with uniform client sends; ACK/sync delay after admission does not belong here"
+    },
+    {
+      "constant_client_to_admission_ms": 25,
+      "expected_late_attempts_if_client_sends_until_end": 45833.33333333333,
+      "scope": "illustrative constant pre-admission delay with uniform client sends; ACK/sync delay after admission does not belong here"
+    },
+    {
+      "constant_client_to_admission_ms": 100,
+      "expected_late_attempts_if_client_sends_until_end": 183333.3333333333,
+      "scope": "illustrative constant pre-admission delay with uniform client sends; ACK/sync delay after admission does not belong here"
+    },
+    {
+      "constant_client_to_admission_ms": 250,
+      "expected_late_attempts_if_client_sends_until_end": 458333.3333333333,
+      "scope": "illustrative constant pre-admission delay with uniform client sends; ACK/sync delay after admission does not belong here"
+    }
+  ],
+  "inflight_sensitivity": [
+    {
+      "mean_handler_ms": 2,
+      "mean_active_requests": 3666.6666666666665,
+      "slots_with_utilization_headroom": 5239
+    },
+    {
+      "mean_handler_ms": 10,
+      "mean_active_requests": 18333.333333333332,
+      "slots_with_utilization_headroom": 26191
+    },
+    {
+      "mean_handler_ms": 25,
+      "mean_active_requests": 45833.33333333333,
+      "slots_with_utilization_headroom": 65477
+    },
+    {
+      "mean_handler_ms": 50,
+      "mean_active_requests": 91666.66666666666,
+      "slots_with_utilization_headroom": 130953
+    },
+    {
+      "mean_handler_ms": 100,
+      "mean_active_requests": 183333.3333333333,
+      "slots_with_utilization_headroom": 261905
+    }
+  ],
+  "memory": {
+    "raw_unique_128_bit_keys_bytes": 1600000000,
+    "exact_table_sensitivity_bytes": {
+      "24": 2400000000,
+      "32": 3200000000,
+      "48": 4800000000
+    },
+    "note": "table bytes/key are assumptions, not Go map measurements; add GC, handlers, queues and replay buffers"
+  },
+  "CPU_sensitivity": [
+    {
+      "assumed_CPU_us_per_attempt": 1,
+      "cores_at_utilization": 3
+    },
+    {
+      "assumed_CPU_us_per_attempt": 5,
+      "cores_at_utilization": 14
+    },
+    {
+      "assumed_CPU_us_per_attempt": 10,
+      "cores_at_utilization": 27
+    },
+    {
+      "assumed_CPU_us_per_attempt": 25,
+      "cores_at_utilization": 66
+    },
+    {
+      "assumed_CPU_us_per_attempt": 50,
+      "cores_at_utilization": 131
+    }
+  ],
+  "node_sensitivity": [
+    {
+      "assumed_per_node_capacity_RPS": 50000,
+      "nodes_without_failover": 53,
+      "nodes_to_tolerate_one_node_loss": 54,
+      "condition": "POST layer only with GET/TLS served separately, or C measured with the intended GET/TLS mix; requires routing/ownership; current app has one writer owner"
+    },
+    {
+      "assumed_per_node_capacity_RPS": 100000,
+      "nodes_without_failover": 27,
+      "nodes_to_tolerate_one_node_loss": 28,
+      "condition": "POST layer only with GET/TLS served separately, or C measured with the intended GET/TLS mix; requires routing/ownership; current app has one writer owner"
+    },
+    {
+      "assumed_per_node_capacity_RPS": 200000,
+      "nodes_without_failover": 14,
+      "nodes_to_tolerate_one_node_loss": 15,
+      "condition": "POST layer only with GET/TLS served separately, or C measured with the intended GET/TLS mix; requires routing/ownership; current app has one writer owner"
+    },
+    {
+      "assumed_per_node_capacity_RPS": 500000,
+      "nodes_without_failover": 6,
+      "nodes_to_tolerate_one_node_loss": 7,
+      "condition": "POST layer only with GET/TLS served separately, or C measured with the intended GET/TLS mix; requires routing/ownership; current app has one writer owner"
+    },
+    {
+      "assumed_per_node_capacity_RPS": 1000000,
+      "nodes_without_failover": 3,
+      "nodes_to_tolerate_one_node_loss": 4,
+      "condition": "POST layer only with GET/TLS served separately, or C measured with the intended GET/TLS mix; requires routing/ownership; current app has one writer owner"
+    }
+  ],
+  "cost_formula": "sum(node_count * hourly_rate * reserved_hours) + charged_GB * rate_per_GB + charged_requests * request_rate + storage_GB_month; no provider prices assumed",
+  "exclusions": [
+    "DDoS and abusive bots",
+    "global geographic latency",
+    "external network failure costs",
+    "production capacity proof",
+    "automatic HA of current app"
+  ]
+}

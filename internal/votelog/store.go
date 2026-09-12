@@ -30,7 +30,7 @@ type Store struct {
 type writer struct {
 	s                       *Store
 	partition               int32
-	client                  *kgo.Client
+	client                  transactionalClient
 	mu                      sync.Mutex
 	closing, sealed, failed bool
 	failure                 error
@@ -40,6 +40,17 @@ type writer struct {
 	seal                    chan struct{}
 	done                    chan struct{}
 }
+
+// The writer uses one transactional producer for its entire ownership epoch.
+// Keeping this boundary narrow also permits deterministic commit-failure tests.
+type transactionalClient interface {
+	ProducerID(context.Context) (int64, int16, error)
+	BeginTransaction() error
+	ProduceSync(context.Context, ...*kgo.Record) kgo.ProduceResults
+	EndTransaction(context.Context, kgo.TransactionEndTry) error
+	Close()
+}
+
 type pending struct {
 	vote   Vote
 	frame  []Vote
@@ -386,34 +397,70 @@ func (w *writer) flush(batch []*pending) error {
 	if len(batch) == 0 {
 		return nil
 	}
-	records := make([]*kgo.Record, len(batch))
-	for i, p := range batch {
-		if len(p.frame) > 0 {
-			value, err := encodeFrame(w.s.cfg, p.frame)
+	records := make([]*kgo.Record, 0, len(batch))
+	positions := make([]struct {
+		record int
+		index  uint32
+	}, len(batch))
+	var frames uint64
+	for i := 0; i < len(batch); {
+		p := batch[i]
+		end := i + 1
+		votes := p.frame
+		if len(votes) == 0 {
+			// Consecutive single calls share an existing v2 frame. Preserve both
+			// queue order and each call's original admission time; flushing after
+			// the deadline never re-admits or timestamps these votes again.
+			for end < len(batch) && len(batch[end].frame) == 0 {
+				end++
+			}
+			if end-i > 1 {
+				votes = make([]Vote, end-i)
+				for j := i; j < end; j++ {
+					votes[j-i] = batch[j].vote
+				}
+			}
+		}
+		for j := i; j < end; j++ {
+			positions[j].record = len(records)
+			positions[j].index = uint32(j - i)
+		}
+		if len(votes) > 0 {
+			// An explicit SubmitFrame stays a standalone record. Its receipt's
+			// Count continues to address exactly indices [0, Count).
+			value, err := encodeFrame(w.s.cfg, votes)
 			if err != nil {
 				for _, pending := range batch {
 					pending.result <- outcome{err: ErrUnknown}
 				}
 				return err
 			}
-			records[i] = &kgo.Record{Topic: w.s.cfg.Topic, Partition: w.partition, Value: value}
+			records = append(records, &kgo.Record{Topic: w.s.cfg.Topic, Partition: w.partition, Value: value})
+			frames++
 		} else {
-			records[i] = &kgo.Record{Topic: w.s.cfg.Topic, Partition: w.partition, Key: p.vote.Token[:], Value: encodeRecord(w.s.cfg, recordVote, p.vote)}
+			// Keep a singleton's v1 encoding and its zero receipt index.
+			records = append(records, &kgo.Record{Topic: w.s.cfg.Topic, Partition: w.partition, Key: p.vote.Token[:], Value: encodeRecord(w.s.cfg, recordVote, p.vote)})
 		}
+		i = end
 	}
 	err := w.commit(w.s.ctx, records, true)
+	if err == nil {
+		w.s.committedFrames.Add(frames)
+		for _, record := range records {
+			w.s.committedValueBytes.Add(uint64(len(record.Value)))
+			w.s.committedKeyBytes.Add(uint64(len(record.Key)))
+		}
+	}
 	for i, p := range batch {
 		o := outcome{err: unknown(err)}
 		if err == nil {
 			admittedAt := p.vote.AdmittedAt
 			if len(p.frame) > 0 {
 				admittedAt = p.frame[0].AdmittedAt
-				w.s.committedFrames.Add(1)
 			}
-			o.receipt = Receipt{Partition: w.partition, Offset: records[i].Offset, AdmittedAt: admittedAt}
+			pos := positions[i]
+			o.receipt = Receipt{Partition: w.partition, Offset: records[pos.record].Offset, Index: pos.index, AdmittedAt: admittedAt}
 			w.s.confirmed.Add(uint64(p.size()))
-			w.s.committedValueBytes.Add(uint64(len(records[i].Value)))
-			w.s.committedKeyBytes.Add(uint64(len(records[i].Key)))
 		}
 		p.result <- o
 	}

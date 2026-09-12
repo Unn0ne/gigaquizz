@@ -1,0 +1,47 @@
+{
+  "scope": "Functional checks performed separately from all throughput measurements. Owned local applications; no physical power/disk loss claim.",
+  "branches": {
+    "simple-files": {
+      "application_sha256": "c42ce9d2800180429bf305e1c408798c575db8923fae8fd339a91260e06a74ca",
+      "httpbench_sha256": "c0a44866cb36312d2a41b6cd90383b0cd2bd30a49056d82ae3ccc1b22842584f",
+      "make_build": "PASS",
+      "make_check": "PASS",
+      "make_check_commands": [
+        "go vet ./...",
+        "go test -race -count=1 ./..."
+      ],
+      "go_test_packages": 11,
+      "go_cached_test_packages": 0,
+      "python_unittest_discover": {
+        "passed": true,
+        "tests": 20
+      },
+      "service_recovery_report": "simple-files-service-check.json",
+      "browser_report": "simple-files-browser-check.json"
+    },
+    "postgres-kafka": {
+      "application_sha256": "3bd76498f84f289b46f4d12b00ef1298b0bd05cc1c7eb087849c460a9903212b",
+      "httpbench_sha256": "875b59cebfad6e7716b8fd241b415752fb3f96999d12b0a12b559ce922756060",
+      "make_build": "PASS",
+      "make_check": "PASS",
+      "make_check_commands": [
+        "go vet ./...",
+        "go test -race ./..."
+      ],
+      "go_test_packages": 16,
+      "go_cached_test_packages": 9,
+      "python_unittest_discover": {
+        "passed": true,
+        "tests": 44
+      },
+      "service_recovery_report": "postgres-kafka-service-check.json",
+      "browser_report": "postgres-kafka-browser-check.json"
+    }
+  },
+  "targeted_checks": {
+    "mixed_file_batch_race_recovery": "PASS",
+    "mixed_kafka_batch_real_recovery": "PASS",
+    "strict_kafka_reader_real_stable_tail_open_and_aborted_transactions": "PASS",
+    "cpu_profile_file_lifecycle_race_both_branches": "PASS"
+  }
+}

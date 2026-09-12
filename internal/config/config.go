@@ -22,6 +22,9 @@ type Config struct {
 	DatabaseSchema   string
 	KafkaBrokers     []string
 	KafkaPartitions  int
+	KafkaBatchVotes  int
+	KafkaQueueVotes  int
+	KafkaLinger      time.Duration
 	KafkaAllowRemote bool
 	MaxUnique        int
 	MaxPolls         int
@@ -67,7 +70,7 @@ func LoadEnv(path string) error {
 
 func Load() (Config, error) {
 	c := Config{Addr: env("HTTP_ADDR", "127.0.0.1:8092"), PublicURL: env("PUBLIC_URL", "http://127.0.0.1:8092"), DatabaseURL: os.Getenv("DATABASE_URL"), AdminPassword: os.Getenv("ADMIN_PASSWORD"), VoteConnections: 64, MaxInflight: 1024,
-		DatabaseSchema: env("GIGAQUIZZ_SCHEMA", "gigaquizz_kafka"), KafkaBrokers: strings.Split(env("KAFKA_BROKERS", "127.0.0.1:19092,127.0.0.1:19093,127.0.0.1:19094"), ","), KafkaPartitions: 4, MaxUnique: 120_000_000, MaxPolls: 10_000, PreparationLead: 20 * time.Second}
+		DatabaseSchema: env("GIGAQUIZZ_SCHEMA", "gigaquizz_kafka"), KafkaBrokers: strings.Split(env("KAFKA_BROKERS", "127.0.0.1:19092,127.0.0.1:19093,127.0.0.1:19094"), ","), KafkaPartitions: 4, KafkaBatchVotes: 256, KafkaQueueVotes: 2048, KafkaLinger: 2 * time.Millisecond, MaxUnique: 120_000_000, MaxPolls: 10_000, PreparationLead: 20 * time.Second}
 	if c.DatabaseURL == "" {
 		return c, errors.New("DATABASE_URL is required; run make dev or configure .env")
 	}
@@ -105,6 +108,8 @@ func Load() (Config, error) {
 		min, max int
 	}{
 		"KAFKA_PARTITIONS":  {&c.KafkaPartitions, 1, 32},
+		"KAFKA_BATCH_VOTES": {&c.KafkaBatchVotes, 1, 4096},
+		"KAFKA_QUEUE_VOTES": {&c.KafkaQueueVotes, 1, 8192},
 		"MAX_UNIQUE_VOTERS": {&c.MaxUnique, 1, 120_000_000},
 		"MAX_STORED_POLLS":  {&c.MaxPolls, 1, 100_000},
 	} {
@@ -115,6 +120,13 @@ func Load() (Config, error) {
 			}
 			*setting.value = n
 		}
+	}
+	if raw := os.Getenv("KAFKA_LINGER_MS"); raw != "" {
+		n, err := strconv.Atoi(raw)
+		if err != nil || n < 1 || n > 1000 {
+			return c, errors.New("invalid KAFKA_LINGER_MS")
+		}
+		c.KafkaLinger = time.Duration(n) * time.Millisecond
 	}
 	if raw := os.Getenv("POLL_PREPARATION_SECONDS"); raw != "" {
 		n, err := strconv.Atoi(raw)

@@ -28,6 +28,12 @@ func kafkaTestConfig(t *testing.T, partitions int) (context.Context, Config) {
 		t.Fatal("cannot locate owned Kafka lab")
 	}
 	lab := filepath.Join(filepath.Dir(source), "../../.local/kafka-lab")
+	if configured := os.Getenv("GIGAQUIZZ_KAFKA_TEST_LAB"); configured != "" {
+		if !filepath.IsAbs(configured) {
+			t.Fatal("GIGAQUIZZ_KAFKA_TEST_LAB must name an absolute owned lab directory")
+		}
+		lab = configured
+	}
 	marker, err := os.ReadFile(filepath.Join(lab, ".gigaquizz-kafka-lab"))
 	if err != nil || string(marker) != "gigaquizz native Kafka lab v1\n" {
 		t.Fatal("run the owned Kafka lab before enabling integration tests")
