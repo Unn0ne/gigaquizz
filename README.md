@@ -25,4 +25,4 @@ make dev
 
 Цель проекта — 100 млн участников за минуту. Файловый модуль уже прошёл отдельный тест со 100 млн записей; весь сайт на такой нагрузке ещё не проверен. [Тест ядра на 102 млн](https://github.com/Unn0ne/gigaquizz/blob/simple-files/docs/qr-load-results.md), [настоящий HTTP и сравнение веток](https://github.com/Unn0ne/gigaquizz/blob/simple-files/docs/http-results.md), [расчёт нагрузки](https://github.com/Unn0ne/gigaquizz/blob/simple-files/docs/http-capacity.md).
 
-[Ревью кода и новые HTTP-тесты обеих веток](https://github.com/Unn0ne/gigaquizz/blob/simple-files/docs/review-scale.md).
+[Последнее ревью и проверка запуска генераторов](https://github.com/Unn0ne/gigaquizz/blob/simple-files/docs/external-review.md), [запуск нагрузки на отдельных серверах](https://github.com/Unn0ne/gigaquizz/blob/simple-files/docs/external-http.md).
