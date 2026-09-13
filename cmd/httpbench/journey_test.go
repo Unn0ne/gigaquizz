@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"compress/gzip"
 	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -179,6 +182,16 @@ func TestJourneyFailureStopsBeforePOSTAndPreservesOutcome(t *testing.T) {
 			if a.State != stateJourneyFailed || a.HTTP != 0 || a.AdmittedNS != 0 || a.Flags != 0 || r.JourneyFailed != 1 || r.Sent != 0 || r.Unknown != 0 || r.Skipped != 0 || r.GETFailures != 1 || r.JourneyStarted != 1 || r.JourneyCompleted != 0 {
 				t.Fatalf("failure outcome=%+v stats=%+v", a, r)
 			}
+			var classified uint64
+			for _, stage := range r.GETStages {
+				classified += stage.Timeouts + stage.TransportFailures + stage.StatusFailures + stage.ValidationFailures
+			}
+			if classified != r.GETFailures {
+				t.Fatalf("failure categories overlap or miss: %+v", r)
+			}
+			if kind == "timeout" && r.GETStages[0].Timeouts != 1 {
+				t.Fatalf("timeout missing: %+v", r.GETStages)
+			}
 			if kind == "read_gate_busy" && (r.GETSent != 5 || r.GETStages[4].Failures != 1) {
 				t.Fatalf("read-gate failure not separate: %+v", r.GETStages)
 			}
@@ -247,4 +260,140 @@ func TestJourneyStateRequiresJourneyOriginalWithoutPOST(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestCompressedDefinitionJourneyAndByteAccounting(t *testing.T) {
+	m, _ := activeJourneyFixture(t)
+	m.Config.Definition = true
+	question, _ := json.Marshal(m.Poll.Definition())
+	paths := []string{"/p/" + m.Poll.ID, "/static/app.css", "/static/common.js", "/static/poll.js", "/api/polls/" + m.Poll.ID + "/definition"}
+	types := []string{"text/html", "text/css", "text/javascript", "text/javascript", "application/json"}
+	bodies := [][]byte{[]byte(strings.Repeat("<html>fixture</html>", 100)), []byte(strings.Repeat("body {}", 100)), []byte(strings.Repeat("/* fixture */", 100)), []byte(strings.Repeat("/* fixture */", 100)), question}
+	var compressed [journeyStages][]byte
+	var wantEncoded, wantDecoded uint64
+	for i, b := range bodies {
+		var out bytes.Buffer
+		z := gzip.NewWriter(&out)
+		_, _ = z.Write(b)
+		_ = z.Close()
+		compressed[i] = out.Bytes()
+		wantEncoded += uint64(out.Len())
+		wantDecoded += uint64(len(b))
+	}
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		for i, p := range paths {
+			if r.URL.Path == p && r.Header.Get("Accept-Encoding") == "gzip" {
+				w.Header().Set("Content-Type", types[i])
+				w.Header().Set("Content-Encoding", "gzip")
+				_, _ = w.Write(compressed[i])
+				return
+			}
+		}
+		http.NotFound(w, r)
+	}))
+	defer srv.Close()
+	m.Config.URL = srv.URL
+	client := newClient(1, time.Second)
+	defer client.CloseIdleConnections()
+	var s workerStats
+	if !runJourney(context.Background(), m.Config, client, &s, time.Now().Add(time.Second)) {
+		t.Fatal("compressed journey failed")
+	}
+	r := summarize(m.Config, []workerStats{s}, time.Second, 0)
+	if r.Mode != "http-journey-definition-gzip" || r.GETFailures != 0 || r.GETBytes != wantEncoded || r.GETDecodedBytes != wantDecoded || wantEncoded >= wantDecoded {
+		t.Fatalf("accounting: %+v", r)
+	}
+}
+
+func TestCompressedResourceBoundsAndCorruption(t *testing.T) {
+	for _, kind := range []string{"truncated", "expansion", "unsupported"} {
+		t.Run(kind, func(t *testing.T) {
+			var out bytes.Buffer
+			z := gzip.NewWriter(&out)
+			body := "<html>fixture</html>"
+			if kind == "expansion" {
+				body = strings.Repeat("x", maxAssetBody+100)
+			}
+			_, _ = z.Write([]byte(body))
+			_ = z.Close()
+			compressed := out.Bytes()
+			if kind == "truncated" {
+				compressed = compressed[:len(compressed)-4]
+			}
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "text/html")
+				w.Header().Set("Content-Encoding", "gzip")
+				_, _ = w.Write(compressed)
+			}))
+			defer srv.Close()
+			m, _ := activeJourneyFixture(t)
+			m.Config.URL = srv.URL
+			m.Config.Definition = kind != "unsupported"
+			client := newClient(1, time.Second)
+			defer client.CloseIdleConnections()
+			var s getStats
+			if getResource(context.Background(), m.Config, client, "/", 0, &s, &journeyDecoder{}) || s.Failures != 1 || s.ValidationFailures != 1 || s.DecodedBytes > maxAssetBody+1 || s.Bytes > maxAssetBody+1 {
+				t.Fatalf("accepted invalid encoding/bound: %+v", s)
+			}
+		})
+	}
+}
+
+func TestWorkerDecoderCanRecoverAfterCorruptResponse(t *testing.T) {
+	var out bytes.Buffer
+	z := gzip.NewWriter(&out)
+	_, _ = z.Write([]byte("<html>fixture</html>"))
+	_ = z.Close()
+	valid := out.Bytes()
+	var decoder journeyDecoder
+	for _, body := range [][]byte{valid[:len(valid)-4], valid, []byte("bad header"), valid} {
+		reader, err := decoder.open(bytes.NewReader(body))
+		if err == nil {
+			_, err = io.Copy(io.Discard, reader)
+			decoder.release()
+		}
+		if bytes.Equal(body, valid) && err != nil {
+			t.Fatal("decoder failed after earlier malformed response", err)
+		}
+		if !bytes.Equal(body, valid) && err == nil {
+			t.Fatal("corrupt gzip accepted")
+		}
+	}
+}
+
+func BenchmarkWorkerGzipDecode(b *testing.B) {
+	var out bytes.Buffer
+	z := gzip.NewWriter(&out)
+	_, _ = z.Write([]byte(strings.Repeat("synthetic public asset;", 800)))
+	_ = z.Close()
+	body := out.Bytes()
+	b.Run("fresh", func(b *testing.B) {
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			r, err := gzip.NewReader(bytes.NewReader(body))
+			if err != nil {
+				b.Fatal(err)
+			}
+			_, err = io.Copy(io.Discard, r)
+			_ = r.Close()
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+	b.Run("worker_reuse", func(b *testing.B) {
+		b.ReportAllocs()
+		var d journeyDecoder
+		for i := 0; i < b.N; i++ {
+			r, err := d.open(bytes.NewReader(body))
+			if err != nil {
+				b.Fatal(err)
+			}
+			_, err = io.Copy(io.Discard, r)
+			d.release()
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
 }

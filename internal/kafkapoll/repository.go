@@ -14,7 +14,6 @@ import (
 
 	"github.com/twmb/franz-go/pkg/kadm"
 	"github.com/twmb/franz-go/pkg/kerr"
-	"github.com/twmb/franz-go/pkg/kgo"
 )
 
 func (s *Store) operation(parent context.Context) (context.Context, func()) {
@@ -59,6 +58,7 @@ func (s *Store) load(ctx context.Context) error {
 		e.prepared = prepared
 		e.config.Brokers = append([]string(nil), s.opts.Brokers...)
 		e.config.AllowRemoteBrokers = s.opts.AllowRemoteBrokers
+		e.config.Security = s.opts.Security
 		s.polls[id] = e
 	}
 	return rows.Err()
@@ -66,7 +66,12 @@ func (s *Store) load(ctx context.Context) error {
 
 // prepare is called only by the single administrative controller. Stable
 // transactional IDs transfer writer epochs; a failed epoch is never resumed.
-func (s *Store) prepare(parent context.Context, e *entry) error {
+func (s *Store) prepare(parent context.Context, e *entry) (retErr error) {
+	defer func() {
+		if retErr != nil {
+			s.preparationFailures.Add(1)
+		}
+	}()
 	ctx, cancel := s.operation(parent)
 	defer cancel()
 	if err := s.checkOwner(ctx); err != nil {
@@ -75,16 +80,22 @@ func (s *Store) prepare(parent context.Context, e *entry) error {
 	// Resolve a possibly cancelled metadata commit before deciding whether a
 	// topic can be rotated. A prepared topic is NEVER recreated or replaced.
 	var encoded []byte
-	if err := s.pool.QueryRow(ctx, "SELECT journal, prepared FROM "+s.table()+" WHERE id=$1", e.poll.ID).Scan(&encoded, &e.prepared); err != nil {
+	var prepared bool
+	if err := s.pool.QueryRow(ctx, "SELECT journal, prepared FROM "+s.table()+" WHERE id=$1", e.poll.ID).Scan(&encoded, &prepared); err != nil {
 		return err
 	}
 	var persisted votelog.Config
 	if json.Unmarshal(encoded, &persisted) != nil || persisted.PollID != e.config.PollID || !validTopic(persisted.Topic, e.config.PollID) {
 		return errors.New("invalid persisted journal ownership")
 	}
+	if e.admissionClosed.Load() && e.prepared && (!prepared || persisted.DefinitionHash() != e.config.DefinitionHash()) {
+		return errors.New("closed poll recovery cannot replace its prepared journal definition")
+	}
+	e.prepared = prepared
 	e.config = persisted
 	e.config.Brokers = append([]string(nil), s.opts.Brokers...)
 	e.config.AllowRemoteBrokers = s.opts.AllowRemoteBrokers
+	e.config.Security = s.opts.Security
 	if !e.prepared {
 		if err := votelog.CreateTopic(ctx, e.config); errors.Is(err, kerr.TopicAlreadyExists) {
 			// No writer is exposed until prepared is durable. The old topic can
@@ -96,15 +107,12 @@ func (s *Store) prepare(parent context.Context, e *entry) error {
 			next := e.config
 			next.Topic = "gqlog_app_" + hex.EncodeToString(next.PollID[:]) + "_" + hex.EncodeToString(generation[:])
 			data, _ := json.Marshal(next)
-			command, err := s.pool.Exec(ctx, "UPDATE "+s.table()+" SET journal=$2 WHERE id=$1 AND NOT prepared", e.poll.ID, data)
+			command, err := s.execDurable(ctx, "UPDATE "+s.table()+" SET journal=$2 WHERE id=$1 AND NOT prepared", e.poll.ID, data)
 			if err != nil {
 				return err
 			}
 			if command.RowsAffected() != 1 {
 				return errors.New("poll preparation ownership changed")
-			}
-			if err = s.guard.WaitDurable(ctx); err != nil {
-				return err
 			}
 			e.config = next
 			if err = votelog.CreateTopic(ctx, e.config); err != nil {
@@ -114,7 +122,7 @@ func (s *Store) prepare(parent context.Context, e *entry) error {
 			return err
 		}
 	}
-	cl, err := kgo.NewClient(kgo.SeedBrokers(e.config.Brokers...))
+	cl, err := votelog.NewClient(e.config)
 	if err != nil {
 		return err
 	}
@@ -144,11 +152,7 @@ func (s *Store) prepare(parent context.Context, e *entry) error {
 		return err
 	}
 	if !e.prepared {
-		if _, err = s.pool.Exec(ctx, "UPDATE "+s.table()+" SET prepared=true WHERE id=$1", e.poll.ID); err != nil {
-			w.Close()
-			return err
-		}
-		if err = s.guard.WaitDurable(ctx); err != nil {
+		if _, err = s.execDurable(ctx, "UPDATE "+s.table()+" SET prepared=true WHERE id=$1", e.poll.ID); err != nil {
 			w.Close()
 			return err
 		}
@@ -182,7 +186,9 @@ func (s *Store) Create(parent context.Context, input poll.CreateInput) (poll.Pol
 	}
 	ctx, cancel := s.operation(parent)
 	defer cancel()
-	s.opMu.Lock()
+	if err := s.opMu.LockContext(ctx); err != nil {
+		return poll.Poll{}, err
+	}
 	defer s.opMu.Unlock()
 	if err := s.checkOwner(ctx); err != nil {
 		return poll.Poll{}, err
@@ -217,32 +223,43 @@ func (s *Store) Create(parent context.Context, input poll.CreateInput) (poll.Pol
 	}
 	e := &entry{poll: p, config: votelog.Config{Brokers: s.opts.Brokers, Topic: "gqlog_app_" + hex.EncodeToString(token[:]), PollID: token, Partitions: s.opts.Partitions, StartsAt: p.StartsAt, EndsAt: p.EndsAt, AllowedMask: (uint32(1) << len(p.Options)) - 1, Multiple: p.Type == "multiple", BatchSize: s.opts.BatchSize, Linger: s.opts.Linger, QueuePerPartition: s.opts.QueuePerPartition, TransactionTimeout: 10 * time.Second}}
 	e.config.AllowRemoteBrokers = s.opts.AllowRemoteBrokers
+	e.config.Security = s.opts.Security
 	description, _ := json.Marshal(p)
 	journal, _ := json.Marshal(e.config)
-	tx, err := s.pool.Begin(ctx)
+	conn, err := s.pool.Acquire(ctx)
+	if err != nil {
+		return poll.Poll{}, err
+	}
+	defer conn.Release()
+	tx, err := conn.Begin(ctx)
 	if err != nil {
 		return poll.Poll{}, err
 	}
 	defer rollback(tx)
-	var overlap bool
-	if err = tx.QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM "+s.table()+" WHERE starts_at < $2 AND ends_at > $1)", p.StartsAt, p.EndsAt).Scan(&overlap); err != nil {
+	if err = s.insertDefinition(ctx, tx, p, description, journal); err != nil {
 		return poll.Poll{}, err
 	}
-	if overlap {
-		return poll.Poll{}, poll.ErrOverlap
+	err = tx.Commit(ctx)
+	if s.afterCreateCommit != nil {
+		err = s.afterCreateCommit(err)
 	}
-	if _, err = tx.Exec(ctx, "INSERT INTO "+s.table()+" (id,description,journal,starts_at,ends_at) VALUES ($1,$2,$3,$4,$5)", id, description, journal, p.StartsAt, p.EndsAt); err != nil {
-		return poll.Poll{}, err
-	}
-	if err = tx.Commit(ctx); err != nil {
-		return poll.Poll{}, err
+	if err != nil {
+		// COMMIT may have reached PostgreSQL. Reconcile independently of the lost
+		// HTTP context; maintenance also reloads unfinished definitions as a fallback.
+		resolve, done := context.WithTimeout(s.ctx, 3*time.Second)
+		reconcileErr := s.reloadPending(resolve)
+		done()
+		if reconcileErr != nil {
+			return poll.Poll{}, errors.New("creation outcome unknown; pending metadata reconciliation required")
+		}
+		return poll.Poll{}, errors.New("creation outcome unknown; inspect the poll list")
 	}
 	// Cache the durable definition even if subsequent preparation is cancelled.
 	// A failed HTTP creation can be found in List and resumed by maintenance.
 	s.mu.Lock()
 	s.polls[id] = e
 	s.mu.Unlock()
-	if err = s.guard.WaitDurable(ctx); err != nil {
+	if err = s.guard.WaitDurableConn(ctx, conn.Conn()); err != nil {
 		return poll.Poll{}, err
 	}
 	if err = s.prepare(ctx, e); err != nil {
@@ -316,8 +333,9 @@ func (s *Store) Vote(ctx context.Context, id, token string, choices []int) (poll
 	if (!multiple && len(normalized) != 1) || normalized[len(normalized)-1] > optionCount {
 		return poll.Receipt{Status: "invalid"}, nil
 	}
-	now := time.Now()
-	if final || !now.Before(ends) {
+	now := s.now()
+	if final || e.admissionClosed.Load() || !now.Before(ends) {
+		e.admissionClosed.Store(true)
 		return poll.Receipt{Status: "closed"}, nil
 	}
 	if now.Before(starts) {
@@ -335,9 +353,12 @@ func (s *Store) Vote(ctx context.Context, id, token string, choices []int) (poll
 	case err == nil:
 		return poll.Receipt{Status: "recorded", Choices: normalized, AcceptedAt: &receipt.AdmittedAt}, nil
 	case errors.Is(err, votelog.ErrClosed):
+		e.admissionClosed.Store(true)
 		return poll.Receipt{Status: "closed"}, nil
 	case errors.Is(err, votelog.ErrNotOpen):
 		return poll.Receipt{Status: "not_open"}, nil
+	case errors.Is(err, votelog.ErrNotOwned):
+		return poll.Receipt{}, votelog.ErrNotOwned
 	case errors.Is(err, votelog.ErrBusy):
 		return poll.Receipt{Status: "busy"}, nil
 	case errors.Is(err, votelog.ErrInvalid):
@@ -363,6 +384,9 @@ func (s *Store) Results(ctx context.Context, id string) (poll.Results, error) {
 	if err = s.pool.QueryRow(ctx, "SELECT result FROM "+s.table()+" WHERE id=$1 AND finalized_at IS NOT NULL", id).Scan(&data); err != nil {
 		return poll.Results{}, err
 	}
+	if err = validateFinal(&entry{poll: p, config: votelog.Config{Multiple: p.Type == "multiple"}}, data); err != nil {
+		return poll.Results{}, err
+	}
 	r = poll.Results{} // omitted pending:false must not retain the pending default
 	if err = json.Unmarshal(data, &r); err != nil {
 		return poll.Results{}, err
@@ -370,99 +394,5 @@ func (s *Store) Results(ctx context.Context, id string) (poll.Results, error) {
 	if r.Pending || r.State != "final" || r.PollID != id {
 		return poll.Results{}, errors.New("invalid persisted final result")
 	}
-	return r, nil
-}
-
-// FinalizeDue publishes only a fully validated CLOSED replay. The exact map
-// grows with actual unique full 128-bit IDs, bounded by MaxUnique. No hash-only
-// membership test or approximate unique count is used.
-func (s *Store) FinalizeDue(parent context.Context) (int, error) {
-	ctx, cancel := s.operation(parent)
-	defer cancel()
-	s.opMu.Lock()
-	defer s.opMu.Unlock()
-	if err := s.checkOwner(ctx); err != nil {
-		return 0, err
-	}
-	s.mu.RLock()
-	pending := make([]*entry, 0)
-	for _, e := range s.polls {
-		if e.poll.FinalizedAt == nil {
-			pending = append(pending, e)
-		}
-	}
-	s.mu.RUnlock()
-	count := 0
-	for _, e := range pending {
-		if e.writer == nil {
-			if err := s.prepare(ctx, e); err != nil {
-				return count, err
-			}
-		}
-		if time.Now().Before(e.poll.EndsAt) {
-			continue
-		}
-		if _, err := e.writer.Seal(ctx); err != nil {
-			return count, err
-		}
-		r, err := aggregate(ctx, e, s.opts.MaxUnique)
-		if err != nil {
-			return count, err
-		}
-		if err = s.checkOwner(ctx); err != nil {
-			return count, err
-		}
-		encoded, _ := json.Marshal(r)
-		// Result and finalized_at change in one PostgreSQL transaction. A
-		// cancelled commit is retried idempotently by reading the stored result.
-		_, err = s.pool.Exec(ctx, "UPDATE "+s.table()+" SET result=$2, finalized_at=$3 WHERE id=$1 AND finalized_at IS NULL", e.poll.ID, encoded, r.CalculatedAt)
-		if err != nil {
-			return count, err
-		}
-		if err = s.guard.WaitDurable(ctx); err != nil {
-			return count, err
-		}
-		var finalized time.Time
-		if err = s.pool.QueryRow(ctx, "SELECT finalized_at FROM "+s.table()+" WHERE id=$1", e.poll.ID).Scan(&finalized); err != nil {
-			return count, err
-		}
-		s.mu.Lock()
-		e.poll.FinalizedAt = &finalized
-		s.mu.Unlock()
-		e.writer.Close()
-		s.mu.Lock()
-		e.writer = nil // final metadata must not retain producer buffers/queues
-		s.mu.Unlock()
-		count++
-	}
-	return count, nil
-}
-
-func aggregate(ctx context.Context, e *entry, maxUnique int) (poll.Results, error) {
-	r := poll.Results{PollID: e.poll.ID, State: "final", Options: make([]poll.OptionCount, len(e.poll.Options))}
-	for i, o := range e.poll.Options {
-		r.Options[i] = poll.OptionCount{ID: o.ID, Label: o.Label}
-	}
-	seen := make(map[[16]byte]struct{})
-	_, err := votelog.Replay(ctx, e.config, func(_ votelog.Position, v votelog.Vote) error {
-		if _, ok := seen[v.Token]; ok {
-			return nil
-		}
-		if len(seen) >= maxUnique {
-			return errors.New("exact aggregation unique-ID memory bound reached; result remains pending")
-		}
-		seen[v.Token] = struct{}{}
-		r.TotalVotes++
-		for i := range r.Options {
-			if v.Choice&(1<<uint(i)) != 0 {
-				r.Options[i].Votes++
-			}
-		}
-		return nil
-	})
-	if err != nil {
-		return poll.Results{}, err
-	}
-	r.CalculatedAt = time.Now().UTC()
 	return r, nil
 }

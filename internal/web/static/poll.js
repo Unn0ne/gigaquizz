@@ -8,7 +8,9 @@
   const message = byId('vote-message');
   const button = byId('vote-button');
   let poll;
-  let clockOffset = 0;
+  let clock = null;
+  let timeCheck = null;
+  let boundaryCheckAttempted = false;
   let record;
   let busy = false;
   let store;
@@ -104,11 +106,43 @@
   }
 
   function liveState() {
-    if (poll.state === 'final') return 'final';
-    const now = Date.now() + clockOffset;
-    if (now < Date.parse(poll.starts_at)) return 'scheduled';
-    if (now < Date.parse(poll.ends_at)) return 'open';
+    if (record?.pending?.closed) return 'processing';
+    if (!clock) return 'unknown';
+    const bounds = clock.bounds();
+    if (bounds.upper < Date.parse(poll.starts_at)) {
+      // A lagging cache clock could otherwise hide the whole real minute.
+      // Confirm a header-based boundary before blocking a participant.
+      if (clock.source === 'headers' && !record?.receipt) {
+        if (!boundaryCheckAttempted) { boundaryCheckAttempted = true; refreshTime(); }
+        return 'unknown';
+      }
+      return 'scheduled';
+    }
+    if (bounds.lower < Date.parse(poll.ends_at)) return 'open';
+    // Date/Age assumes a correctly operated cache. Confirm an apparent close
+    // against the origin before disabling a participant who has no receipt.
+    if (clock.source === 'headers' && !record?.receipt) {
+      if (!boundaryCheckAttempted) { boundaryCheckAttempted = true; refreshTime(); }
+      return 'unknown';
+    }
     return 'processing';
+  }
+
+  async function refreshTime() {
+    if (timeCheck) return timeCheck;
+    timeCheck = (async () => {
+      try {
+        const response = await ui.request('/api/time', { cache: 'no-store' });
+        const next = response.ok ? ui.clockFromResponse(response, true) : null;
+        if (!next) throw new Error('clock_unknown');
+        clock = next;
+        ui.notice(byId('clock-warning'), '');
+      } catch {
+        clock = null;
+        ui.notice(byId('clock-warning'), 'Не удалось проверить время. Вы можете отправить ответ; сервер проверит, открыт ли опрос.', 'warning');
+      } finally { timeCheck = null; renderClock(); }
+    })();
+    return timeCheck;
   }
 
   function selectedChoices() {
@@ -147,23 +181,25 @@
     const state = liveState();
     ui.stateBadge(byId('poll-state'), state);
     const until = state === 'scheduled' ? poll.starts_at : poll.ends_at;
-    const seconds = Math.max(0, Math.ceil((Date.parse(until) - Date.now() - clockOffset) / 1000));
+    const bounds = clock?.bounds();
+    const seconds = bounds ? Math.max(0, Math.ceil((Date.parse(until) - bounds.lower) / 1000)) : 0;
     const timer = byId('countdown');
     if (state === 'open' || state === 'scheduled') {
       const minutes = Math.floor(seconds / 60);
       timer.textContent = (state === 'scheduled' ? 'До начала ' : 'Осталось ') + minutes + ':' + String(seconds % 60).padStart(2, '0');
-    } else timer.textContent = 'Приём ответов закрыт';
+    } else timer.textContent = state === 'unknown' ? 'Точное время недоступно' : 'Приём ответов закрыт';
     byId('scheduled-note').hidden = state !== 'scheduled';
     if (state === 'scheduled') byId('scheduled-note').textContent = 'Начало ' + ui.date(poll.starts_at) + '. Страницу можно оставить открытой.';
-    byId('choices-fieldset').disabled = busy || Boolean(record.pending) || Boolean(record.receipt) || state !== 'open';
+    byId('choices-fieldset').disabled = busy || Boolean(record.pending) || Boolean(record.receipt) || !['open', 'unknown'].includes(state);
     const retrySeconds = Math.max(0, Math.ceil((retryAvailableAt - performance.now()) / 1000));
     button.hidden = Boolean(record.receipt);
-    button.disabled = busy || retrySeconds > 0 || Boolean(record.pending?.closed) || (!record.pending && state !== 'open');
+    button.disabled = busy || retrySeconds > 0 || Boolean(record.pending?.closed) || (!record.pending && !['open', 'unknown'].includes(state));
     if (busy) button.textContent = 'Отправляем ответ…';
     else if (record.pending?.closed) button.textContent = 'Приём ответов закрыт';
     else if (retrySeconds > 0) button.textContent = 'Повторить через ' + retrySeconds + ' с';
     else if (record.pending) button.textContent = 'Повторить отправку';
     else if (state === 'scheduled') button.textContent = 'Голосование скоро начнётся';
+    else if (state === 'unknown') button.textContent = 'Отправить ответ →';
     else if (state !== 'open') button.textContent = 'Голосование завершено';
     else button.textContent = 'Отправить ответ →';
   }
@@ -171,7 +207,7 @@
   async function sendVote(event) {
     event.preventDefault();
     if (busy || record.receipt || record.pending?.closed || performance.now() < retryAvailableAt) return;
-    if (!record.pending && liveState() !== 'open') {
+    if (!record.pending && !['open', 'unknown'].includes(liveState())) {
       renderClock();
       return;
     }
@@ -194,14 +230,15 @@
       const submittedChoices = record.pending.choices.slice();
       const response = await ui.request('/api/polls/' + encodeURIComponent(pollID) + '/votes', { method: 'POST', body: JSON.stringify({ token: record.token, choices: submittedChoices }) });
       const data = response.data;
-      const recorded = response.status === 202 && data.status === 'recorded';
-      if (recorded || ([200, 201, 409].includes(response.status) && Array.isArray(data.choices) && data.choices.length > 0)) {
+      const valid = ui.validReceipt(data, response.status, submittedChoices, poll);
+      const recorded = valid && response.status === 202;
+      if (valid) {
         record = await store.update((current) => {
           // A recorded receipt confirms this attempt, without claiming which
           // choice will be canonical after all attempts have been processed.
           if (!current.receipt) current.receipt = recorded
-            ? { status: 'recorded', attempt_choices: submittedChoices, accepted_at: data.accepted_at || null }
-            : { status: response.status === 409 ? 'conflict' : data.status, choices: data.choices, accepted_at: data.accepted_at || null };
+            ? { status: 'recorded', attempt_choices: submittedChoices, accepted_at: data.accepted_at }
+            : { status: response.status === 409 ? 'conflict' : data.status, choices: data.choices, accepted_at: data.accepted_at };
           delete current.pending;
           return current;
         });
@@ -246,11 +283,11 @@
 
   async function init() {
     try {
-      const response = await ui.request('/api/polls/' + encodeURIComponent(pollID || ''));
+      const response = await ui.request('/api/polls/' + encodeURIComponent(pollID || '') + '/definition');
       if (!response.ok) throw new Error(response.status === 404 ? 'Такого опроса нет. Проверьте ссылку у организатора.' : 'Сервис временно недоступен. Попробуйте ещё раз.');
       poll = response.data;
-      clockOffset = Date.parse(poll.server_time) - response.midpoint;
-      if (!Number.isFinite(clockOffset)) throw new Error('Не удалось определить время начала опроса.');
+      if (!Array.isArray(poll.options) || !Number.isFinite(Date.parse(poll.starts_at)) || Date.parse(poll.ends_at) - Date.parse(poll.starts_at) !== 60000) throw new Error('Не удалось прочитать условия опроса.');
+      clock = ui.clockFromResponse(response);
       document.title = poll.question + ' — Gigaquizz';
       byId('question').textContent = poll.question;
       byId('selection-hint').textContent = poll.type === 'multiple' ? 'Можно выбрать несколько вариантов.' : 'Выберите один вариант.';
@@ -274,6 +311,7 @@
       byId('choices').replaceChildren(fragment);
       store = await createStore();
       record = await store.update();
+      if (!clock) await refreshTime();
       byId('loading').hidden = true;
       byId('poll-panel').hidden = false;
       renderRecord();

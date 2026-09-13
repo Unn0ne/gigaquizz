@@ -34,6 +34,7 @@ def run(args):
     binary = (root / 'bin/gigaquizz').resolve()
     check(binary.is_file(), 'build bin/gigaquizz first')
     check(1024 < args.port <= 65535, 'port must be 1025..65535')
+    check(1 <= args.file_partitions <= 256, 'file partitions must be 1..256')
     with socket.socket() as probe:
         probe.bind(('127.0.0.1', args.port))
     directory = root / '.local/service-checks' / (args.mode + '_' + secrets.token_hex(6))
@@ -42,7 +43,7 @@ def run(args):
     base = 'http://127.0.0.1:' + str(args.port)
     values = {'HTTP_ADDR': '127.0.0.1:' + str(args.port), 'PUBLIC_URL': base,
               'ADMIN_PASSWORD': password, 'MAX_INFLIGHT': '256',
-              'MAX_UNIQUE_VOTERS': '10000', 'DATA_DIR': str(directory / 'data')}
+              'MAX_UNIQUE_VOTERS': '10000', 'FILE_PARTITIONS': str(args.file_partitions), 'DATA_DIR': str(directory / 'data')}
     if args.mode == 'postgres-kafka':
         database = os.environ.get('TEST_DATABASE_URL', '')
         check(bool(database), 'TEST_DATABASE_URL is required for an isolated Kafka metadata schema')
@@ -168,7 +169,13 @@ def run(args):
         report['final_choice_counts'] = [x['votes'] for x in final['options']]
         phase('graceful_restart_of_final_result')
         stop(); start(); login()
-        status, repeated = request(results, authenticated=True)
+        until = time.monotonic()+60
+        while True:
+            status, repeated = request(results, authenticated=True)
+            if status == 200 and repeated.get('state') == 'final' and not repeated.get('pending'):
+                break
+            check(time.monotonic() < until, 'stored final verification exceeded deadline')
+            time.sleep(.2)
         check(status == 200 and repeated == final, 'persisted final result changed after restart')
         report['checks'].extend(['final_result_survives_graceful_restart', 'late_new_and_repeat_rejected', 'admin_sessions_revoked_on_restart'])
         report['correct'] = True
@@ -193,6 +200,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--mode', choices=['simple-files', 'postgres-kafka'], required=True)
     parser.add_argument('--port', type=int, required=True)
+    parser.add_argument('--file-partitions', type=int, default=1)
     try:
         sys.exit(run(parser.parse_args()))
     except Exception as error:

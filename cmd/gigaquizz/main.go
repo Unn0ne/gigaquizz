@@ -19,6 +19,7 @@ import (
 	"gigaquizz/internal/httpapi"
 	"gigaquizz/internal/kafkapoll"
 	"gigaquizz/internal/postgres"
+	"gigaquizz/internal/votelog"
 	"gigaquizz/internal/web"
 )
 
@@ -60,7 +61,11 @@ func run() (runErr error) {
 		slog.Info("migrations applied")
 		return nil
 	}
-	store, err := kafkapoll.New(startup, kafkapoll.Options{DatabaseURL: cfg.DatabaseURL, Schema: cfg.DatabaseSchema, Brokers: cfg.KafkaBrokers, AllowRemoteBrokers: cfg.KafkaAllowRemote, Partitions: cfg.KafkaPartitions, BatchSize: cfg.KafkaBatchVotes, QueuePerPartition: cfg.KafkaQueueVotes, Linger: cfg.KafkaLinger, MaxUnique: cfg.MaxUnique, MaxPolls: cfg.MaxPolls, PreparationLead: cfg.PreparationLead, Durability: durability})
+	security, err := votelog.BuildSecurity(votelog.SecurityOptions{TLS: cfg.KafkaTLS, CAFile: cfg.KafkaTLSCAFile, CertFile: cfg.KafkaTLSCertFile, KeyFile: cfg.KafkaTLSKeyFile, ServerName: cfg.KafkaTLSServerName, SASLMechanism: cfg.KafkaSASLMechanism, Username: cfg.KafkaSASLUsername, Password: cfg.KafkaSASLPassword})
+	if err != nil {
+		return err
+	}
+	store, err := kafkapoll.New(startup, kafkapoll.Options{DatabaseURL: cfg.DatabaseURL, Schema: cfg.DatabaseSchema, Brokers: cfg.KafkaBrokers, AllowRemoteBrokers: cfg.KafkaAllowRemote, Partitions: cfg.KafkaPartitions, BatchSize: cfg.KafkaBatchVotes, QueuePerPartition: cfg.KafkaQueueVotes, Linger: cfg.KafkaLinger, Security: security, MaxPartitionUnique: cfg.MaxPartitionUnique, MaxUnique: cfg.MaxUnique, MaxPolls: cfg.MaxPolls, PreparationLead: cfg.PreparationLead, Durability: durability})
 	if err != nil {
 		return errors.New("cannot initialize PostgreSQL/Kafka controller (check broker readiness and exclusive schema ownership)")
 	}

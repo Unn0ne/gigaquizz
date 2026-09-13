@@ -13,11 +13,12 @@ test('Retry-After delays manual retry; closed refusal preserves uncertainty with
   const id = '00112233-4455-6677-8899-aabbccddeeff';
   const now = Date.now();
   const bodies = [];
-  await page.route(`**/api/polls/${id}`, route => route.fulfill({ json: {
+  await page.route(`**/api/polls/${id}/definition`, route => route.fulfill({ headers: { Date: new Date().toUTCString(), Age: '0' }, json: {
     id, question: 'Проверка повтора', type: 'single', options: [{ id: 1, label: 'Да' }, { id: 2, label: 'Нет' }],
     starts_at: new Date(now - 57000).toISOString(), ends_at: new Date(now + 3000).toISOString(),
     state: 'open', server_time: new Date().toISOString(),
   } }));
+  await page.route('**/api/time', route => route.fulfill({ json: { server_time: new Date().toISOString() } }));
   await page.route(`**/api/polls/${id}/votes`, route => {
     bodies.push(route.request().postDataJSON());
     return bodies.length === 1

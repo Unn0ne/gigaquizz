@@ -12,6 +12,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"syscall"
 	"time"
 
@@ -38,10 +39,17 @@ type auditStates struct {
 	Status   []byte
 	Admitted []int64
 }
+type auditInput struct {
+	Manifest privateManifest
+	States   auditStates
+}
 type auditReport struct {
 	JournalInspection *journalInspection `json:"journal_inspection,omitempty"`
 	Mode              string             `json:"mode"`
 	Correct           bool               `json:"correct"`
+	Generators        int                `json:"generators"`
+	PlannedKeys       uint64             `json:"planned_unique_keys"`
+	ACKCoverage       float64            `json:"acknowledged_attempt_fraction"`
 	LedgerValid       bool               `json:"ledger_valid"`
 	JournalClosed     bool               `json:"journal_closed"`
 	ResultsMatched    bool               `json:"saved_service_results_matched"`
@@ -68,6 +76,9 @@ type auditReport struct {
 }
 
 func loadLedger(path string) (privateManifest, auditStates, error) {
+	return loadLedgerContext(context.Background(), path)
+}
+func loadLedgerContext(ctx context.Context, path string) (privateManifest, auditStates, error) {
 	var m privateManifest
 	var s auditStates
 	if err := readPrivateJSON(path, &m, 2<<20); err != nil {
@@ -105,6 +116,11 @@ func loadLedger(path string) (privateManifest, auditStates, error) {
 			reader := bufio.NewReaderSize(io.TeeReader(f, h), 256*1024)
 			var raw [ledgerBytes]byte
 			for n := uint64(0); n < meta.Records; n++ {
+				if n%4096 == 0 {
+					if err := ctx.Err(); err != nil {
+						return err
+					}
+				}
 				if _, err = io.ReadFull(reader, raw[:]); err != nil {
 					return err
 				}
@@ -113,7 +129,7 @@ func loadLedger(path string) (privateManifest, auditStates, error) {
 					return err
 				}
 				seq, err := sequence(m.Config, a.Key, a.Choice)
-				if err != nil || seq != a.Seq || a.Seq >= uint64(len(s.Status)) || s.Status[a.Seq] != 0 || a.Token != tokenFor(block, m.Namespace, a.Key) || a.Token == [16]byte{} || a.ScheduledNS != int64(a.Key*uint64(time.Second)/m.Config.Rate) {
+				if err != nil || seq != a.Seq || a.Seq >= uint64(len(s.Status)) || s.Status[a.Seq] != 0 || a.Token != tokenFor(block, m.Namespace, m.Config.KeyOffset+a.Key) || a.Token == [16]byte{} || a.ScheduledNS != int64(m.Config.scheduledOffset(a.Key)) {
 					return errors.New("ledger sequence, full token, key or schedule mismatch")
 				}
 				if a.State == stateACK && (a.HTTP != 202 || a.AdmittedNS < m.Poll.StartsAt.UnixNano() || a.AdmittedNS >= m.Poll.EndsAt.UnixNano() || a.Flags != 0) {
@@ -176,7 +192,7 @@ func runAudit(ctx context.Context, path, fileJournal, kafkaConfig, resultsPath s
 	defer cancel()
 	start := time.Now()
 	r := auditReport{Mode: "independent-http-audit"}
-	m, s, err := loadLedger(path)
+	m, s, err := loadLedgerContext(ctx, path)
 	if err != nil {
 		r.Failure = "invalid_private_ledger"
 		return r, err
@@ -202,27 +218,54 @@ func runAudit(ctx context.Context, path, fileJournal, kafkaConfig, resultsPath s
 }
 
 func reconcile(ctx context.Context, m privateManifest, s auditStates, res poll.Results, replay journalReplay) (auditReport, error) {
-	r := auditReport{Mode: "independent-http-audit", LedgerValid: true, Planned: m.Config.attempts(), StateBytes: 9*m.Config.attempts() + m.Config.keys(), Method: "Separate process reads every CRC/SHA256-checked full-ID client record and the journal through CLOSED. AES inversion validates all 128 token bits and synthetic key range; dense flags are exact, not a probabilistic hash. Each ACK matches token+choice+admitted_at with multiplicity one. Only unknown attempts can explain additional records. Canonical first journal occurrence is compared to saved final service counts. No HTTP positions or receipt cache required."}
-	if uint64(len(s.Status)) != r.Planned || len(s.Status) != len(s.Admitted) {
-		r.Failure = "invalid_state_bounds"
-		return r, errors.New(r.Failure)
-	}
-	for _, state := range s.Status {
-		switch state & 0x3f {
-		case stateACK:
-			r.Confirmed++
-		case stateUnknown:
-			r.Unknown++
-		case stateJourneyFailed:
-			r.JourneyFailed++
-		}
-		if state&0x40 != 0 {
-			r.InvalidPositive++
-		}
-	}
-	block, _ := aes.NewCipher(m.Seed[:])
-	seen := make([]byte, m.Config.keys())
+	return reconcileMany(ctx, []auditInput{{Manifest: m, States: s}}, res, replay)
+}
+
+func reconcileMany(ctx context.Context, inputs []auditInput, res poll.Results, replay journalReplay) (auditReport, error) {
+	r := auditReport{Mode: "independent-http-audit", LedgerValid: true, Generators: len(inputs), Method: "Separate process reads every CRC/SHA256-checked full-ID client record and the journal through CLOSED. AES inversion validates all 128 token bits and disjoint generator ranges; dense flags are exact, not a probabilistic hash. Each ACK matches token+choice+admitted_at with multiplicity one. Only unknown attempts can explain additional records. Canonical first journal occurrence is compared to saved final service counts. Complete range coverage is required by distributed-plan audits; correct does not mean every planned attempt was admitted."}
 	fail := func(reason string) error { r.Failure = reason; return errors.New(reason) }
+	if len(inputs) < 1 || len(inputs) > 128 {
+		return r, fail("invalid_generator_inventory")
+	}
+	inputs = append([]auditInput(nil), inputs...)
+	sort.Slice(inputs, func(i, j int) bool { return inputs[i].Manifest.Config.KeyOffset < inputs[j].Manifest.Config.KeyOffset })
+	m := inputs[0].Manifest
+	var end uint64
+	for i, input := range inputs {
+		c, s := input.Manifest.Config, input.States
+		if c.validate() != nil || uint64(len(s.Status)) != c.attempts() || len(s.Status) != len(s.Admitted) {
+			return r, fail("invalid_state_bounds")
+		}
+		if input.Manifest.Seed != m.Seed || input.Manifest.Namespace != m.Namespace || !samePoll(input.Manifest.Poll, m.Poll) || (i > 0 && c.KeyOffset < end) {
+			return r, fail("incompatible_or_overlapping_generator_ranges")
+		}
+		end = c.KeyOffset + c.keys()
+		r.Planned += c.attempts()
+		r.PlannedKeys += c.keys()
+		if r.Planned > maxPlanAttempts || r.PlannedKeys > maxPlanKeys {
+			return r, fail("distributed_audit_capacity_exceeded")
+		}
+		for _, state := range s.Status {
+			switch state & 0x3f {
+			case stateACK:
+				r.Confirmed++
+			case stateUnknown:
+				r.Unknown++
+			case stateJourneyFailed:
+				r.JourneyFailed++
+			}
+			if state&0x40 != 0 {
+				r.InvalidPositive++
+			}
+		}
+	}
+	r.StateBytes = 9*r.Planned + r.PlannedKeys
+	r.ACKCoverage = float64(r.Confirmed) / float64(r.Planned)
+	block, _ := aes.NewCipher(m.Seed[:])
+	seen := make([][]byte, len(inputs))
+	for i, input := range inputs {
+		seen[i] = make([]byte, input.Manifest.Config.keys())
+	}
 	err := replay(ctx, func(v journalVote) error {
 		if ctx.Err() != nil {
 			return ctx.Err()
@@ -231,12 +274,19 @@ func reconcile(ctx context.Context, m privateManifest, s auditStates, res poll.R
 			r.Unexpected++
 			return fail("journal_admission_outside_window")
 		}
-		key, err := keyFor(block, m.Namespace, v.Token, m.Config.keys())
+		globalKey, err := keyFor(block, m.Namespace, v.Token, end)
 		if err != nil {
 			r.Unexpected++
 			return fail("unexpected_full_token")
 		}
-		seq, err := sequence(m.Config, key, v.Choice)
+		i := sort.Search(len(inputs), func(i int) bool { c := inputs[i].Manifest.Config; return globalKey < c.KeyOffset+c.keys() })
+		if i == len(inputs) || globalKey < inputs[i].Manifest.Config.KeyOffset {
+			r.Unexpected++
+			return fail("unexpected_full_token")
+		}
+		c, s := inputs[i].Manifest.Config, inputs[i].States
+		key := globalKey - c.KeyOffset
+		seq, err := sequence(c, key, v.Choice)
 		if err != nil {
 			r.Unexpected++
 			return fail("unplanned_choice_or_repeat")
@@ -260,10 +310,10 @@ func reconcile(ctx context.Context, m privateManifest, s auditStates, res poll.R
 			r.Resolved++
 		}
 		s.Status[seq] |= 0x80
-		if seen[key] == 0 {
+		if seen[i][key] == 0 {
 			r.Canonical++
 			r.Choices[v.Choice-1]++
-			seen[key] = 1
+			seen[i][key] = 1
 		} else {
 			r.Duplicates++
 		}

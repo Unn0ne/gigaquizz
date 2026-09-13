@@ -240,7 +240,36 @@ func TestHTTPKafkaDurableAttemptsRestartAndExactFinal(t *testing.T) {
 			t.Fatal("finalized timestamp was not persisted")
 		}
 	}
+
 	assertFinal()
+	// Simulate a committed final UPDATE whose reply/memory publication was lost.
+	// An unusable broker address proves this fast path opens no new Kafka writer.
+	s.mu.Lock()
+	s.polls[p.ID].poll.FinalizedAt = nil
+	savedBrokers := s.polls[p.ID].config.Brokers
+	s.polls[p.ID].config.Brokers = []string{"127.0.0.1:1"}
+	s.mu.Unlock()
+	if n, err := s.FinalizeDue(ctx); err != nil || n != 1 {
+		t.Fatalf("restore committed final without replay: %d %v", n, err)
+	}
+	s.mu.Lock()
+	s.polls[p.ID].config.Brokers = savedBrokers
+	s.mu.Unlock()
+
+	assertFinal()
+	var validResult []byte
+	if err := s.pool.QueryRow(ctx, "SELECT result FROM "+s.table()+" WHERE id=$1", p.ID).Scan(&validResult); err != nil {
+		t.Fatal(err)
+	}
+	var corrupt poll.Results
+	if err := json.Unmarshal(validResult, &corrupt); err != nil {
+		t.Fatal(err)
+	}
+	corrupt.Options[0].Votes = -1
+	badResult, _ := json.Marshal(corrupt)
+	if _, err := s.pool.Exec(ctx, "UPDATE "+s.table()+" SET result=$2 WHERE id=$1", p.ID, badResult); err != nil {
+		t.Fatal(err)
+	}
 	server.Close()
 	s.Close()
 	s, err = New(ctx, opts)
@@ -249,6 +278,12 @@ func TestHTTPKafkaDurableAttemptsRestartAndExactFinal(t *testing.T) {
 	}
 	startHTTP()
 	login()
+	if code, _ := request("GET", "/api/admin/polls/"+p.ID+"/results", nil); code != 503 {
+		t.Fatalf("corrupt final after restart returned %d", code)
+	}
+	if _, err := s.pool.Exec(ctx, "UPDATE "+s.table()+" SET result=$2 WHERE id=$1", p.ID, validResult); err != nil {
+		t.Fatal(err)
+	}
 	assertFinal()
 	var rows int
 	if err = s.pool.QueryRow(ctx, "SELECT count(*) FROM "+s.table()).Scan(&rows); err != nil || rows != 1 {

@@ -1,0 +1,41 @@
+{
+  "scope": "Sanitized local observations around the failed cold journey; no throughput or physical data-loss claim.",
+  "profile": "r13_kafka_journey_10000_lag1000",
+  "observations": [
+    {
+      "local_time": "2026-09-13 17:15:15.691",
+      "component": "Kafka Raft network client",
+      "exception_type": "java.net.BindException",
+      "exception_message": "Can't assign requested address"
+    },
+    {
+      "local_time": "2026-09-13 17:15:17.166",
+      "component": "Kafka controller",
+      "event": "leadership renounced; new controller epoch observed"
+    },
+    {
+      "local_time": "2026-09-13 17:15:34",
+      "component": "application",
+      "failed_writers": 5,
+      "storage_errors": 19073
+    }
+  ],
+  "OS_settings_read_after_profile": {
+    "ephemeral_first": 49152,
+    "ephemeral_last": 65535,
+    "range_size": 16384,
+    "tcp_msl_ms": 15000
+  },
+  "interpretation": "The local-address allocation errors and request cancellation storm are consistent with exhausted ephemeral ports on the shared laptop. Peak socket occupancy was not sampled, so exact resource usage and causal attribution to each producer error are not proven. These are not measurements of independent client machines.",
+  "confirmed_bug": "Failed Kafka writers were permanently reused by finalization; a manual process restart was required to obtain final results.",
+  "recovery": {
+    "manual_restart_final_seconds": 1.4505085419514216,
+    "ACK_exactly_matched": 160434,
+    "ACK_missing": 0,
+    "unknown_attempts": 22738,
+    "unknown_found_committed": 14,
+    "final_unique_votes": 160448
+  },
+  "system_settings_modified": false,
+  "shared_brokers_restarted": false
+}

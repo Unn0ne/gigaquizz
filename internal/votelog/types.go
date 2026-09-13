@@ -18,15 +18,19 @@ import (
 )
 
 var (
-	ErrNotOpen = errors.New("poll has not started")
-	ErrClosed  = errors.New("poll admission closed")
-	ErrBusy    = errors.New("bounded admission queue full")
-	ErrUnknown = errors.New("attempt outcome unknown")
-	ErrInvalid = errors.New("invalid vote or configuration")
+	ErrNotOwned = errors.New("partition is owned by another writer")
+	ErrNotOpen  = errors.New("poll has not started")
+	ErrClosed   = errors.New("poll admission closed")
+	ErrBusy     = errors.New("bounded admission queue full")
+	ErrUnknown  = errors.New("attempt outcome unknown")
+	ErrInvalid  = errors.New("invalid vote or configuration")
 )
 
 type Config struct {
 	Brokers []string
+	// Runtime-only ownership: nil means all; an explicit empty set cannot open a writer.
+	OwnedPartitions []int32         `json:"-"`
+	Security        *ClientSecurity `json:"-"`
 	// AllowRemoteBrokers opts into trusted-network plaintext Kafka addresses.
 	// It adds no authentication or encryption; the default retains lab isolation.
 	AllowRemoteBrokers bool
@@ -50,6 +54,9 @@ func (c Config) validate() error {
 		c.BatchSize < 1 || c.BatchSize > 4096 || c.QueuePerPartition < 1 || c.QueuePerPartition > 8192 ||
 		c.Linger < time.Millisecond || c.Linger > time.Second || c.TransactionTimeout < time.Second || c.TransactionTimeout > 30*time.Second {
 		return ErrInvalid
+	}
+	if _, err := c.ownedPartitions(); err != nil {
+		return err
 	}
 	maxBrokers := 3
 	if c.AllowRemoteBrokers {
@@ -114,10 +121,13 @@ type PartitionEnd struct {
 	Offset    int64 `json:"offset"`
 }
 type Manifest struct {
-	Topic      string         `json:"topic"`
-	Partitions []PartitionEnd `json:"partitions"`
-	StartsAt   time.Time      `json:"starts_at"`
-	EndsAt     time.Time      `json:"ends_at"`
+	Partial         bool           `json:"partial,omitempty"`
+	TotalPartitions int            `json:"total_partitions,omitempty"`
+	OwnedPartitions []int32        `json:"owned_partitions,omitempty"`
+	Topic           string         `json:"topic"`
+	Partitions      []PartitionEnd `json:"partitions"`
+	StartsAt        time.Time      `json:"starts_at"`
+	EndsAt          time.Time      `json:"ends_at"`
 }
 type AuditResult struct {
 	Manifest      Manifest

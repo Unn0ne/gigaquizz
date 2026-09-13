@@ -56,7 +56,7 @@ func ReplayStrict(parent context.Context, c Config, visit func(Position, Vote) e
 	}
 	ctx, cancel := context.WithTimeout(parent, 5*time.Minute)
 	defer cancel()
-	client, err := kgo.NewClient(kgo.SeedBrokers(c.Brokers...),
+	client, err := NewClient(c,
 		kgo.DialTimeout(3*time.Second), kgo.RequestTimeoutOverhead(5*time.Second),
 		kgo.FetchMaxBytes(4<<20), kgo.FetchMaxPartitionBytes(4<<20),
 		kgo.BrokerMaxReadBytes(8<<20))

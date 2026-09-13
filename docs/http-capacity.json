@@ -11,15 +11,15 @@
     "GET_request_http_bytes": 512,
     "static_response_headers_bytes_each": 512,
     "wire_note": "HTTP byte assumptions; TCP/IP, TLS, packet loss and retransmits are additional",
-    "page_note": "four explicitly linked resources; optional browser requests such as favicon excluded; gzip computed offline, not currently served by Go",
+    "page_note": "four explicitly linked resources; optional browser requests such as favicon excluded; gzip size estimated offline with Python default level; Go serves precomputed gzip.BestSpeed, so measured payload sizes differ",
     "arrivals_note": "page opening and voting need not occur in the same window",
     "replication": "Kafka RF3; one broker copy plus two replica copies; protocol overhead excluded"
   },
   "source_assets": {
     "poll.html": {
-      "bytes": 3027,
-      "gzip_bytes": 1336,
-      "sha256": "181fa4dd4910ad85c63bb9cb4f5461c5f7773a10f699980b5fd9558dfbf00775"
+      "bytes": 3108,
+      "gzip_bytes": 1350,
+      "sha256": "21554f1622d28f269e3d4f556eb764ecd7de82b00c3766603b7332184b27b5c2"
     },
     "app.css": {
       "bytes": 17358,
@@ -27,14 +27,14 @@
       "sha256": "95be199cafe69ce6ce02dc70f717100f15f62263bedc04fdb2d941a8e09acde9"
     },
     "common.js": {
-      "bytes": 2345,
-      "gzip_bytes": 1058,
-      "sha256": "de05bb1d5c003a20294e81a7800e60f620b43e2ac4abdd456f827e1a6f0de62e"
+      "bytes": 6978,
+      "gzip_bytes": 2642,
+      "sha256": "173e639024a78454b489b7e57d8d16d097375d4d7152c5d4b05c3b35a8487f05"
     },
     "poll.js": {
-      "bytes": 15581,
-      "gzip_bytes": 4718,
-      "sha256": "62da7e74ccdbe19310a7cbc1b8a3823171e55ea32a24fd0b1deddfa1d14b0c54"
+      "bytes": 17432,
+      "gzip_bytes": 5212,
+      "sha256": "4221067ebb4d19c4a89d496755a673ee23193bf395b803c9103e4e06eb8b0aec"
     }
   },
   "workload": {
@@ -46,23 +46,24 @@
     "all_HTTP_requests_without_reloads": 610000000,
     "all_HTTP_RPS_if_open_and_vote_in_same_window": 10166666.666666668,
     "new_connections_per_second_if_one_per_cold_browser": 1666666.6666666667,
-    "timer_network_requests": 0
+    "periodic_timer_network_requests": 0,
+    "clock_fallback_note": "One /api/time request when cached Date/Age cannot be used, or before the first local scheduled/closed rejection without a receipt. These conditional GETs are additional; no periodic time polling."
   },
   "traffic": {
     "page_uncompressed": {
-      "bytes": 3831100000000,
-      "decimal_GB": 3831.1,
-      "mean_Gbit_s": 510.81333333333333
+      "bytes": 4487600000000,
+      "decimal_GB": 4487.6,
+      "mean_Gbit_s": 598.3466666666666
     },
     "page_gzip_estimate": {
-      "bytes": 1168900000000,
-      "decimal_GB": 1168.9,
-      "mean_Gbit_s": 155.85333333333335
+      "bytes": 1378100000000,
+      "decimal_GB": 1378.1,
+      "mean_Gbit_s": 183.74666666666667
     },
     "page_gzip_preloaded_over_10_minutes": {
-      "bytes": 1168900000000,
-      "decimal_GB": 1168.9,
-      "mean_Gbit_s": 15.585333333333335
+      "bytes": 1378100000000,
+      "decimal_GB": 1378.1,
+      "mean_Gbit_s": 18.374666666666666
     },
     "question_responses": {
       "bytes": 153600000000,
@@ -95,9 +96,9 @@
       "mean_Gbit_s": 49.152
     },
     "all_egress_gzip_HTTP_estimate": {
-      "bytes": 1639940000000,
-      "decimal_GB": 1639.94,
-      "mean_Gbit_s": 218.65866666666665
+      "bytes": 1849140000000,
+      "decimal_GB": 1849.14,
+      "mean_Gbit_s": 246.552
     }
   },
   "full_reload_scenario": {
@@ -107,9 +108,9 @@
     "all_HTTP_requests": 660000000,
     "all_HTTP_RPS": 11000000.0,
     "outgoing_gzip_HTTP_estimate": {
-      "bytes": 1792670000000,
-      "decimal_GB": 1792.67,
-      "mean_Gbit_s": 239.02266666666665
+      "bytes": 2022790000000,
+      "decimal_GB": 2022.79,
+      "mean_Gbit_s": 269.70533333333333
     },
     "incoming_HTTP_estimate": {
       "bytes": 394240000000,
@@ -121,22 +122,22 @@
     {
       "hit_fraction": 0,
       "origin_question_RPS": 1666666.6666666667,
-      "note": "target architecture; current question includes server_time and is no-store"
+      "note": "immutable /definition is shared-cacheable; legacy /api/polls/{id} and /api/time remain no-store; CDN hit rates require measurement"
     },
     {
       "hit_fraction": 0.9,
       "origin_question_RPS": 166666.66666666663,
-      "note": "target architecture; current question includes server_time and is no-store"
+      "note": "immutable /definition is shared-cacheable; legacy /api/polls/{id} and /api/time remain no-store; CDN hit rates require measurement"
     },
     {
       "hit_fraction": 0.99,
       "origin_question_RPS": 16666.666666666682,
-      "note": "target architecture; current question includes server_time and is no-store"
+      "note": "immutable /definition is shared-cacheable; legacy /api/polls/{id} and /api/time remain no-store; CDN hit rates require measurement"
     },
     {
       "hit_fraction": 0.999,
       "origin_question_RPS": 1666.6666666666683,
-      "note": "target architecture; current question includes server_time and is no-store"
+      "note": "immutable /definition is shared-cacheable; legacy /api/polls/{id} and /api/time remain no-store; CDN hit rates require measurement"
     }
   ],
   "repeat_sensitivity": [
@@ -276,6 +277,58 @@
       "mean_handler_ms": 100,
       "mean_active_requests": 183333.3333333333,
       "slots_with_utilization_headroom": 261905
+    }
+  ],
+  "partition_finalization_sensitivity": [
+    {
+      "partitions": 1,
+      "mean_unique_per_partition": 100000000.0,
+      "assumed_exact_map_bytes_at_32_per_key": 3200000000,
+      "note": "Sequential partition aggregation now implemented in both branches; hash skew, replay/GC/queue memory and explicit per-partition bound are additional; local partitions do not create network workers"
+    },
+    {
+      "partitions": 8,
+      "mean_unique_per_partition": 12500000.0,
+      "assumed_exact_map_bytes_at_32_per_key": 400000000,
+      "note": "Sequential partition aggregation now implemented in both branches; hash skew, replay/GC/queue memory and explicit per-partition bound are additional; local partitions do not create network workers"
+    },
+    {
+      "partitions": 32,
+      "mean_unique_per_partition": 3125000.0,
+      "assumed_exact_map_bytes_at_32_per_key": 100000000,
+      "note": "Sequential partition aggregation now implemented in both branches; hash skew, replay/GC/queue memory and explicit per-partition bound are additional; local partitions do not create network workers"
+    },
+    {
+      "partitions": 128,
+      "mean_unique_per_partition": 781250.0,
+      "assumed_exact_map_bytes_at_32_per_key": 25000000,
+      "note": "Sequential partition aggregation now implemented in both branches; hash skew, replay/GC/queue memory and explicit per-partition bound are additional; local partitions do not create network workers"
+    },
+    {
+      "partitions": 256,
+      "mean_unique_per_partition": 390625.0,
+      "assumed_exact_map_bytes_at_32_per_key": 12500000,
+      "note": "Sequential partition aggregation now implemented in both branches; hash skew, replay/GC/queue memory and explicit per-partition bound are additional; local partitions do not create network workers"
+    }
+  ],
+  "clock_fallback_sensitivity": [
+    {
+      "affected_browser_fraction": 0.001,
+      "additional_requests_per_check": 100000,
+      "RPS_if_spread_over_minute": 1666.6666666666667,
+      "note": "A synchronized deadline burst is not uniform; provision the stateless /api/time path at the edge and measure separately"
+    },
+    {
+      "affected_browser_fraction": 0.01,
+      "additional_requests_per_check": 1000000,
+      "RPS_if_spread_over_minute": 16666.666666666668,
+      "note": "A synchronized deadline burst is not uniform; provision the stateless /api/time path at the edge and measure separately"
+    },
+    {
+      "affected_browser_fraction": 1,
+      "additional_requests_per_check": 100000000,
+      "RPS_if_spread_over_minute": 1666666.6666666667,
+      "note": "A synchronized deadline burst is not uniform; provision the stateless /api/time path at the edge and measure separately"
     }
   ],
   "memory": {

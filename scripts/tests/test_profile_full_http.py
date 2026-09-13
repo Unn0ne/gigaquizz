@@ -53,10 +53,32 @@ class Process:
         return 0
 
 
+def fixture_load(keys, offset=0, repeat_every=0, index=0):
+    attempts = keys + ((offset + keys) // repeat_every - offset // repeat_every if repeat_every else 0)
+    # Deliberately sparse ACK coverage: exact reconciliation must never imply
+    # that all planned attempts were accepted. This is an orchestration fixture.
+    return {'mode': 'http-post', 'complete': True, 'cancelled': False,
+            'planned_attempts': attempts, 'planned_unique_keys': keys, 'http_post_sent': 1,
+            'valid_recorded_ack': 1, 'generator_skipped': attempts - 1,
+            'repeat_every': repeat_every, 'workers': 2, 'queue': 8, 'max_lag_ms': 100,
+            'scheduled_seconds': 60, 'post_latency_scope': 'fixture dispatch through body',
+            'latency_mean_ms': 10 * (index + 1), 'latency_max_ms': 10 * (index + 1),
+            'latency_p99_upper_bound_ms': 16 * (index + 1),
+            'post_sent_per_scheduled_second': [1] + [0] * 59,
+            'ack_received_per_scheduled_second': [1] + [0] * 59}
+
+
 class HarnessFixture:
-    def __init__(self, directory, interrupt=False, stuck=False):
+    def __init__(self, directory, interrupt=False, stuck=False, strict=True, generators=1, repeat_every=0,
+                 pending_after_restart=0, changed_after_restart=False, never_final=False, failed_generator=None, audit_generators=None):
         self.directory = directory
-        self.interrupt, self.stuck = interrupt, stuck
+        self.interrupt, self.stuck, self.strict = interrupt, stuck, strict
+        self.generators, self.repeat_every = generators, repeat_every
+        self.pending_after_restart, self.changed_after_restart = pending_after_restart, changed_after_restart
+        self.never_final, self.failed_generator = never_final, failed_generator
+        self.audit_generators = generators if audit_generators is None else audit_generators
+        self.app_starts, self.sleeps = 0, 0
+        self.interrupt_after_spawn = None
         self.commands = []
         self.sql_commands = []
         self.processes = []
@@ -78,6 +100,12 @@ class HarnessFixture:
                            'options': [{'id': 1, 'votes': 1}, {'id': 2, 'votes': 0}]}
             return Response(self.poll, 201)
         if path.endswith('/results'):
+            if self.app_starts > 1:
+                if self.pending_after_restart > 0 or self.never_final:
+                    self.pending_after_restart -= 1
+                    return Response({'state': 'processing', 'pending': True, 'total_votes': 0})
+                if self.changed_after_restart:
+                    return Response({**self.result, 'total_votes': self.result['total_votes'] + 1})
             return Response(self.result)
         if path == '/api/admin/metrics':
             return Response({'recorded_responses': 1})
@@ -87,21 +115,42 @@ class HarnessFixture:
 
     def popen(self, command, **kwargs):
         self.commands.append((command, kwargs))
-        workload = '-rate' in command
-        audit = '-audit-only' in command
-        process = Process(20000 + len(self.processes), running=not (audit or (workload and not self.interrupt)),
-                          stuck=workload and self.stuck)
+        preparing = '-prepare-plan' in command
+        workload = '-plan' in command or ('-rate' in command and not preparing)
+        audit = '-audit-only' in command or '-audit-plan' in command
+        if '-env' in command:
+            self.app_starts += 1
+        index = int(command[command.index('-generator') + 1]) if '-generator' in command else 0
+        running = not (audit or preparing or (workload and not self.interrupt and self.failed_generator is None and self.interrupt_after_spawn is None))
+        process = Process(20000 + len(self.processes), running=running, stuck=workload and self.stuck)
+        if workload and index == self.failed_generator:
+            process.returncode = 7
         self.processes.append(process)
-        if workload or audit:
-            json.dump({'complete': True, 'cancelled': False, 'correct': True, 'planned_attempts': 60,
-                       'valid_recorded_ack': 1, 'matched_ack_attempts': 1, 'missing_ack_attempts': 0,
-                       'unverified_ack_attempts': 0, 'saved_service_results_matched': True}, kwargs['stdout'])
-            kwargs['stdout'].flush()
+        if preparing:
+            value = {'complete': True, 'generators': self.generators, 'planned_unique_keys': 60,
+                     'planned_attempts': 60 + (60 // self.repeat_every if self.repeat_every else 0), 'http_votes_sent': 0}
+        elif workload:
+            keys = 60 // self.generators + (1 if index < 60 % self.generators else 0)
+            offset = (60 // self.generators) * index + min(index, 60 % self.generators)
+            value = fixture_load(keys, offset, self.repeat_every, index)
+        elif audit:
+            value = {'correct': True, 'planned_attempts': 60 + (60 // self.repeat_every if self.repeat_every else 0),
+                     'planned_unique_keys': 60, 'generators': self.audit_generators,
+                     'matched_ack_attempts': self.generators, 'missing_ack_attempts': 0,
+                     'unverified_ack_attempts': 0, 'saved_service_results_matched': True,
+                     'journal_inspection': {'method': 'kafka-stable-snapshot', 'strict_snapshot_complete': self.strict, 'snapshot_partitions': 4}}
+        else:
+            return process
+        json.dump(value, kwargs['stdout'])
+        kwargs['stdout'].flush()
         return process
 
     def sleep(self, seconds):
+        self.sleeps += 1
         if self.interrupt:
             raise KeyboardInterrupt
+        if self.app_starts > 1:
+            return
         raise AssertionError('successful fixture should require no real waiting')
 
     def run(self, command, **kwargs):
@@ -113,10 +162,13 @@ class HarnessFixture:
 
 class ProfileTests(unittest.TestCase):
     def execute_fixture(self, repeat_every=0, interrupt=False, stuck=False, extra_env=None,
-                        cpu_profile=False, mode='simple-files'):
+                        cpu_profile=False, mode='simple-files', strict=True, generators=1, pending_after_restart=0,
+                        changed_after_restart=False, never_final=False, failed_generator=None, audit_generators=None, interrupt_after_spawn=None):
         with tempfile.TemporaryDirectory() as temp:
             directory = Path(temp)
             app, generator, psql = directory / 'application', directory / 'generator', directory / 'psql'
+            reader = directory / 'reader'
+            reader.write_bytes(b'fixture current strict reader')
             app.write_bytes(b'fixture application identity')
             generator.write_bytes(b'fixture generator identity')
             psql.write_bytes(b'fixture psql identity; never executed')
@@ -127,23 +179,34 @@ class ProfileTests(unittest.TestCase):
             args = argparse.Namespace(mode=mode, label='fixture', port=8093, rate=1,
                                       repeat_every=repeat_every, workers=2, queue=8, max_lag_ms=100,
                                       max_inflight=8, partitions=4, batch_votes=None, queue_votes=None,
-                                      linger_ms=None, app_memory='3GiB', psql=str(psql), cpu_profile=cpu_profile)
-            fixture = HarnessFixture(directory, interrupt, stuck)
+                                      linger_ms=None, app_memory='3GiB', psql=str(psql), cpu_profile=cpu_profile, generators=generators)
+            fixture = HarnessFixture(directory, interrupt, stuck, strict, generators, repeat_every,
+                                     pending_after_restart, changed_after_restart, never_final, failed_generator, audit_generators)
+            fixture.interrupt_after_spawn = interrupt_after_spawn
             with ExitStack() as stack:
                 stack.enter_context(patch.object(profile.urllib.request, 'build_opener', return_value=fixture))
                 stack.enter_context(patch.object(profile.subprocess, 'Popen', side_effect=fixture.popen))
+                if interrupt_after_spawn is not None:
+                    def mask(how, values):
+                        if how == profile.signal.SIG_SETMASK and len(fixture.processes) == fixture.interrupt_after_spawn:
+                            fixture.interrupt_after_spawn = -1
+                            raise KeyboardInterrupt
+                        return set()
+                    stack.enter_context(patch.object(profile.signal, 'pthread_sigmask', side_effect=mask))
                 stack.enter_context(patch.object(profile.subprocess, 'run', side_effect=fixture.run))
                 stack.enter_context(patch.object(profile.socket, 'create_connection'))
                 stack.enter_context(patch.object(profile, 'process_samples', return_value=[]))
                 stack.enter_context(patch.object(profile.shutil, 'disk_usage', return_value=argparse.Namespace(free=64 * 1024**3)))
                 stack.enter_context(patch.object(profile.time, 'sleep', side_effect=fixture.sleep))
+                if never_final:
+                    stack.enter_context(patch.object(profile.time, 'monotonic', side_effect=iter(range(0, 10000, 60))))
                 stack.enter_context(patch.dict(profile.os.environ, extra_env or {}, clear=True))
                 stack.enter_context(patch('sys.stdout', new_callable=io.StringIO))
                 code, raised = None, None
                 attempts, required = profile.plan_bytes(args.rate, repeat_every, args.mode)
                 try:
                     code = profile.owned_profile(args, ROOT, directory, app, generator,
-                                                 'http://127.0.0.1:8093', directory, attempts, required)
+                                                 'http://127.0.0.1:8093', directory, attempts, required, reader)
                 except (KeyboardInterrupt, subprocess.TimeoutExpired, OSError) as error:
                     raised = type(error).__name__
             path = directory / 'report.json'
@@ -162,6 +225,23 @@ class ProfileTests(unittest.TestCase):
         self.assertTrue(report['correct'])
         self.assertEqual(sum(p.terminated for p in fixture.processes), 2)
 
+    def test_current_reader_is_independent_of_frozen_generator(self):
+        fixture, code, _, report = self.execute_fixture()
+        self.assertEqual(code, 0)
+        workload = next(cmd for cmd, _ in fixture.commands if '-rate' in cmd)
+        reader = next(cmd for cmd, _ in fixture.commands if '-audit-only' in cmd)
+        self.assertNotEqual(workload[0], reader[0])
+        self.assertNotEqual(report['binary_sha256']['generator'], report['binary_sha256']['reader'])
+        self.assertFalse(report['load_coverage']['all_planned_attempts_acknowledged'])
+        self.assertEqual(report['load_coverage']['planned_attempts_without_ack'], 59)
+
+    def test_prefix_only_kafka_audit_cannot_certify_profile(self):
+        _, code, _, report = self.execute_fixture(mode='postgres-kafka', strict=False,
+            extra_env={'TEST_DATABASE_URL': 'postgresql://127.0.0.1/fixture'})
+        self.assertNotEqual(code, 0)
+        self.assertFalse(report['correct'])
+        self.assertTrue(any('stable snapshot' in x['message'] for x in report['errors']))
+
     def test_repeats_are_added_to_same_minute_population_and_disk_guard(self):
         plain, plain_bytes = profile.plan_bytes(1000, 0, 'simple-files')
         repeated, repeated_bytes = profile.plan_bytes(1000, 5, 'simple-files')
@@ -178,7 +258,7 @@ class ProfileTests(unittest.TestCase):
             binary = root / 'fixture'
             binary.write_bytes(b'never executed')
             binary.chmod(0o700)
-            args = argparse.Namespace(runtime_root=str(root), server_binary=str(binary), load_binary=str(binary),
+            args = argparse.Namespace(runtime_root=str(root), server_binary=str(binary), load_binary=str(binary), audit_binary=str(binary),
                                       mode='simple-files', rate=100000, repeat_every=1, port=8093, label='fixture')
             with patch.object(profile.os, 'umask'), \
                     patch.object(profile.socket, 'socket', side_effect=AssertionError('preflight touched network')), \
@@ -197,7 +277,7 @@ class ProfileTests(unittest.TestCase):
             lab.mkdir(parents=True)
             marker = lab / '.gigaquizz-kafka-lab'
             marker.write_text('gigaquizz native Kafka lab v1\n')
-            args = argparse.Namespace(runtime_root=str(root), server_binary=str(binary), load_binary=str(binary),
+            args = argparse.Namespace(runtime_root=str(root), server_binary=str(binary), load_binary=str(binary), audit_binary=str(binary),
                                       mode='postgres-kafka', rate=1000, repeat_every=5, port=8093, label='fixture')
             with patch.object(profile.os, 'umask'), \
                     patch.object(profile.shutil, 'disk_usage', return_value=argparse.Namespace(free=128 * 1024**3)), \
@@ -320,6 +400,189 @@ class ProfileTests(unittest.TestCase):
         for command, _ in fixture.commands:
             if '-env' not in command:
                 self.assertNotIn('-cpu-profile', command, 'only the application is CPU-profiled')
+
+
+    def test_multiple_generators_share_one_population_and_one_exact_reader(self):
+        fixture, code, raised, report = self.execute_fixture(generators=3, repeat_every=7)
+        self.assertIsNone(raised)
+        self.assertEqual(code, 0)
+        prepare = next(command for command, _ in fixture.commands if '-prepare-plan' in command)
+        self.assertEqual(prepare[prepare.index('-total-unique') + 1], '60')
+        self.assertEqual(prepare[prepare.index('-generators') + 1], '3')
+        self.assertNotIn('-allow-high-load', prepare)
+        plan = prepare[prepare.index('-prepare-plan') + 1]
+        workloads = [command for command, _ in fixture.commands if '-plan' in command]
+        self.assertEqual(len(workloads), 3)
+        for i, command in enumerate(workloads):
+            self.assertEqual(command[command.index('-plan') + 1], plan)
+            self.assertEqual(command[command.index('-generator') + 1], str(i))
+            self.assertEqual(Path(command[command.index('-ledger-dir') + 1]).name, f'generator-{i:03d}')
+            self.assertNotIn('-rate', command, 'children must use disjoint plan ranges, never duplicate the total rate')
+        readers = [command for command, _ in fixture.commands if '-audit-plan' in command]
+        self.assertEqual(len(readers), 1)
+        self.assertEqual(readers[0][readers[0].index('-audit-plan') + 1], plan)
+        self.assertEqual(Path(readers[0][readers[0].index('-ledgers') + 1]).name, 'ledger')
+        self.assertEqual(report['load']['planned_attempts'], 68)
+        self.assertEqual(report['load']['planned_unique_keys'], 60)
+        self.assertEqual(report['load']['valid_recorded_ack'], 3)
+        self.assertEqual(report['load']['generator_skipped'], 65)
+        self.assertEqual(report['load']['latency_mean_ms'], 20)
+        self.assertNotIn('latency_p99_upper_bound_ms', report['load'])
+        self.assertEqual(len(report['generator_loads']), 3)
+        self.assertFalse(report['load_coverage']['all_planned_attempts_acknowledged'])
+        self.assertEqual(report['configuration']['combined_resource_budget']['workers_total'], 6)
+
+    def test_one_failed_generator_stops_its_owned_siblings_and_cannot_certify_a_partial_plan(self):
+        fixture, code, raised, report = self.execute_fixture(generators=3, failed_generator=1)
+        self.assertIsNone(raised)
+        self.assertNotEqual(code, 0)
+        self.assertFalse(report['correct'])
+        children = [process for (command, _), process in zip(fixture.commands, fixture.processes) if '-plan' in command]
+        self.assertEqual(len(children), 3)
+        self.assertTrue(children[0].terminated and children[2].terminated)
+        self.assertFalse(any('-audit-plan' in command for command, _ in fixture.commands))
+        self.assertTrue(fixture.processes[0].terminated)
+
+
+    def test_interrupt_stops_every_generator_and_application_in_one_plan(self):
+        fixture, _, _, report = self.execute_fixture(generators=3, interrupt=True)
+        children = [process for (command, _), process in zip(fixture.commands, fixture.processes) if '-plan' in command or '-env' in command]
+        self.assertEqual(len(children), 4)
+        self.assertTrue(all(process.terminated for process in children))
+        self.assertFalse(report['correct'])
+        self.assertFalse(any('-audit-plan' in command for command, _ in fixture.commands))
+
+
+    def test_pending_signal_after_app_spawn_still_cleans_up_registered_pid(self):
+        fixture, _, raised, report = self.execute_fixture(interrupt_after_spawn=1)
+        self.assertIsNone(raised)
+        self.assertEqual(len(fixture.processes), 1)
+        self.assertTrue(fixture.processes[0].terminated)
+        self.assertFalse(report['correct'])
+
+    def test_pending_signal_between_generator_spawn_and_assignment_cleans_up_all_registered_children(self):
+        # app, plan preparer, first generator, second generator: interrupt as
+        # the fourth PID is registered, before generator_children.append runs.
+        fixture, _, raised, report = self.execute_fixture(generators=3, interrupt_after_spawn=4)
+        self.assertIsNone(raised)
+        self.assertEqual(len(fixture.processes), 4)
+        self.assertTrue(fixture.processes[0].terminated)
+        self.assertTrue(fixture.processes[2].terminated and fixture.processes[3].terminated)
+        self.assertFalse(report['correct'])
+
+    def test_child_restores_original_signal_mask_and_only_changes_its_own_fd_limit(self):
+        original = {profile.signal.SIGHUP}
+        with patch.object(profile.resource, 'getrlimit', return_value=(256, 65536)), \
+                patch.object(profile.resource, 'setrlimit') as limits, \
+                patch.object(profile.signal, 'pthread_sigmask') as mask:
+            profile.child_limits(33280, original)
+        limits.assert_called_once_with(profile.resource.RLIMIT_NOFILE, (33280, 65536))
+        mask.assert_called_once_with(profile.signal.SIG_SETMASK, original)
+
+    def test_foreign_partition_memory_bound_cannot_override_the_owned_fixture(self):
+        fixture, code, _, report = self.execute_fixture(extra_env={'MAX_PARTITION_UNIQUE_VOTERS': '1'})
+        self.assertEqual(code, 0)
+        self.assertEqual(report['configuration']['max_partition_unique_voters'], 160)
+        for command, options in fixture.commands:
+            if '-env' in command:
+                self.assertEqual(options['env']['MAX_PARTITION_UNIQUE_VOTERS'], '160')
+
+    def test_reader_must_certify_every_generator_even_if_ack_sum_matches(self):
+        _, code, _, report = self.execute_fixture(generators=2, audit_generators=1)
+        self.assertNotEqual(code, 0)
+        self.assertFalse(report['correct'])
+        self.assertTrue(any('every planned generator' in entry['message'] for entry in report['errors']))
+
+    def test_restart_waits_for_async_finalization_then_compares_exact_saved_result(self):
+        fixture, code, _, report = self.execute_fixture(pending_after_restart=2)
+        self.assertEqual(code, 0)
+        self.assertEqual(fixture.sleeps, 2)
+        self.assertTrue(report['correct'])
+        _, code, _, report = self.execute_fixture(pending_after_restart=1, changed_after_restart=True)
+        self.assertNotEqual(code, 0)
+        self.assertFalse(report['correct'])
+        self.assertTrue(any('final result changed' in entry['message'] for entry in report['errors']))
+
+    def test_restart_pending_state_has_a_deadline_and_cleans_up(self):
+        fixture, code, raised, report = self.execute_fixture(never_final=True)
+        self.assertIsNone(raised)
+        self.assertNotEqual(code, 0)
+        self.assertFalse(report['correct'])
+        self.assertTrue(any('finalization exceeded' in entry['message'] for entry in report['errors']))
+        self.assertTrue(all(process.terminated for (command, _), process in zip(fixture.commands, fixture.processes) if '-env' in command))
+
+    def test_aggregate_rejects_missing_outcomes_or_duplicate_population(self):
+        good = [fixture_load(30), fixture_load(30, offset=30, index=1)]
+        self.assertEqual(profile.aggregate_load_reports(good, 60, 60)['valid_recorded_ack'], 2)
+        bad = [dict(good[0]), dict(good[1])]
+        bad[1]['generator_skipped'] -= 1
+        with self.assertRaisesRegex(RuntimeError, 'cover'):
+            profile.aggregate_load_reports(bad, 60, 60)
+        with self.assertRaisesRegex(RuntimeError, 'population'):
+            profile.aggregate_load_reports([fixture_load(60), fixture_load(60)], 60, 60)
+
+
+    def test_multi_get_bytes_and_failure_categories_are_added_with_weighted_latency(self):
+        loads = [fixture_load(30), fixture_load(30, offset=30, index=1)]
+        for i, load in enumerate(loads):
+            sent = i + 1
+            load.update(http_get_sent=sent, http_get_failures=1, http_get_body_bytes=100 * sent,
+                        http_get_decoded_body_bytes=500 * sent)
+            load['http_get_stages'] = [{'stage': 'question', 'sent': sent, 'failures': 1,
+                                       'response_body_bytes': 100 * sent, 'decoded_body_bytes': 500 * sent,
+                                       'timeouts': 1 if i == 0 else 0, 'validation_failures': 1 if i == 1 else 0,
+                                       'mean_latency_ms': 10 * sent, 'max_latency_ms': 20 * sent}]
+        aggregate = profile.aggregate_load_reports(loads, 60, 60)
+        self.assertEqual(aggregate['http_get_body_bytes'], 300)
+        self.assertEqual(aggregate['http_get_decoded_body_bytes'], 1500)
+        stage = aggregate['http_get_stages'][0]
+        self.assertEqual(stage['timeouts'], 1)
+        self.assertEqual(stage['validation_failures'], 1)
+        self.assertAlmostEqual(stage['mean_latency_ms'], 50 / 3)
+        self.assertEqual(stage['max_latency_ms'], 40)
+        loads[1]['http_get_stages'][0]['stage'] = 'different'
+        with self.assertRaisesRegex(RuntimeError, 'GET stages differ'):
+            profile.aggregate_load_reports(loads, 60, 60)
+
+    def test_combined_resource_budget_does_not_multiply_rate_or_reserve_by_generators(self):
+        args = argparse.Namespace(generators=4, workers=4096, queue=8192, app_memory='3GiB')
+        budget = profile.local_budget(args)
+        self.assertEqual(budget['workers_total'], 16384)
+        self.assertEqual(budget['queue_total'], 32768)
+        self.assertEqual(budget['owned_child_open_file_limit'], 2 * 16384 + 512)
+        self.assertEqual(budget['generator_GOMEMLIMIT_total_bytes'], 8 * 1024**3)
+        one, one_bytes = profile.plan_bytes(1000, 7, 'simple-files', generators=1, workers=4096)
+        four, four_bytes = profile.plan_bytes(1000, 7, 'simple-files', generators=4, workers=4096)
+        self.assertEqual(one, four)
+        self.assertLess(four_bytes - one_bytes, 64 * 1024**2)
+        with self.assertRaisesRegex(RuntimeError, '1..4'):
+            profile.local_budget(argparse.Namespace(generators=5))
+
+    def test_frozen_load_binary_rejected_before_app_or_network_when_multiple_requested(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            binary = root / 'fixture'
+            binary.write_bytes(b'never executed')
+            binary.chmod(0o700)
+            args = argparse.Namespace(runtime_root=str(root), server_binary=str(binary), load_binary=str(binary), audit_binary=str(binary),
+                                      mode='simple-files', rate=1, repeat_every=0, generators=2, port=8093, label='fixture')
+            with patch.object(profile.os, 'umask'), \
+                    patch.object(profile.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, stdout='', stderr='  -rate uint\n  -audit-only string\n')), \
+                    patch.object(profile.socket, 'socket', side_effect=AssertionError('preflight touched network')), \
+                    patch.object(profile, 'owned_profile', side_effect=AssertionError('preflight started a profile')):
+                with self.assertRaisesRegex(RuntimeError, 'frozen POST-only'):
+                    profile.run(args)
+            self.assertFalse((root / '.local').exists())
+
+    def test_plan_capability_probe_requires_exact_flags_and_independent_reader(self):
+        help_text = '\n'.join('  -' + flag + ' string' for flag in ('prepare-plan', 'total-unique', 'generators', 'plan', 'generator', 'audit-plan', 'ledgers'))
+        with patch.object(profile.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, stdout='', stderr=help_text)):
+            profile.require_plan_support(Path('/fixture/binary'))
+            profile.require_plan_support(Path('/fixture/binary'), reader=True)
+        misleading = help_text.replace('  -plan string', '  -plan-extra string')
+        with patch.object(profile.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, stdout='', stderr=misleading)):
+            with self.assertRaisesRegex(RuntimeError, 'plan-capable'):
+                profile.require_plan_support(Path('/fixture/binary'))
 
     def test_comparable_default_run_does_not_enable_cpu_profiling(self):
         fixture, code, _, report = self.execute_fixture()

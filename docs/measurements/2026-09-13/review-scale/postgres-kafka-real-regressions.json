@@ -1,0 +1,93 @@
+{
+  "scope": "real isolated local PostgreSQL/Kafka regressions plus later scoped clock fixes; no load benchmark",
+  "preflight": {
+    "owned_lab": true,
+    "brokers_owned": 3,
+    "isr": [
+      1,
+      2,
+      3
+    ],
+    "postgres_version": "16.3",
+    "postgres_primary": true,
+    "fsync": true,
+    "synchronous_commit": "on",
+    "full_page_writes": true,
+    "free_gib": 27.109,
+    "retained_lab_gib": 15.911
+  },
+  "real_regressions": [
+    {
+      "scenario": "two disjoint Store instances, four partitions, restart one owner without fencing the peer; partial and full replay",
+      "passed": true,
+      "wall_seconds": 3.02,
+      "attempts": 4,
+      "unique_ids": 3,
+      "separate_os_processes": false
+    },
+    {
+      "scenario": "lost PostgreSQL creation COMMIT reply reconciles without application restart",
+      "passed": true,
+      "test_seconds": 0.56
+    },
+    {
+      "scenario": "overlapping schedule mutations in independent PostgreSQL transactions serialize",
+      "passed": true,
+      "test_seconds": 0.12
+    },
+    {
+      "scenario": "HTTP durable attempts, test-owned PG session loss, restart within window, restart after close, exact final, persisted-final fast restore, corrupt final after restart rejected with503, valid final restored",
+      "passed": true,
+      "retry_wall_seconds": 69.487,
+      "canonical_votes": 3
+    }
+  ],
+  "resolved_test_failure": {
+    "scenario": "corrupt final HTTP assertion",
+    "expected_initially": 500,
+    "actual_contract": 503,
+    "runtime_fix_needed_for_status": false,
+    "corrected_full_test_rerun_passed": true,
+    "original_log_retained": true
+  },
+  "post_real_source_fixes": {
+    "irreversible_local_deadline_latches": [
+      "votelog Store across owned partitions, singles and frames",
+      "kafkapoll entry before writer admission"
+    ],
+    "final_time_clamped_to_end": true,
+    "retired_writer_lifetime_counters_preserved": true,
+    "historical_counts_invented_after_restart": false,
+    "app_owned_partition_option_removed": true,
+    "distributed_clock_protocol_added": false
+  },
+  "final_checks": {
+    "five_package_race": true,
+    "five_package_vet": true,
+    "final_votelog_race_after_seal_context_regression": true,
+    "final_votelog_vet": true,
+    "integration_gates_disabled_for_unit_checks": true,
+    "diff_check_passed_before_last_seal_context_guard": true
+  },
+  "postflight": {
+    "saved_broker_pids_still_alive": 3,
+    "free_gib": 26.903,
+    "isr_requeried": false,
+    "reason": "avoid Java CLI alongside parent final build/performance work"
+  },
+  "data_policy": {
+    "old_services_stopped": false,
+    "old_data_deleted": false,
+    "isolated_test_data_retained": true,
+    "committed": false,
+    "pushed": false
+  },
+  "remaining_multi_application_blockers": [
+    "single schema-wide controller advisory lock",
+    "application has full-partition local writer and no routing/worker registry",
+    "no distributed ownership assignment/transfer protocol; lowlevel explicit fencing only",
+    "full manifest coordination still belongs to one application controller",
+    "recovery scans complete assigned journal prefix before serve; preparation eagerly opens every unfinished poll",
+    "PG ownership loss is fail-stop; no automatic failover"
+  ]
+}

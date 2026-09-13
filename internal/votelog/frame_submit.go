@@ -33,9 +33,13 @@ func (s *Store) SubmitFrame(ctx context.Context, inputs []Input) (FrameReceipt, 
 	if ctx.Err() != nil {
 		return FrameReceipt{}, ErrUnknown
 	}
-	w := s.writers[partition]
+	w := s.writerFor(partition)
+	if w == nil {
+		return FrameReceipt{}, ErrNotOwned
+	}
 	w.mu.Lock()
-	if w.sealed || w.closing {
+	if s.admissionClosed.Load() || w.sealed || w.closing {
+		s.admissionClosed.Store(true)
 		w.mu.Unlock()
 		return FrameReceipt{}, ErrClosed
 	}
@@ -45,6 +49,7 @@ func (s *Store) SubmitFrame(ctx context.Context, inputs []Input) (FrameReceipt, 
 	}
 	if w.queuedVotes+len(votes) > s.cfg.QueuePerPartition || len(w.jobs) == cap(w.jobs) {
 		w.mu.Unlock()
+		s.busyVotes.Add(uint64(len(votes)))
 		return FrameReceipt{}, ErrBusy
 	}
 	now := s.now()
@@ -53,6 +58,7 @@ func (s *Store) SubmitFrame(ctx context.Context, inputs []Input) (FrameReceipt, 
 		return FrameReceipt{}, ErrNotOpen
 	}
 	if !now.Before(s.cfg.EndsAt) {
+		s.admissionClosed.Store(true)
 		w.mu.Unlock()
 		return FrameReceipt{}, ErrClosed
 	}
@@ -60,6 +66,10 @@ func (s *Store) SubmitFrame(ctx context.Context, inputs []Input) (FrameReceipt, 
 	// the partition gate. The frame's commit may finish after the deadline.
 	for i := range votes {
 		votes[i].AdmittedAt = now.UTC()
+	}
+	if s.admissionClosed.Load() {
+		w.mu.Unlock()
+		return FrameReceipt{}, ErrClosed
 	}
 	p := &pending{frame: votes, result: make(chan outcome, 1)}
 	w.queuedVotes += len(votes)

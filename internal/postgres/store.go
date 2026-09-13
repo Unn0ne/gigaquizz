@@ -28,10 +28,8 @@ const (
 )
 
 type Store struct {
-	pool            *pgxpool.Pool
-	durability      DurabilityOptions
-	durabilityState durabilityState
-	diagnostics     storeDiagnostics
+	pool *pgxpool.Pool
+	*DurabilityGuard
 }
 
 var _ poll.Repository = (*Store)(nil)
@@ -41,11 +39,11 @@ func New(ctx context.Context, databaseURL string, maxConns int32) (*Store, error
 }
 
 func NewWithOptions(ctx context.Context, databaseURL string, maxConns int32, options DurabilityOptions) (*Store, error) {
-	if err := options.validate(); err != nil {
+	guard, err := NewDurabilityGuard(options)
+	if err != nil {
 		return nil, err
 	}
-	options.StandbyNames = append([]string(nil), options.StandbyNames...)
-	s := &Store{durability: options}
+	s := &Store{DurabilityGuard: guard}
 	if maxConns < 1 {
 		return nil, errors.New("database max connections must be positive")
 	}

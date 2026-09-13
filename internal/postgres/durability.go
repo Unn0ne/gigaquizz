@@ -77,22 +77,28 @@ func (d *durabilityState) check(id primaryIdentity) bool {
 	return d.identity.SystemID == id.SystemID && d.identity.Timeline == id.Timeline && d.identity.Started.Equal(id.Started)
 }
 
-func (s *Store) checkConnection(ctx context.Context, conn *pgx.Conn) error {
+func (s *DurabilityGuard) checkConnection(ctx context.Context, conn *pgx.Conn) error {
 	var recovery bool
+	var version int
+	var started time.Time
 	var fsync, commit, fullPages, setting string
 	err := conn.QueryRow(ctx, `SELECT pg_catalog.pg_is_in_recovery(),
 		current_setting('fsync'), current_setting('synchronous_commit'),
-		current_setting('full_page_writes'), current_setting('synchronous_standby_names')`).
-		Scan(&recovery, &fsync, &commit, &fullPages, &setting)
+		current_setting('full_page_writes'), current_setting('synchronous_standby_names'),
+		current_setting('server_version_num')::integer, pg_catalog.pg_postmaster_start_time()`).
+		Scan(&recovery, &fsync, &commit, &fullPages, &setting, &version, &started)
 	if err != nil {
 		return ErrDurability
 	}
-	if recovery || fsync != "on" || commit != "on" || fullPages != "on" {
+	if version < 160000 || recovery || fsync != "on" || commit != "on" || fullPages != "on" {
 		return ErrDurability
 	}
 	if s.durability.RequiredStandbys == 0 {
 		if strings.TrimSpace(setting) != "" {
 			return errors.New("synchronous replication requires an explicit durability policy")
+		}
+		if !s.durabilityState.check(primaryIdentity{Started: started}) {
+			return ErrDurability
 		}
 		return nil
 	}
@@ -130,7 +136,7 @@ func (s *Store) WaitDurable(ctx context.Context) error {
 // polls never move that target. Each poll is a new transaction/statistics view.
 // A successful SQL command alone (e.g. after a SyncRep WARNING) is insufficient.
 // Physical standbys must also run with fsync=on; this is a deployment invariant.
-func (s *Store) waitDurableConn(ctx context.Context, conn *pgx.Conn) error {
+func (s *DurabilityGuard) waitDurableConn(ctx context.Context, conn *pgx.Conn) error {
 	if s.durability.RequiredStandbys == 0 {
 		return nil
 	}
@@ -194,4 +200,30 @@ func (s *Store) waitDurableConn(ctx context.Context, conn *pgx.Conn) error {
 			s.diagnostics.proofWaitNS.Add(uint64(time.Since(waitBegan)))
 		}
 	}
+}
+
+// DurabilityGuard validates a fixed PostgreSQL primary and proves committed WAL.
+// It owns no connections, schema, or vote repository. Callers use their own
+// pinned write connection for CheckConnection and WaitDurableConn.
+type DurabilityGuard struct {
+	durability      DurabilityOptions
+	durabilityState durabilityState
+	diagnostics     storeDiagnostics
+}
+
+func NewDurabilityGuard(options DurabilityOptions) (*DurabilityGuard, error) {
+	if err := options.validate(); err != nil {
+		return nil, err
+	}
+	options.StandbyNames = append([]string(nil), options.StandbyNames...)
+	return &DurabilityGuard{durability: options}, nil
+}
+func (g *DurabilityGuard) CheckConnection(ctx context.Context, conn *pgx.Conn) error {
+	return g.checkConnection(ctx, conn)
+}
+func (g *DurabilityGuard) WaitDurableConn(ctx context.Context, conn *pgx.Conn) error {
+	if err := g.checkConnection(ctx, conn); err != nil {
+		return err
+	}
+	return g.waitDurableConn(ctx, conn)
 }

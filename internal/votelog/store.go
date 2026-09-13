@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -15,17 +16,20 @@ import (
 )
 
 type Store struct {
-	cfg       Config
-	ctx       context.Context
-	cancel    context.CancelFunc
-	writers   []*writer
-	wg        sync.WaitGroup
-	closeOnce sync.Once
-	now       func() time.Time
+	cfg             Config
+	ctx             context.Context
+	cancel          context.CancelFunc
+	writers         []*writer
+	byPartition     []*writer
+	wg              sync.WaitGroup
+	closeOnce       sync.Once
+	admissionClosed atomic.Bool
+	now             func() time.Time
 	// Deterministic integration-test hooks; configured before concurrent use.
 	beforeCommit, afterCommit                                                                func(partition int32) error
 	admitted, confirmed, transactions, transactionRecords, transactionNS, maxBatch, failures atomic.Uint64
 	committedFrames, committedValueBytes, committedKeyBytes                                  atomic.Uint64
+	busyVotes                                                                                atomic.Uint64
 }
 type writer struct {
 	s                       *Store
@@ -37,6 +41,7 @@ type writer struct {
 	end                     int64
 	jobs                    chan *pending
 	queuedVotes             int // protected by mu; queued logical votes, not frames
+	activeVotes             int // collected/in-flight logical votes; protected by mu
 	seal                    chan struct{}
 	done                    chan struct{}
 }
@@ -90,7 +95,7 @@ func CreateTopic(ctx context.Context, c Config) error {
 	if err := c.validate(); err != nil {
 		return err
 	}
-	cl, err := kgo.NewClient(kgo.SeedBrokers(c.Brokers...))
+	cl, err := NewClient(c)
 	if err != nil {
 		return err
 	}
@@ -146,10 +151,13 @@ func New(ctx context.Context, c Config) (*Store, error) {
 	defer initCancel()
 	ctx = initCtx
 	c.Brokers = append([]string(nil), c.Brokers...)
+	if c.OwnedPartitions != nil {
+		c.OwnedPartitions = append([]int32{}, c.OwnedPartitions...)
+	}
 	base, cancel := context.WithCancel(context.Background())
 	s := &Store{cfg: c, ctx: base, cancel: cancel, now: time.Now}
 	fail := func(err error) (*Store, error) { s.Close(); return nil, err }
-	admin, err := kgo.NewClient(kgo.SeedBrokers(c.Brokers...))
+	admin, err := NewClient(c)
 	if err != nil {
 		return fail(err)
 	}
@@ -207,18 +215,22 @@ func New(ctx context.Context, c Config) (*Store, error) {
 		case <-time.After(50 * time.Millisecond):
 		}
 	}
-	fresh := true
-	for _, p := range ends[c.Topic] {
+	initialized := make([]int32, 0, c.Partitions)
+	for partition, p := range ends[c.Topic] {
 		if p.Err != nil {
 			return fail(p.Err)
 		}
-		fresh = fresh && p.Offset == 0
+		if p.Offset > 0 {
+			initialized = append(initialized, partition)
+		}
 	}
 	// Validate the original committed configuration before appending recovery
 	// barriers. Recovery never binds an existing topic to a new poll definition.
-	if !fresh {
+	if len(initialized) > 0 {
+		verifyCfg := c
+		verifyCfg.OwnedPartitions = initialized
 		verifyCtx, verifyCancel := context.WithTimeout(ctx, 20*time.Second)
-		verifyErr := verifyFirstRecords(verifyCtx, c)
+		verifyErr := verifyFirstRecords(verifyCtx, verifyCfg)
 		verifyCancel()
 		if errors.Is(verifyErr, context.DeadlineExceeded) {
 			return fail(errors.New("initial committed configuration incomplete; prepare a fresh topic before the event"))
@@ -227,17 +239,21 @@ func New(ctx context.Context, c Config) (*Store, error) {
 			return fail(verifyErr)
 		}
 	}
-	for i := 0; i < c.Partitions; i++ {
+	s.byPartition = make([]*writer, c.Partitions)
+	owned, _ := c.ownedPartitions()
+	for _, partition := range owned {
+		i := int(partition)
 		w := &writer{s: s, partition: int32(i), jobs: make(chan *pending, c.QueuePerPartition), seal: make(chan struct{}, 1), done: make(chan struct{}), end: -1}
 		opts := append(clientOptions(c), kgo.TransactionalID(fmt.Sprintf("%s-p%d", c.Topic, i)), kgo.TransactionTimeout(c.TransactionTimeout))
-		w.client, err = kgo.NewClient(opts...)
+		w.client, err = NewClient(c, opts...)
 		if err != nil {
 			return fail(err)
 		}
 		s.writers = append(s.writers, w)
+		s.byPartition[w.partition] = w
 	}
 	barriers := make([]int64, c.Partitions)
-	err = parallel(c.Partitions, func(i int) error {
+	err = parallel(len(s.writers), func(i int) error {
 		w := s.writers[i]
 		// Only initial ownership acquisition may retry a transient coordinator
 		// response. Runtime writers never reinitialize after failure/fencing.
@@ -259,7 +275,7 @@ func New(ctx context.Context, c Config) (*Store, error) {
 		if err := w.commit(ctx, []*kgo.Record{r}, false); err != nil {
 			return err
 		}
-		barriers[i] = r.Offset
+		barriers[w.partition] = r.Offset
 		return nil
 	})
 	if err != nil {
@@ -269,9 +285,10 @@ func New(ctx context.Context, c Config) (*Store, error) {
 	if err != nil {
 		return fail(err)
 	}
-	for i, w := range s.writers {
-		if closed[i] >= 0 {
-			w.closing, w.sealed, w.end = true, true, closed[i]
+	for _, w := range s.writers {
+		if closed[w.partition] >= 0 {
+			w.closing, w.sealed, w.end = true, true, closed[w.partition]
+			s.admissionClosed.Store(true)
 		}
 		s.wg.Add(1)
 		go w.run()
@@ -305,6 +322,9 @@ func parallel(n int, fn func(int) error) error {
 func (s *Store) Config() Config {
 	c := s.cfg
 	c.Brokers = append([]string(nil), c.Brokers...)
+	if c.OwnedPartitions != nil {
+		c.OwnedPartitions = append([]int32{}, c.OwnedPartitions...)
+	}
 	return c
 }
 
@@ -315,9 +335,13 @@ func (s *Store) Submit(ctx context.Context, token [16]byte, choice uint32) (Rece
 	if ctx.Err() != nil {
 		return Receipt{}, ErrUnknown
 	}
-	w := s.writers[s.cfg.Partition(token)]
+	w := s.writerFor(s.cfg.Partition(token))
+	if w == nil {
+		return Receipt{}, ErrNotOwned
+	}
 	w.mu.Lock()
-	if w.sealed || w.closing {
+	if s.admissionClosed.Load() || w.sealed || w.closing {
+		s.admissionClosed.Store(true)
 		w.mu.Unlock()
 		return Receipt{}, ErrClosed
 	}
@@ -327,6 +351,7 @@ func (s *Store) Submit(ctx context.Context, token [16]byte, choice uint32) (Rece
 	}
 	if w.queuedVotes >= s.cfg.QueuePerPartition || len(w.jobs) == cap(w.jobs) {
 		w.mu.Unlock()
+		s.busyVotes.Add(1)
 		return Receipt{}, ErrBusy
 	}
 	now := s.now()
@@ -335,6 +360,11 @@ func (s *Store) Submit(ctx context.Context, token [16]byte, choice uint32) (Rece
 		return Receipt{}, ErrNotOpen
 	}
 	if !now.Before(s.cfg.EndsAt) {
+		s.admissionClosed.Store(true)
+		w.mu.Unlock()
+		return Receipt{}, ErrClosed
+	}
+	if s.admissionClosed.Load() {
 		w.mu.Unlock()
 		return Receipt{}, ErrClosed
 	}
@@ -475,12 +505,18 @@ func (w *writer) run() {
 	batch := make([]*pending, 0, w.s.cfg.BatchSize)
 	batchVotes := 0
 	defer func() {
+		w.mu.Lock()
+		w.activeVotes = 0
+		w.mu.Unlock()
 		for _, p := range batch {
 			p.result <- outcome{err: ErrUnknown}
 		}
 		for {
 			select {
 			case p := <-w.jobs:
+				w.mu.Lock()
+				w.queuedVotes -= p.size()
+				w.mu.Unlock()
 				p.result <- outcome{err: ErrUnknown}
 			default:
 				return
@@ -500,6 +536,9 @@ func (w *writer) run() {
 		batch = batch[:0]
 		batchVotes = 0
 		err := w.flush(b)
+		w.mu.Lock()
+		w.activeVotes = 0
+		w.mu.Unlock()
 		clear(b)
 		if err != nil {
 			fail(err)
@@ -509,6 +548,9 @@ func (w *writer) run() {
 	}
 	appendJob := func(p *pending) bool {
 		if batchVotes+p.size() > w.s.cfg.BatchSize && !flush() {
+			w.mu.Lock()
+			w.queuedVotes -= p.size()
+			w.mu.Unlock()
 			p.result <- outcome{err: ErrUnknown}
 			return false
 		}
@@ -516,6 +558,7 @@ func (w *writer) run() {
 		// The bound is queued logical votes plus one active transaction batch.
 		w.mu.Lock()
 		w.queuedVotes -= p.size()
+		w.activeVotes += p.size()
 		w.mu.Unlock()
 		batch = append(batch, p)
 		batchVotes += p.size()
@@ -558,9 +601,15 @@ func (w *writer) run() {
 }
 
 func (s *Store) Seal(ctx context.Context) (Manifest, error) {
-	if err := waitUntil(ctx, s.cfg.EndsAt, s.now); err != nil {
+	if err := ctx.Err(); err != nil {
 		return Manifest{}, err
 	}
+	if !s.admissionClosed.Load() {
+		if err := waitUntil(ctx, s.cfg.EndsAt, s.now); err != nil {
+			return Manifest{}, err
+		}
+	}
+	s.admissionClosed.Store(true)
 	err := parallel(len(s.writers), func(i int) error {
 		w := s.writers[i]
 		w.mu.Lock()
@@ -592,7 +641,7 @@ func (s *Store) Seal(ctx context.Context) (Manifest, error) {
 	if err != nil {
 		return Manifest{}, err
 	}
-	m := Manifest{Topic: s.cfg.Topic, StartsAt: s.cfg.StartsAt, EndsAt: s.cfg.EndsAt}
+	m := s.cfg.manifest()
 	for _, w := range s.writers {
 		w.mu.Lock()
 		m.Partitions = append(m.Partitions, PartitionEnd{w.partition, w.end})
@@ -611,13 +660,17 @@ func (s *Store) Close() {
 
 func (s *Store) Metrics() map[string]uint64 {
 	m := map[string]uint64{"admitted": s.admitted.Load(), "committed_attempts": s.confirmed.Load(), "transactions": s.transactions.Load(), "transaction_records": s.transactionRecords.Load(), "transaction_ns": s.transactionNS.Load(), "max_batch_records": s.maxBatch.Load(), "failed_writers": s.failures.Load(), "committed_frames": s.committedFrames.Load(), "committed_value_bytes": s.committedValueBytes.Load(), "committed_key_bytes": s.committedKeyBytes.Load()}
+	m["busy_votes"] = s.busyVotes.Load()
 	for _, w := range s.writers {
 		w.mu.Lock()
+		m["queued_votes"] += uint64(w.queuedVotes)
+		m["active_votes"] += uint64(w.activeVotes)
 		err := w.failure
 		w.mu.Unlock()
 		if err == nil {
 			continue
 		}
+		m[writerFailureCategory(err)]++
 		var failure *transactionFailure
 		if errors.As(err, &failure) {
 			m["failed_at_"+failure.stage]++
@@ -634,4 +687,25 @@ func (s *Store) Metrics() map[string]uint64 {
 		}
 	}
 	return m
+}
+
+// Only fixed categories may reach application telemetry. Error strings and
+// broker addresses remain private, and a category describes the observed error
+// rather than claiming that the underlying transaction was committed/aborted.
+func writerFailureCategory(err error) string {
+	var network net.Error
+	switch {
+	case errors.Is(err, context.DeadlineExceeded), errors.Is(err, kerr.RequestTimedOut):
+		return "writer_failures_timeout"
+	case errors.As(err, &network) && network.Timeout():
+		return "writer_failures_timeout"
+	case errors.Is(err, kerr.ProducerFenced), errors.Is(err, kerr.InvalidProducerEpoch):
+		return "writer_failures_fenced"
+	case errors.Is(err, kerr.NetworkException), errors.As(err, &network):
+		return "writer_failures_network"
+	case errors.Is(err, kgo.ErrClientClosed):
+		return "writer_failures_client_closed"
+	default:
+		return "writer_failures_other"
+	}
 }

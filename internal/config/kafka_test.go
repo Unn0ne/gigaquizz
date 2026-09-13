@@ -9,7 +9,7 @@ func kafkaConfigEnv(t *testing.T) {
 	t.Helper()
 	t.Setenv("DATABASE_URL", "postgres://unit-test-only")
 	t.Setenv("ADMIN_PASSWORD", "unit-test-only-password")
-	for _, key := range []string{"VOTE_DB_CONNECTIONS", "MAX_INFLIGHT", "DURABILITY_REQUIRED_STANDBYS", "DURABILITY_STANDBY_NAMES", "KAFKA_PARTITIONS", "KAFKA_BATCH_VOTES", "KAFKA_QUEUE_VOTES", "KAFKA_LINGER_MS", "MAX_UNIQUE_VOTERS", "MAX_STORED_POLLS", "POLL_PREPARATION_SECONDS", "KAFKA_ALLOW_REMOTE_BROKERS"} {
+	for _, key := range []string{"MAX_PARTITION_UNIQUE_VOTERS", "KAFKA_TLS", "KAFKA_TLS_CA_FILE", "KAFKA_TLS_CERT_FILE", "KAFKA_TLS_KEY_FILE", "KAFKA_TLS_SERVER_NAME", "KAFKA_SASL_MECHANISM", "KAFKA_SASL_USERNAME", "KAFKA_SASL_PASSWORD", "MAX_INFLIGHT", "DURABILITY_REQUIRED_STANDBYS", "DURABILITY_STANDBY_NAMES", "KAFKA_PARTITIONS", "KAFKA_BATCH_VOTES", "KAFKA_QUEUE_VOTES", "KAFKA_LINGER_MS", "MAX_UNIQUE_VOTERS", "MAX_STORED_POLLS", "POLL_PREPARATION_SECONDS", "KAFKA_ALLOW_REMOTE_BROKERS"} {
 		t.Setenv(key, "")
 	}
 }
@@ -43,5 +43,20 @@ func TestKafkaBatchOptionsRejectUnboundedValues(t *testing.T) {
 				}
 			})
 		}
+	}
+}
+
+func TestPartitionScaleAndLegacyUnusedPoolOption(t *testing.T) {
+	kafkaConfigEnv(t)
+	t.Setenv("KAFKA_PARTITIONS", "256")
+	t.Setenv("MAX_PARTITION_UNIQUE_VOTERS", "2000000")
+	t.Setenv("VOTE_DB_CONNECTIONS", "obsolete-value")
+	c, err := Load()
+	if err != nil || c.KafkaPartitions != 256 || c.MaxPartitionUnique != 2000000 {
+		t.Fatal("partition scale/config", err)
+	}
+	t.Setenv("KAFKA_PARTITIONS", "257")
+	if _, err := Load(); err == nil {
+		t.Fatal("unbounded partitions")
 	}
 }

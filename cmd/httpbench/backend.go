@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"errors"
+	"os"
+	"strconv"
 
 	"gigaquizz/internal/votelog"
 )
@@ -18,6 +20,23 @@ func backend(m privateManifest, fileJournal, kafkaConfig string) (*journalReader
 	id, err := parseID(m.Config.PollID)
 	if err != nil || c.PollID != id || !c.StartsAt.Equal(m.Poll.StartsAt) || !c.EndsAt.Equal(m.Poll.EndsAt) || c.AllowedMask != (uint32(1)<<len(m.Poll.Options))-1 || c.Multiple != (m.Poll.Type == "multiple") {
 		return nil, errors.New("Kafka configuration differs from HTTP poll")
+	}
+	// Journal JSON never stores credentials. Offline readers use the same
+	// runtime environment as the application, independently of private ledgers.
+	tlsEnabled := false
+	if raw := os.Getenv("KAFKA_TLS"); raw != "" {
+		tlsEnabled, err = strconv.ParseBool(raw)
+		if err != nil {
+			return nil, errors.New("invalid Kafka reader TLS setting")
+		}
+	}
+	c.Security, err = votelog.BuildSecurity(votelog.SecurityOptions{
+		TLS: tlsEnabled, CAFile: os.Getenv("KAFKA_TLS_CA_FILE"), CertFile: os.Getenv("KAFKA_TLS_CERT_FILE"),
+		KeyFile: os.Getenv("KAFKA_TLS_KEY_FILE"), ServerName: os.Getenv("KAFKA_TLS_SERVER_NAME"),
+		SASLMechanism: os.Getenv("KAFKA_SASL_MECHANISM"), Username: os.Getenv("KAFKA_SASL_USERNAME"), Password: os.Getenv("KAFKA_SASL_PASSWORD"),
+	})
+	if err != nil {
+		return nil, err
 	}
 	return kafkaReader(c, votelog.ReplayStrict), nil
 }

@@ -25,6 +25,7 @@ import (
 )
 
 var ErrOwnership = errors.New("application controller ownership lost; restart required")
+
 var schemaPattern = regexp.MustCompile(`^[a-z][a-z0-9_]{0,62}$`)
 
 const maxPendingPolls = 32 // bound prepared producers/queues as well as metadata
@@ -34,12 +35,14 @@ type Options struct {
 	Schema             string
 	Brokers            []string
 	AllowRemoteBrokers bool
+	Security           *votelog.ClientSecurity
 	Partitions         int
 	BatchSize          int
 	QueuePerPartition  int
 	Linger             time.Duration
 	PreparationLead    time.Duration
 	MaxUnique          int
+	MaxPartitionUnique int
 	MaxPolls           int
 	Durability         postgres.DurabilityOptions
 }
@@ -69,10 +72,16 @@ func (o *Options) defaults() error {
 	if o.MaxUnique == 0 {
 		o.MaxUnique = 120_000_000
 	}
+	if o.MaxPartitionUnique == 0 {
+		o.MaxPartitionUnique = o.MaxUnique
+	}
+	if o.MaxPartitionUnique < 1 || o.MaxPartitionUnique > o.MaxUnique {
+		return errors.New("invalid partition aggregation memory bound")
+	}
 	if o.MaxPolls == 0 {
 		o.MaxPolls = 10_000
 	}
-	if o.DatabaseURL == "" || len(o.Brokers) == 0 || o.Partitions < 1 || o.Partitions > 32 || o.BatchSize < 1 || o.BatchSize > 4096 || o.QueuePerPartition < 1 || o.QueuePerPartition > 8192 || o.Linger < time.Millisecond || o.Linger > time.Second || o.PreparationLead < 5*time.Second || o.PreparationLead > time.Minute || o.MaxUnique < 1 || o.MaxUnique > 120_000_000 || o.MaxPolls < 1 || o.MaxPolls > 100_000 {
+	if o.DatabaseURL == "" || len(o.Brokers) == 0 || o.Partitions < 1 || o.Partitions > 256 || o.BatchSize < 1 || o.BatchSize > 4096 || o.QueuePerPartition < 1 || o.QueuePerPartition > 8192 || o.Linger < time.Millisecond || o.Linger > time.Second || o.PreparationLead < 5*time.Second || o.PreparationLead > time.Minute || o.MaxUnique < 1 || o.MaxUnique > 120_000_000 || o.MaxPolls < 1 || o.MaxPolls > 100_000 {
 		return errors.New("invalid Kafka application configuration")
 	}
 	o.Brokers = append([]string(nil), o.Brokers...)
@@ -80,27 +89,44 @@ func (o *Options) defaults() error {
 }
 
 type entry struct {
-	poll     poll.Poll
-	config   votelog.Config
-	writer   *votelog.Store
-	prepared bool
+	admissionClosed atomic.Bool
+	poll            poll.Poll
+	config          votelog.Config
+	writer          journalWriter
+	prepared        bool
+}
+
+// journalWriter keeps recovery orchestration independent of a producer epoch.
+// A replacement must be fenced from the same immutable Kafka journal; attempts
+// are never copied between epochs or resubmitted by this layer.
+type journalWriter interface {
+	Submit(context.Context, [16]byte, uint32) (votelog.Receipt, error)
+	Seal(context.Context) (votelog.Manifest, error)
+	Close()
+	Metrics() map[string]uint64
 }
 
 type Store struct {
-	opts          Options
-	pool          *pgxpool.Pool
-	guard         *postgres.Store
-	owner         *pgx.Conn
-	ownerMu       sync.Mutex
-	ownerStarted  time.Time
-	ctx           context.Context
-	cancel        context.CancelFunc
-	closed        atomic.Bool
-	closeOnce     sync.Once
-	opMu          sync.Mutex // administrative create/recover/finalize; never used by Vote
-	mu            sync.RWMutex
-	polls         map[string]*entry
-	heartbeatDone chan struct{}
+	opts                Options
+	clock               func() time.Time // injectable admission clock; nil uses time.Now
+	retiredMetrics      map[string]uint64
+	pool                *pgxpool.Pool
+	guard               *postgres.DurabilityGuard
+	owner               *pgx.Conn
+	ownerMu             sync.Mutex
+	ownerStarted        time.Time
+	ctx                 context.Context
+	cancel              context.CancelFunc
+	closed              atomic.Bool
+	closeOnce           sync.Once
+	opMu                contextMutex // administrative create/recover/finalize; never used by Vote
+	finalizeMu          contextMutex
+	mu                  sync.RWMutex
+	polls               map[string]*entry
+	heartbeatDone       chan struct{}
+	preparationFailures atomic.Uint64
+	// Test-only reply loss hook, configured before concurrent use.
+	afterCreateCommit func(error) error
 }
 
 var _ poll.Repository = (*Store)(nil)
@@ -120,6 +146,7 @@ func poolConfig(databaseURL string) (*pgxpool.Config, error) {
 	c.ConnConfig.ConnectTimeout = 5 * time.Second
 	c.ConnConfig.RuntimeParams["application_name"] = "gigaquizz_kafka_metadata"
 	c.ConnConfig.RuntimeParams["synchronous_commit"] = "on"
+	c.ConnConfig.RuntimeParams["default_transaction_isolation"] = "read committed"
 	c.ConnConfig.RuntimeParams["statement_timeout"] = "10000"
 	c.ConnConfig.RuntimeParams["lock_timeout"] = "5000"
 	c.ConnConfig.RuntimeParams["idle_in_transaction_session_timeout"] = "10000"
@@ -150,6 +177,16 @@ func migrate(ctx context.Context, pool *pgxpool.Pool, schema string) error {
 		return err
 	}
 	if _, err = tx.Exec(ctx, "ALTER TABLE "+pgx.Identifier{schema, "polls"}.Sanitize()+" ADD COLUMN IF NOT EXISTS prepared boolean NOT NULL DEFAULT false"); err != nil {
+		return err
+	}
+
+	if _, err = tx.Exec(ctx, "CREATE TABLE IF NOT EXISTS "+pgx.Identifier{schema, "partition_results"}.Sanitize()+` (
+  poll_id uuid NOT NULL REFERENCES `+pgx.Identifier{schema, "polls"}.Sanitize()+`(id),
+  partition integer NOT NULL CHECK(partition>=0 AND partition<256),
+  definition_hash bytea NOT NULL CHECK(octet_length(definition_hash)=32),
+  closed_offset bigint NOT NULL CHECK(closed_offset>=0),
+  total bigint NOT NULL CHECK(total>=0), counts jsonb NOT NULL, checksum bytea NOT NULL CHECK(octet_length(checksum)=32),
+  PRIMARY KEY(poll_id,partition))`); err != nil {
 		return err
 	}
 	return tx.Commit(ctx)
@@ -187,7 +224,7 @@ func New(ctx context.Context, options Options) (_ *Store, err error) {
 			s.Close()
 		}
 	}()
-	s.guard, err = postgres.NewWithOptions(ctx, options.DatabaseURL, 1, options.Durability)
+	s.guard, err = postgres.NewDurabilityGuard(options.Durability)
 	if err != nil {
 		return nil, errors.New("metadata database durability check failed")
 	}
@@ -195,6 +232,7 @@ func New(ctx context.Context, options Options) (_ *Store, err error) {
 	if err != nil {
 		return nil, err
 	}
+	c.AfterConnect = s.guard.CheckConnection
 	s.pool, err = pgxpool.NewWithConfig(ctx, c)
 	if err != nil {
 		return nil, errors.New("cannot initialize metadata database")
@@ -202,6 +240,9 @@ func New(ctx context.Context, options Options) (_ *Store, err error) {
 	s.owner, err = pgx.ConnectConfig(ctx, c.ConnConfig.Copy())
 	if err != nil {
 		return nil, errors.New("cannot open controller ownership session")
+	}
+	if err = s.guard.CheckConnection(ctx, s.owner); err != nil {
+		return nil, err
 	}
 	var owned bool
 	err = s.owner.QueryRow(ctx, "SELECT pg_try_advisory_lock($1), pg_postmaster_start_time()", lockID(options.Schema)).Scan(&owned, &s.ownerStarted)
@@ -211,7 +252,7 @@ func New(ctx context.Context, options Options) (_ *Store, err error) {
 	if err = migrate(ctx, s.pool, options.Schema); err != nil {
 		return nil, errors.New("cannot migrate metadata schema")
 	}
-	if err = s.guard.WaitDurable(ctx); err != nil {
+	if err = s.waitDurable(ctx); err != nil {
 		return nil, err
 	}
 	if err = s.load(ctx); err != nil {
@@ -279,7 +320,7 @@ func (s *Store) heartbeat() {
 
 func (s *Store) closeWriters() {
 	s.mu.RLock()
-	writers := make([]*votelog.Store, 0, len(s.polls))
+	writers := make([]journalWriter, 0, len(s.polls))
 	for _, e := range s.polls {
 		if e.writer != nil {
 			writers = append(writers, e.writer)
@@ -308,9 +349,6 @@ func (s *Store) Close() {
 		if s.pool != nil {
 			s.pool.Close()
 		}
-		if s.guard != nil {
-			s.guard.Close()
-		}
 	})
 }
 
@@ -318,7 +356,7 @@ func (s *Store) Ping(ctx context.Context) error {
 	if err := s.checkOwner(ctx); err != nil {
 		return err
 	}
-	if err := s.guard.Ping(ctx); err != nil {
+	if err := s.waitDurable(ctx); err != nil {
 		return err
 	}
 	s.mu.RLock()

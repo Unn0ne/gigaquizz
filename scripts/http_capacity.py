@@ -38,7 +38,7 @@ def calculate(root, voters=100_000_000, seconds=60, repeats=0.1, utilization=0.7
                         'question_response_http_bytes': 1536,
                         'GET_request_http_bytes': 512, 'static_response_headers_bytes_each': 512,
                         'wire_note': 'HTTP byte assumptions; TCP/IP, TLS, packet loss and retransmits are additional',
-                        'page_note': 'four explicitly linked resources; optional browser requests such as favicon excluded; gzip computed offline, not currently served by Go',
+                        'page_note': 'four explicitly linked resources; optional browser requests such as favicon excluded; gzip size estimated offline with Python default level; Go serves precomputed gzip.BestSpeed, so measured payload sizes differ',
                         'arrivals_note': 'page opening and voting need not occur in the same window',
                         'replication': 'Kafka RF3; one broker copy plus two replica copies; protocol overhead excluded'},
         'source_assets': assets,
@@ -49,7 +49,8 @@ def calculate(root, voters=100_000_000, seconds=60, repeats=0.1, utilization=0.7
                      'all_HTTP_requests_without_reloads': 5 * voters + attempts,
                      'all_HTTP_RPS_if_open_and_vote_in_same_window': 5 * unique_rate + rate,
                      'new_connections_per_second_if_one_per_cold_browser': unique_rate,
-                     'timer_network_requests': 0},
+                     'periodic_timer_network_requests': 0,
+                     'clock_fallback_note': 'One /api/time request when cached Date/Age cannot be used, or before the first local scheduled/closed rejection without a receipt. These conditional GETs are additional; no periodic time polling.'},
         'traffic': {
             'page_uncompressed': traffic(page, voters),
             'page_gzip_estimate': traffic(compressed, voters),
@@ -71,7 +72,7 @@ def calculate(root, voters=100_000_000, seconds=60, repeats=0.1, utilization=0.7
         },
         'read_cache_sensitivity': [
             {'hit_fraction': hit, 'origin_question_RPS': unique_rate * (1 - hit),
-             'note': 'target architecture; current question includes server_time and is no-store'}
+             'note': 'immutable /definition is shared-cacheable; legacy /api/polls/{id} and /api/time remain no-store; CDN hit rates require measurement'}
             for hit in (0, .9, .99, .999)
         ],
         'repeat_sensitivity': [
@@ -109,6 +110,18 @@ def calculate(root, voters=100_000_000, seconds=60, repeats=0.1, utilization=0.7
             {'mean_handler_ms': ms, 'mean_active_requests': rate * ms / 1000,
              'slots_with_utilization_headroom': math.ceil(rate * ms / 1000 / utilization)}
             for ms in (2, 10, 25, 50, 100)
+        ],
+        'partition_finalization_sensitivity': [
+            {'partitions': p, 'mean_unique_per_partition': voters / p,
+             'assumed_exact_map_bytes_at_32_per_key': math.ceil(voters / p) * 32,
+             'note': 'Sequential partition aggregation now implemented in both branches; hash skew, replay/GC/queue memory and explicit per-partition bound are additional; local partitions do not create network workers'}
+            for p in (1, 8, 32, 128, 256)
+        ],
+        'clock_fallback_sensitivity': [
+            {'affected_browser_fraction': f, 'additional_requests_per_check': math.ceil(voters * f),
+             'RPS_if_spread_over_minute': voters * f / seconds,
+             'note': 'A synchronized deadline burst is not uniform; provision the stateless /api/time path at the edge and measure separately'}
+            for f in (.001, .01, 1)
         ],
         'memory': {'raw_unique_128_bit_keys_bytes': voters * 16,
                    'exact_table_sensitivity_bytes': {str(b): voters * b for b in (24, 32, 48)},

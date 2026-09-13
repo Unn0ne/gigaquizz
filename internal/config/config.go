@@ -11,24 +11,27 @@ import (
 )
 
 type Config struct {
-	Addr             string
-	PublicURL        string
-	DatabaseURL      string
-	AdminPassword    string
-	VoteConnections  int32
-	MaxInflight      int
-	RequiredStandbys int
-	StandbyNames     []string
-	DatabaseSchema   string
-	KafkaBrokers     []string
-	KafkaPartitions  int
-	KafkaBatchVotes  int
-	KafkaQueueVotes  int
-	KafkaLinger      time.Duration
-	KafkaAllowRemote bool
-	MaxUnique        int
-	MaxPolls         int
-	PreparationLead  time.Duration
+	Addr                                                                  string
+	PublicURL                                                             string
+	DatabaseURL                                                           string
+	AdminPassword                                                         string
+	MaxInflight                                                           int
+	RequiredStandbys                                                      int
+	StandbyNames                                                          []string
+	DatabaseSchema                                                        string
+	KafkaBrokers                                                          []string
+	KafkaPartitions                                                       int
+	KafkaBatchVotes                                                       int
+	KafkaQueueVotes                                                       int
+	KafkaLinger                                                           time.Duration
+	KafkaAllowRemote                                                      bool
+	MaxUnique                                                             int
+	MaxPartitionUnique                                                    int
+	KafkaTLS                                                              bool
+	KafkaTLSCAFile, KafkaTLSCertFile, KafkaTLSKeyFile, KafkaTLSServerName string
+	KafkaSASLMechanism, KafkaSASLUsername, KafkaSASLPassword              string
+	MaxPolls                                                              int
+	PreparationLead                                                       time.Duration
 }
 
 // LoadEnv never evaluates shell syntax or replaces an existing environment value.
@@ -69,20 +72,13 @@ func LoadEnv(path string) error {
 }
 
 func Load() (Config, error) {
-	c := Config{Addr: env("HTTP_ADDR", "127.0.0.1:8092"), PublicURL: env("PUBLIC_URL", "http://127.0.0.1:8092"), DatabaseURL: os.Getenv("DATABASE_URL"), AdminPassword: os.Getenv("ADMIN_PASSWORD"), VoteConnections: 64, MaxInflight: 1024,
+	c := Config{Addr: env("HTTP_ADDR", "127.0.0.1:8092"), PublicURL: env("PUBLIC_URL", "http://127.0.0.1:8092"), DatabaseURL: os.Getenv("DATABASE_URL"), AdminPassword: os.Getenv("ADMIN_PASSWORD"), MaxInflight: 1024,
 		DatabaseSchema: env("GIGAQUIZZ_SCHEMA", "gigaquizz_kafka"), KafkaBrokers: strings.Split(env("KAFKA_BROKERS", "127.0.0.1:19092,127.0.0.1:19093,127.0.0.1:19094"), ","), KafkaPartitions: 4, KafkaBatchVotes: 256, KafkaQueueVotes: 2048, KafkaLinger: 2 * time.Millisecond, MaxUnique: 120_000_000, MaxPolls: 10_000, PreparationLead: 20 * time.Second}
 	if c.DatabaseURL == "" {
 		return c, errors.New("DATABASE_URL is required; run make dev or configure .env")
 	}
 	if len(c.AdminPassword) < 16 || strings.Contains(c.AdminPassword, "CHANGE_ME") {
 		return c, errors.New("set a unique ADMIN_PASSWORD of at least 16 characters")
-	}
-	if raw := os.Getenv("VOTE_DB_CONNECTIONS"); raw != "" {
-		n, err := strconv.Atoi(raw)
-		if err != nil || n < 1 || n > 10000 {
-			return c, fmt.Errorf("invalid VOTE_DB_CONNECTIONS")
-		}
-		c.VoteConnections = int32(n)
 	}
 	if raw := os.Getenv("MAX_INFLIGHT"); raw != "" {
 		n, err := strconv.Atoi(raw)
@@ -107,11 +103,12 @@ func Load() (Config, error) {
 		value    *int
 		min, max int
 	}{
-		"KAFKA_PARTITIONS":  {&c.KafkaPartitions, 1, 32},
-		"KAFKA_BATCH_VOTES": {&c.KafkaBatchVotes, 1, 4096},
-		"KAFKA_QUEUE_VOTES": {&c.KafkaQueueVotes, 1, 8192},
-		"MAX_UNIQUE_VOTERS": {&c.MaxUnique, 1, 120_000_000},
-		"MAX_STORED_POLLS":  {&c.MaxPolls, 1, 100_000},
+		"KAFKA_PARTITIONS":            {&c.KafkaPartitions, 1, 256},
+		"KAFKA_BATCH_VOTES":           {&c.KafkaBatchVotes, 1, 4096},
+		"KAFKA_QUEUE_VOTES":           {&c.KafkaQueueVotes, 1, 8192},
+		"MAX_UNIQUE_VOTERS":           {&c.MaxUnique, 1, 120_000_000},
+		"MAX_PARTITION_UNIQUE_VOTERS": {&c.MaxPartitionUnique, 1, 120_000_000},
+		"MAX_STORED_POLLS":            {&c.MaxPolls, 1, 100_000},
 	} {
 		if raw := os.Getenv(key); raw != "" {
 			n, err := strconv.Atoi(raw)
@@ -141,6 +138,24 @@ func Load() (Config, error) {
 			return c, errors.New("invalid KAFKA_ALLOW_REMOTE_BROKERS")
 		}
 		c.KafkaAllowRemote = n
+	}
+
+	if raw := os.Getenv("KAFKA_TLS"); raw != "" {
+		v, err := strconv.ParseBool(raw)
+		if err != nil {
+			return c, errors.New("invalid KAFKA_TLS")
+		}
+		c.KafkaTLS = v
+	}
+	c.KafkaTLSCAFile = os.Getenv("KAFKA_TLS_CA_FILE")
+	c.KafkaTLSCertFile = os.Getenv("KAFKA_TLS_CERT_FILE")
+	c.KafkaTLSKeyFile = os.Getenv("KAFKA_TLS_KEY_FILE")
+	c.KafkaTLSServerName = os.Getenv("KAFKA_TLS_SERVER_NAME")
+	c.KafkaSASLMechanism = os.Getenv("KAFKA_SASL_MECHANISM")
+	c.KafkaSASLUsername = os.Getenv("KAFKA_SASL_USERNAME")
+	c.KafkaSASLPassword = os.Getenv("KAFKA_SASL_PASSWORD")
+	if c.MaxPartitionUnique > c.MaxUnique {
+		return c, errors.New("partition unique bound exceeds total unique bound")
 	}
 	for i := range c.KafkaBrokers {
 		c.KafkaBrokers[i] = strings.TrimSpace(c.KafkaBrokers[i])

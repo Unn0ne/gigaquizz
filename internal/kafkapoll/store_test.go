@@ -60,3 +60,19 @@ func TestVoteNeverUsesMetadataDatabase(t *testing.T) {
 		t.Fatal("lost controller continued admission")
 	}
 }
+
+func TestApplicationDeadlineLatchSurvivesWallClockRollback(t *testing.T) {
+	id := "10000000-0000-4000-8000-000000000001"
+	now := time.Now().UTC()
+	ends := now
+	e := &entry{poll: poll.Poll{ID: id, Type: "single", Options: []poll.Option{{ID: 1}, {ID: 2}}, StartsAt: ends.Add(-time.Minute), EndsAt: ends}}
+	s := &Store{ctx: context.Background(), polls: map[string]*entry{id: e}, clock: func() time.Time { return now }}
+	if r, err := s.Vote(context.Background(), id, "20000000000040008000000000000001", []int{1}); err != nil || r.Status != "closed" {
+		t.Fatal("deadline did not close application", r, err)
+	}
+	now = ends.Add(-time.Second)
+	// The writer is absent: reopening would incorrectly return busy, not closed.
+	if r, err := s.Vote(context.Background(), id, "20000000000040008000000000000002", []int{2}); err != nil || r.Status != "closed" {
+		t.Fatal("API reopened after observing closed", r, err)
+	}
+}

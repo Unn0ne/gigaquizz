@@ -1,0 +1,63 @@
+{
+  "scope": "Summary transcribed from completed tool output; commands below were executed before load profiles. No throughput claim.",
+  "initial_candidate": {
+    "simple-files": {
+      "make_check": "PASS: vet and full race suite with count=1",
+      "make_build": "PASS",
+      "python_unittest_count": 37
+    },
+    "postgres-kafka": {
+      "make_check": "PASS: vet and full race suite, some unchanged packages cached",
+      "make_build": "PASS",
+      "python_unittest_count": 61
+    }
+  },
+  "final_candidate_scoped_regressions": {
+    "files_group_and_filestore": "PASS: go test -race ./internal/filelog ./internal/filestore; go vet for those packages",
+    "httpbench_both_branches": "PASS: go test -race ./cmd/httpbench; go vet ./cmd/httpbench",
+    "browser_command": "npx playwright test tests/browser/public-clock.spec.js tests/browser/recorded.spec.js tests/browser/retry.spec.js",
+    "browser_simple_files": {
+      "passed": 12,
+      "seconds": 12.2,
+      "report_source": "tool stdout, no separate browser JSON retained"
+    },
+    "browser_postgres_kafka": {
+      "passed": 12,
+      "seconds": 13.6,
+      "report_source": "tool stdout, no separate browser JSON retained"
+    },
+    "browser_coverage_note": "Full 15-test suite passed before last receipt parser change. The affected 12-test subset then passed on both final branches, including two added nanosecond cases. Full final 17-test suite not rerun.",
+    "binaries_both_branches": "Built successfully; candidate2 provenance identifies source and binary hashes."
+  },
+  "allocation_fixture": {
+    "benchmark": "BenchmarkWorkerGzipDecode",
+    "scope": "Microbenchmark allocation fixture for generator gzip decoding, not HTTP capacity",
+    "fresh_decoder_bytes_per_operation": 41284,
+    "reused_decoder_bytes_per_operation": 48,
+    "fresh_decoder_allocations_per_operation": 6,
+    "reused_decoder_allocations_per_operation": 1
+  },
+  "final_review": {
+    "after_fixes": "No further actionable finding in independent targeted re-review of Group closure, nanosecond receipt validation and gzip decoder reuse; broader PostgreSQL and common HTTP review completed before these last fixes.",
+    "remaining_scale_limits": [
+      "Single application owner in each branch",
+      "No automatic multi-host routing or failover",
+      "Local replica processes share one physical machine",
+      "100M HTTP and production TLS/CDN capacity not measured"
+    ]
+  },
+  "final_candidate3": {
+    "files_http_race_and_vet": "PASS after common diagnostics allowlist update",
+    "postgres_kafka_scoped_race": "PASS kafkapoll, votelog, httpapi",
+    "postgres_kafka_scoped_vet": "PASS kafkapoll, votelog, httpapi, cmd/gigaquizz",
+    "make_build_both_branches": "PASS; all branch commands rebuilt",
+    "linux_amd64_cross_build_both_branches": "PASS, CGO_ENABLED=0; compiled, not executed on Linux",
+    "real_fencing_without_restart": "PASS with race, 69.334 s; initial incorrect test expectation for post-CLOSED BOOT count was corrected and full scenario rerun",
+    "independent_recovery_review": "PASS; no actionable finding in ownership, cancellation, epoch replacement or lifetime counter retention",
+    "hot_submit_changed_by_finalizer_fix": false
+  },
+  "linux_amd64_binaries": {
+    "simple-files": "2a25b801ef959101f461716d7c0ee6f4f59464636da9bafae8d52b8884837454",
+    "postgres-kafka": "b46726832e85556e50231e6823f7567e0594fb1bbe7b74238c9d73ff9010c7ec"
+  }
+}

@@ -13,10 +13,14 @@ import (
 // aborted data and hidden transaction markers make those shortcuts incorrect.
 func scan(ctx context.Context, c Config, visit func(*kgo.Record) (bool, error)) error {
 	partitions := map[int32]kgo.Offset{}
-	for i := 0; i < c.Partitions; i++ {
-		partitions[int32(i)] = kgo.NewOffset().AtStart()
+	owned, err := c.ownedPartitions()
+	if err != nil {
+		return err
 	}
-	cl, err := kgo.NewClient(kgo.SeedBrokers(c.Brokers...),
+	for _, partition := range owned {
+		partitions[partition] = kgo.NewOffset().AtStart()
+	}
+	cl, err := NewClient(c,
 		kgo.ConsumePartitions(map[string]map[int32]kgo.Offset{c.Topic: partitions}),
 		kgo.FetchIsolationLevel(kgo.ReadCommitted()), kgo.FetchMaxBytes(32<<20), kgo.FetchMaxPartitionBytes(4<<20))
 	if err != nil {
@@ -24,7 +28,7 @@ func scan(ctx context.Context, c Config, visit func(*kgo.Record) (bool, error)) 
 	}
 	defer cl.Close()
 	done := make([]bool, c.Partitions)
-	remaining := c.Partitions
+	remaining := len(owned)
 	for remaining > 0 {
 		fetches := cl.PollRecords(ctx, 10000)
 		if err := ctx.Err(); err != nil {
@@ -40,6 +44,10 @@ func scan(ctx context.Context, c Config, visit func(*kgo.Record) (bool, error)) 
 			}
 			if p.Partition < 0 || int(p.Partition) >= c.Partitions {
 				failure = errors.New("unexpected partition")
+				return
+			}
+			if _, owned := partitions[p.Partition]; !owned {
+				failure = errors.New("reader received partition outside declared scope")
 				return
 			}
 			if p.LogStartOffset > 0 {
@@ -167,6 +175,7 @@ func replay(ctx context.Context, c Config, barriers []int64, visit func(Position
 // It does not retain a vote map. Callers publish only after a successful return;
 // a visitor error or malformed later record leaves the result incomplete.
 func Replay(ctx context.Context, c Config, visit func(Position, Vote) error) (Manifest, error) {
+	c.OwnedPartitions = nil // Public full replay never silently narrows writer scope.
 	if err := c.validate(); err != nil {
 		return Manifest{}, err
 	}
@@ -182,6 +191,7 @@ func Replay(ctx context.Context, c Config, visit func(Position, Vote) error) (Ma
 }
 
 func Audit(ctx context.Context, c Config) (AuditResult, error) {
+	c.OwnedPartitions = nil
 	if err := c.validate(); err != nil {
 		return AuditResult{}, err
 	}

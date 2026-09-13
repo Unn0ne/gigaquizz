@@ -1,0 +1,1246 @@
+{
+  "mode": "simple-files",
+  "label": "r13_files_new_journey_20000",
+  "started_at": "2026-09-13T13:25:23.966439+00:00",
+  "finished_at": "2026-09-13T13:26:41.319613+00:00",
+  "correct": true,
+  "scope": "Real local HTTP application, isolated real 60-second poll, exact private-ledger audit, process restart; no TLS/CDN capacity claim",
+  "diagnostic_cpu_profile": false,
+  "configuration": {
+    "rate_unique_s": 20000,
+    "planned_attempts": 1200000,
+    "workers": 1024,
+    "generator_queue": 4096,
+    "generators": 1,
+    "combined_resource_budget": {
+      "generators": 1,
+      "workers_per_generator": 1024,
+      "workers_total": 1024,
+      "queue_per_generator": 4096,
+      "queue_total": 4096,
+      "generator_GOMEMLIMIT_total_bytes": 2147483648,
+      "application_GOMEMLIMIT_bytes": 3221225472,
+      "memory_limit_semantics": "Go soft heap limits, not RSS caps or RAM reservations; excludes shared brokers and runtime overhead",
+      "estimated_owned_open_files_total": 4096,
+      "owned_child_open_file_limit": 16384
+    },
+    "max_lag_ms": 100,
+    "repeat_every": 0,
+    "journey": true,
+    "definition": true,
+    "file_partitions": 8,
+    "max_partition_unique_voters": 1200100,
+    "max_inflight": 4096,
+    "kafka_partitions": null,
+    "batch_votes_override": null,
+    "queue_votes_override": null,
+    "linger_ms_override": null,
+    "app_GOMEMLIMIT": "3GiB",
+    "generator_GOMEMLIMIT": "2GiB",
+    "GOGC": "100",
+    "GOMAXPROCS": 10,
+    "owned_child_open_file_limit": 16384
+  },
+  "binary_sha256": {
+    "application": "f3b5376d40b154e99abc8a2d4ed82340754ab0fca7ec80f4f20ef90eb81336e6",
+    "generator": "aa5e69e116e3421288fa09cfe4ba07885cf6d3e41212ef75f0c45d6278badd19",
+    "reader": "aa5e69e116e3421288fa09cfe4ba07885cf6d3e41212ef75f0c45d6278badd19"
+  },
+  "disk": {
+    "required_bytes_including_reserve": 9308603904,
+    "reserve_bytes": 8589934592,
+    "free_before": 28750311424,
+    "free_after": 28709134336
+  },
+  "checks": [
+    "real_60_second_window",
+    "production_final_result_ready",
+    "final_result_unchanged_after_process_restart",
+    "late_post_410",
+    "independent_exact_journal_audit"
+  ],
+  "errors": [],
+  "load": {
+    "mode": "http-journey-definition-gzip",
+    "complete": true,
+    "cancelled": false,
+    "planned_unique_per_second": 20000,
+    "planned_attempts": 1200000,
+    "planned_unique_keys": 1200000,
+    "repeat_every": 0,
+    "workers": 1024,
+    "queue": 4096,
+    "max_lag_ms": 100,
+    "scheduled_seconds": 60,
+    "wall_seconds_including_drain": 65.765666708,
+    "http_post_sent": 404,
+    "valid_recorded_ack": 404,
+    "unknown": 0,
+    "closed": 0,
+    "not_admitted": 0,
+    "not_open": 0,
+    "rejected": 0,
+    "generator_skipped": 398972,
+    "journey_failed": 800624,
+    "journey_started": 801028,
+    "journey_completed_before_post": 404,
+    "http_get_sent": 1045509,
+    "http_get_failures": 785331,
+    "http_get_body_bytes": 728884117,
+    "http_get_decoded_body_bytes": 1962236392,
+    "http_get_stages": [
+      {
+        "timeouts": 626580,
+        "transport_failures": 189,
+        "status_failures": 0,
+        "validation_failures": 0,
+        "decoded_body_bytes": 527837856,
+        "stage": "html",
+        "sent": 796601,
+        "failures": 626769,
+        "response_body_bytes": 246935728,
+        "mean_latency_ms": 60.6634450001067,
+        "max_latency_ms": 2545.59225
+      },
+      {
+        "timeouts": 90884,
+        "transport_failures": 5,
+        "status_failures": 0,
+        "validation_failures": 0,
+        "decoded_body_bytes": 1337864040,
+        "stage": "css",
+        "sent": 167570,
+        "failures": 90889,
+        "response_body_bytes": 443807965,
+        "mean_latency_ms": 22.9433529279525,
+        "max_latency_ms": 2545.653125
+      },
+      {
+        "timeouts": 59380,
+        "transport_failures": 0,
+        "status_failures": 0,
+        "validation_failures": 0,
+        "decoded_body_bytes": 58809114,
+        "stage": "common_js",
+        "sent": 70307,
+        "failures": 59380,
+        "response_body_bytes": 24716874,
+        "mean_latency_ms": 14.25845746686674,
+        "max_latency_ms": 679.306791
+      },
+      {
+        "timeouts": 7123,
+        "transport_failures": 0,
+        "status_failures": 0,
+        "validation_failures": 0,
+        "decoded_body_bytes": 37574760,
+        "stage": "poll_js",
+        "sent": 9268,
+        "failures": 7123,
+        "response_body_bytes": 13296648,
+        "mean_latency_ms": 13.905830604876996,
+        "max_latency_ms": 612.599917
+      },
+      {
+        "timeouts": 1170,
+        "transport_failures": 0,
+        "status_failures": 0,
+        "validation_failures": 0,
+        "decoded_body_bytes": 150622,
+        "stage": "question",
+        "sent": 1763,
+        "failures": 1170,
+        "response_body_bytes": 126902,
+        "mean_latency_ms": 16.06817641747022,
+        "max_latency_ms": 168.203167
+      }
+    ],
+    "journey_mean_ms": 70.92966357828439,
+    "journey_max_ms": 2721.1335,
+    "invalid_successful_responses": 0,
+    "ledger_bytes": 76800000,
+    "latency_p50_upper_bound_ms": 67.108864,
+    "latency_p95_upper_bound_ms": 134.217728,
+    "latency_p99_upper_bound_ms": 134.217728,
+    "latency_max_ms": 185.117042,
+    "latency_mean_ms": 49.64882199504951,
+    "post_sent_per_scheduled_second": [
+      234,
+      33,
+      9,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      121,
+      0,
+      1,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "ack_received_per_scheduled_second": [
+      234,
+      33,
+      9,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      121,
+      0,
+      1,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "method": "Uniform scheduled unique IDs; one independent POST per attempt; bounded workers and queue; stale/full attempts are skips; no request retries. Each worker buffers its private 64-byte full-ID/choice/admission/outcome ledger. 202 recorded is a durable attempt, not canonical uniqueness. No journal reconciliation occurs in this process. Uses immutable /definition and explicitly negotiated gzip with bounded decoding; encoded and decoded body bytes reported separately. Each original attempt first fetches HTML, app.css, common.js, poll.js and the original question sequentially with no browser cache or JS execution. Repeats send only POST. The GET chain must finish before the original scheduled slot plus max-lag; a failed/expired chain is journey_failed and sends no POST. GET metrics count client.Do calls and actually read response-body bytes, excluding headers, transport/TLS overhead and the one setup validation GET; they do not include any transparent GET connection repair inside Go Transport.",
+    "post_latency_scope": "POST dispatch through response body read; excludes scheduler and preceding GETs"
+  },
+  "final_unique_votes": 404,
+  "final_choice_counts": [
+    404,
+    0
+  ],
+  "application_metrics": {
+    "accepted_responses": 0,
+    "conflict_responses": 0,
+    "definition_cache_entries": 1,
+    "definition_cache_hits": 1109,
+    "definition_cache_misses": 0,
+    "definition_preparation_failures": 0,
+    "duplicate_responses": 0,
+    "http_admin_gate_rejections": 0,
+    "http_read_gate_rejections": 0,
+    "http_vote_gate_rejections": 0,
+    "inflight": 0,
+    "poll_preparation_failures": 0,
+    "public_gzip_body_bytes": 1128887622,
+    "public_not_modified": 0,
+    "public_raw_body_bytes": 0,
+    "public_response_body_bytes": 1128887622,
+    "recorded_responses": 404,
+    "rejected_attempts": 0,
+    "storage_active_votes": 0,
+    "storage_batch_ns": 1936145826,
+    "storage_batches": 183,
+    "storage_busy_votes": 0,
+    "storage_durable_frames": 175,
+    "storage_durable_votes": 404,
+    "storage_errors": 0,
+    "storage_failed_writers": 0,
+    "storage_queue_rejections": 0,
+    "storage_queued_votes": 0,
+    "unknown_outcomes": 0,
+    "vote_http_attempts": 404
+  },
+  "audit": {
+    "mode": "independent-http-audit",
+    "correct": true,
+    "generators": 1,
+    "planned_unique_keys": 1200000,
+    "acknowledged_attempt_fraction": 0.00033666666666666665,
+    "ledger_valid": true,
+    "journal_closed": true,
+    "saved_service_results_matched": true,
+    "planned_attempts": 1200000,
+    "confirmed_attempts": 404,
+    "matched_ack_attempts": 404,
+    "missing_ack_attempts": 0,
+    "unverified_ack_attempts": 0,
+    "unknown_client_attempts": 0,
+    "journey_failed_client_attempts": 800624,
+    "unknown_attempts_found_committed": 0,
+    "journal_attempts": 404,
+    "canonical_unique_keys": 404,
+    "duplicate_logical_attempts": 0,
+    "unexpected_records": 0,
+    "unexpected_physical_copies": 0,
+    "receipt_mismatches": 0,
+    "canonical_choice_counts": [
+      404,
+      0
+    ],
+    "invalid_successful_responses": 0,
+    "compact_state_bytes": 12000000,
+    "wall_seconds": 0.260521709,
+    "method": "Separate process reads every CRC/SHA256-checked full-ID client record and the journal through CLOSED. AES inversion validates all 128 token bits and disjoint generator ranges; dense flags are exact, not a probabilistic hash. Each ACK matches token+choice+admitted_at with multiplicity one. Only unknown attempts can explain additional records. Canonical first journal occurrence is compared to saved final service counts. Complete range coverage is required by distributed-plan audits; correct does not mean every planned attempt was admitted."
+  },
+  "load_coverage": {
+    "acknowledged_attempt_fraction": 0.00033666666666666665,
+    "planned_attempts_without_ack": 1199596,
+    "all_planned_attempts_acknowledged": false
+  },
+  "generator_reports": [],
+  "resource_observations": [
+    {
+      "role": "application",
+      "sampled_interval_seconds": 58.704200125008356,
+      "mean_cpu_cores": 0.24768244808783058,
+      "maximum_sampled_RSS_bytes": 63537152
+    },
+    {
+      "role": "generator_or_reader",
+      "sampled_interval_seconds": 58.704200125008356,
+      "mean_cpu_cores": 1.8875991796844915,
+      "maximum_sampled_RSS_bytes": 326074368
+    }
+  ],
+  "workload_resource_samples": [
+    {
+      "elapsed_seconds": 8.898092666990124,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:01.15",
+          "rss_bytes": 62439424
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:02.86",
+          "rss_bytes": 176078848
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 9.96801900002174,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:02.92",
+          "rss_bytes": 61816832
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:06.81",
+          "rss_bytes": 185778176
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 11.03200329199899,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:04.66",
+          "rss_bytes": 63242240
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:11.03",
+          "rss_bytes": 197378048
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 12.084899500012398,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:06.25",
+          "rss_bytes": 63291392
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:14.57",
+          "rss_bytes": 198901760
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 13.136892959009856,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.09",
+          "rss_bytes": 63291392
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:17.40",
+          "rss_bytes": 199098368
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 14.186027124989778,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.10",
+          "rss_bytes": 63291392
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:18.71",
+          "rss_bytes": 199770112
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 15.22869262500899,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.10",
+          "rss_bytes": 63291392
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:20.06",
+          "rss_bytes": 200458240
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 16.2798269999912,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.10",
+          "rss_bytes": 63291392
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:21.61",
+          "rss_bytes": 201506816
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 17.330784792022314,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.10",
+          "rss_bytes": 63291392
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:23.07",
+          "rss_bytes": 201916416
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 18.3738137090113,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.11",
+          "rss_bytes": 63291392
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:24.58",
+          "rss_bytes": 202342400
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 19.418041334021837,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.11",
+          "rss_bytes": 63291392
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:26.37",
+          "rss_bytes": 203522048
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 20.464430709020235,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.12",
+          "rss_bytes": 63291392
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:27.84",
+          "rss_bytes": 203997184
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 21.50813954201294,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.12",
+          "rss_bytes": 63291392
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:29.47",
+          "rss_bytes": 204357632
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 22.566617125004996,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.27",
+          "rss_bytes": 63307776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:31.22",
+          "rss_bytes": 205438976
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 23.61537854198832,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.28",
+          "rss_bytes": 63307776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:32.60",
+          "rss_bytes": 206176256
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 24.659067999979015,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.28",
+          "rss_bytes": 63307776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:33.97",
+          "rss_bytes": 207388672
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 25.708009499998298,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.28",
+          "rss_bytes": 63307776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:35.44",
+          "rss_bytes": 208945152
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 26.76027058402542,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.29",
+          "rss_bytes": 63307776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:36.87",
+          "rss_bytes": 209518592
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 27.807394750008825,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.29",
+          "rss_bytes": 63307776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:38.67",
+          "rss_bytes": 211025920
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 28.8514860420255,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.29",
+          "rss_bytes": 63307776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:40.65",
+          "rss_bytes": 217071616
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 29.898115999996662,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.30",
+          "rss_bytes": 63291392
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:42.49",
+          "rss_bytes": 220676096
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 30.940273499989416,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.31",
+          "rss_bytes": 63291392
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:44.19",
+          "rss_bytes": 220954624
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 31.987753083987627,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.31",
+          "rss_bytes": 62849024
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:46.04",
+          "rss_bytes": 221200384
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 33.02606058400124,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.32",
+          "rss_bytes": 62849024
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:47.70",
+          "rss_bytes": 221462528
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 34.07404774997849,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.32",
+          "rss_bytes": 62849024
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:49.38",
+          "rss_bytes": 221855744
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 35.11731983401114,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.32",
+          "rss_bytes": 62849024
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:51.15",
+          "rss_bytes": 222265344
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 36.164242334023584,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.32",
+          "rss_bytes": 62849024
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:52.79",
+          "rss_bytes": 222871552
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 37.211774834024254,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.32",
+          "rss_bytes": 62849024
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:54.49",
+          "rss_bytes": 223363072
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 38.26778512500459,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.32",
+          "rss_bytes": 62849024
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:56.30",
+          "rss_bytes": 223969280
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 39.31708212499507,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.32",
+          "rss_bytes": 62849024
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:57.98",
+          "rss_bytes": 224886784
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 40.36402704200009,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.99",
+          "rss_bytes": 62881792
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:00.83",
+          "rss_bytes": 240156672
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 41.40965420898283,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:09.79",
+          "rss_bytes": 63127552
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:06.06",
+          "rss_bytes": 262504448
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 42.46366804197896,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:11.60",
+          "rss_bytes": 63225856
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:11.10",
+          "rss_bytes": 310345728
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 43.50695629202528,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:13.63",
+          "rss_bytes": 63242240
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:15.11",
+          "rss_bytes": 311230464
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 44.55758316698484,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.23",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:19.15",
+          "rss_bytes": 311443456
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 45.60200795897981,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.27",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:20.53",
+          "rss_bytes": 311771136
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 46.644681666977704,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.28",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:21.82",
+          "rss_bytes": 312377344
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 47.68744420900475,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.28",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:23.21",
+          "rss_bytes": 312442880
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 48.742889792018104,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.28",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:24.61",
+          "rss_bytes": 312918016
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 49.792886000010185,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.28",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:25.98",
+          "rss_bytes": 313245696
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 50.83870545902755,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.28",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:27.50",
+          "rss_bytes": 313769984
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 51.88473545899615,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.28",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:28.84",
+          "rss_bytes": 314114048
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 52.92981237499043,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.28",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:30.29",
+          "rss_bytes": 314343424
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 53.974612209014595,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.29",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:31.99",
+          "rss_bytes": 314834944
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 55.021720791992266,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.29",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:33.67",
+          "rss_bytes": 315392000
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 56.06417229201179,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.29",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:35.25",
+          "rss_bytes": 315981824
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 57.10722629202064,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.29",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:37.13",
+          "rss_bytes": 316702720
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 58.14945429202635,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.29",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:38.64",
+          "rss_bytes": 317407232
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 59.19662583398167,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.29",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:40.21",
+          "rss_bytes": 318013440
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 60.244769166980404,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.29",
+          "rss_bytes": 63537152
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:41.88",
+          "rss_bytes": 318636032
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 61.288410583976656,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.29",
+          "rss_bytes": 63488000
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:43.39",
+          "rss_bytes": 319356928
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 62.342652458988596,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.39",
+          "rss_bytes": 63488000
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:45.23",
+          "rss_bytes": 320323584
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 63.38813316699816,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.67",
+          "rss_bytes": 63488000
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:47.33",
+          "rss_bytes": 321339392
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 64.43398520903429,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.68",
+          "rss_bytes": 63488000
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:48.76",
+          "rss_bytes": 322633728
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 65.48195533402031,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.68",
+          "rss_bytes": 63488000
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:50.51",
+          "rss_bytes": 324403200
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 66.53313016699394,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.69",
+          "rss_bytes": 63488000
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:52.14",
+          "rss_bytes": 325468160
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 67.60229279199848,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.69",
+          "rss_bytes": 63488000
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:53.67",
+          "rss_bytes": 326074368
+        }
+      ]
+    }
+  ],
+  "resource_scope": "CPU delta over sampled workload phase; peak sampled RSS is not exact peak; all processes share this laptop. CPU and RSS of independent generators are listed separately.",
+  "WAL_observation": {
+    "files": 8,
+    "logical_bytes": 19272,
+    "allocated_bytes": 32768
+  }
+}
