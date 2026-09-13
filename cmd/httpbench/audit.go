@@ -99,7 +99,7 @@ func loadLedgerContext(ctx context.Context, path string) (privateManifest, audit
 		if err != nil || len(wantHash) != sha256.Size {
 			return m, s, errors.New("invalid ledger hash")
 		}
-		f, err := os.OpenFile(filepath.Join(filepath.Dir(path), meta.Name), os.O_RDONLY|syscall.O_NOFOLLOW, 0)
+		f, err := os.OpenFile(filepath.Join(filepath.Dir(path), meta.Name), os.O_RDONLY|syscall.O_NOFOLLOW|syscall.O_NONBLOCK, 0)
 		if err != nil {
 			return m, s, err
 		}

@@ -56,7 +56,7 @@ func TestCancelledHTTPRunKeepsEveryAttemptAndExactACK(t *testing.T) {
 	c := m.Config
 	c.Rate = 20
 	c.RepeatEvery = 0
-	c.Start = time.Now().Add(20 * time.Millisecond)
+	c.Start = time.Now().Add(1500 * time.Millisecond)
 	c.Directory = filepath.Join(t.TempDir(), "private-run")
 	c.Workers = 2
 	c.Queue = 2
