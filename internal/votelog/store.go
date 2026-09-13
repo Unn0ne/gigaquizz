@@ -319,15 +319,6 @@ func parallel(n int, fn func(int) error) error {
 	return nil
 }
 
-func (s *Store) Config() Config {
-	c := s.cfg
-	c.Brokers = append([]string(nil), c.Brokers...)
-	if c.OwnedPartitions != nil {
-		c.OwnedPartitions = append([]int32{}, c.OwnedPartitions...)
-	}
-	return c
-}
-
 func (s *Store) Submit(ctx context.Context, token [16]byte, choice uint32) (Receipt, error) {
 	if token == [16]byte{} || !s.cfg.validChoice(choice) {
 		return Receipt{}, ErrInvalid

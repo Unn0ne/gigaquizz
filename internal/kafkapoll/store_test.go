@@ -2,6 +2,7 @@ package kafkapoll
 
 import (
 	"context"
+	"math"
 	"testing"
 	"time"
 
@@ -25,6 +26,18 @@ func TestParseFullIdentifiersAndOptionsBounds(t *testing.T) {
 	for _, o := range []Options{{DatabaseURL: "x", Schema: "bad;schema", Brokers: []string{"127.0.0.1:19092"}}, {DatabaseURL: "x", Brokers: []string{"127.0.0.1:19092"}, MaxUnique: 120_000_001}, {DatabaseURL: "x", Brokers: []string{"127.0.0.1:19092"}, MaxPolls: 100_001}} {
 		if o.defaults() == nil {
 			t.Fatal("accepted configuration outside its inventory/memory bound")
+		}
+	}
+}
+
+func TestCreateRejectsUnsupportedCalendarBeforeMetadataSideEffects(t *testing.T) {
+	// With no context, pool or owner initialized, reaching the database would
+	// panic. Validation must reject these dates before acquiring any resource.
+	s := &Store{}
+	for _, starts := range []time.Time{time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC), time.Date(1677, 1, 1, 0, 0, 0, 0, time.UTC), time.Date(3000, 1, 1, 0, 0, 0, 0, time.UTC), time.Date(9999, 1, 1, 0, 0, 0, 0, time.UTC), time.Unix(0, math.MaxInt64).Add(-time.Minute + time.Nanosecond)} {
+		p, err := s.Create(context.Background(), poll.CreateInput{Question: "Invalid future window", Type: "single", Options: []string{"A", "B"}, StartsAt: &starts})
+		if err == nil || p.ID != "" {
+			t.Fatal("invalid calendar reserved a poll", starts.Year())
 		}
 	}
 }

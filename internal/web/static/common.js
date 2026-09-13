@@ -7,7 +7,6 @@ window.Gigaquizz = (() => {
   async function request(path, options = {}) {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 20000);
-    const sentAt = Date.now();
     const sentMono = performance.now();
     try {
       const response = await fetch(path, { ...options, credentials: 'same-origin', signal: controller.signal, headers: { Accept: 'application/json', ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...options.headers } });
@@ -29,7 +28,7 @@ window.Gigaquizz = (() => {
         error.retryAfter = retryAfter;
         throw error;
       }
-      return { ok: response.ok, status: response.status, data, retryAfter, midpoint: (sentAt + Date.now()) / 2, timing: { sentMono, headersMono, bodyMono, dateHeader, ageHeader } };
+      return { ok: response.ok, status: response.status, data, retryAfter, timing: { sentMono, headersMono, bodyMono, dateHeader, ageHeader } };
     } finally {
       window.clearTimeout(timeout);
     }

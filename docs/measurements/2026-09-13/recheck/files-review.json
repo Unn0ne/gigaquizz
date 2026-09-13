@@ -1,0 +1,68 @@
+{
+  "branch": "simple-files",
+  "scope": [
+    "internal/filelog",
+    "internal/filestore",
+    "internal/config",
+    "cmd/gigaquizz"
+  ],
+  "initial_checks": {
+    "go_vet": "PASS",
+    "go_test_race": "PASS",
+    "details": "results.json"
+  },
+  "final_checks": {
+    "go_vet": "PASS",
+    "go_test_race": "PASS",
+    "details": "final-results.json"
+  },
+  "focused_regressions": {
+    "status": "PASS"
+  },
+  "findings": [
+    {
+      "priority": "P2",
+      "status": "fixed",
+      "description": "A finalized poll with durable CLOSED barriers prevented repository startup if the wall clock moved back before its original deadline: its saved result was classified as premature.",
+      "fix": "Recovery now requires a successful read-only replay of every existing CLOSED barrier and strict validation of the saved result before restoring that final. Open journals are never sealed to justify a premature result.",
+      "files": [
+        "internal/filestore/recovery.go",
+        "internal/filestore/store.go",
+        "internal/filestore/restart_clock_test.go"
+      ],
+      "regressions": [
+        "Fresh-owner restart inside the original minute and before its start preserves the exact final",
+        "Known and new tokens remain closed",
+        "Tampered saved results are rejected repeatedly without overwrite",
+        "Checksummed premature results remain rejected and do not manufacture CLOSED",
+        "Single and two-partition journals"
+      ]
+    },
+    {
+      "status": "hardened_and_aligned_with_postgres_kafka",
+      "description": "Files already rejected unsafe Create years conservatively; Create, WAL configuration, and persisted-definition validation now share the exact signed-64-bit UnixNano round-trip invariant for both endpoints.",
+      "fix": "Reject timestamps that do not round trip through time.Unix(0, t.UnixNano()), including a valid start whose one-minute end overflows; permit both valid boundary windows.",
+      "files": [
+        "internal/filelog/types.go",
+        "internal/filelog/time_range_test.go",
+        "internal/filestore/store.go",
+        "internal/filestore/recovery.go",
+        "internal/filestore/time_range_test.go"
+      ],
+      "regressions": [
+        "Minimum and maximum signed-64-bit nanosecond boundaries",
+        "One nanosecond outside either boundary and year 3000",
+        "No journal or preparation files for invalid Create",
+        "Real WAL admission, replay, and recovery at both boundaries",
+        "Offset-equivalent starts and persisted-definition validation"
+      ]
+    }
+  ],
+  "remaining_actionable_findings": [],
+  "limitations": [
+    "Race and filesystem tests do not prove power-loss durability or throughput.",
+    "Existing guarantees still depend on one owned local disk; disk loss requires separate replication.",
+    "A context cannot interrupt an in-progress filesystem sync; Close may wait for that syscall.",
+    "No load tests, browser tests, commits, pushes, or production configuration changes were performed by this agent."
+  ]
+}

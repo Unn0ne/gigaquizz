@@ -55,6 +55,11 @@ func (c Config) validate() error {
 		c.Linger < time.Millisecond || c.Linger > time.Second || c.TransactionTimeout < time.Second || c.TransactionTimeout > 30*time.Second {
 		return ErrInvalid
 	}
+	// The journal encodes signed nanoseconds. time.Time itself permits a much
+	// wider calendar range; reject timestamps that would silently wrap on disk.
+	if !time.Unix(0, c.StartsAt.UnixNano()).Equal(c.StartsAt) || !time.Unix(0, c.EndsAt.UnixNano()).Equal(c.EndsAt) {
+		return ErrInvalid
+	}
 	if _, err := c.ownedPartitions(); err != nil {
 		return err
 	}

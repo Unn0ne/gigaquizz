@@ -1,0 +1,42 @@
+{
+  "changes": [
+    "Check single and distributed generator summaries, exact private manifest populations/ranges/modes, and independent audit population against the requested profile.",
+    "Classify gzip header read deadlines/cancellation and HTTP body close errors as transport outcomes while retaining corrupt gzip validation failures."
+  ],
+  "reviewed": [
+    "AES full-ID bijection, disjoint key/repeat ranges and plan digest binding",
+    "Complete ledger sequence coverage, ACK token/choice/admission multiplicity, unknown resolution, missing/copy rejection and exact canonical results",
+    "Original-minute monotonic generator schedule, queue/worker bounds, skipped and journey-failed denominator",
+    "Owned process registration and cancellation/cleanup, isolated loopback configuration and disk preflight",
+    "Capacity formulas: 100M distinct voters, repeats, cold GETs and reloads, directional traffic, logical storage versus RF3 and measured/assumed boundaries"
+  ],
+  "checks": [
+    {
+      "branch": "simple-files",
+      "diff_check_exit_code": 0
+    },
+    {
+      "branch": "postgres-kafka",
+      "diff_check_exit_code": 0
+    }
+  ],
+  "files": {
+    "cmd/httpbench/journey.go": {
+      "sha256": "87d4331a694167831eb8c854749669c92636f5214abf0c3ff37a67bb685b598d",
+      "same_in_both_branches": true
+    },
+    "cmd/httpbench/journey_test.go": {
+      "sha256": "83cac9ac0bc265d2ab207f5d4664a6083aba6ed0889d59b084d156392783b5b0",
+      "same_in_both_branches": true
+    },
+    "scripts/profile_full_http.py": {
+      "sha256": "4a4810713649e1188a73a2417ffc98b248ef2e125026f3ed9d034b8e29efd38b",
+      "same_in_both_branches": true
+    },
+    "scripts/tests/test_profile_full_http.py": {
+      "sha256": "321b5b3040777bf7d28bcffefbaa4ae2f57065f9ef99ec2d8047816402adf7a0",
+      "same_in_both_branches": true
+    }
+  },
+  "no_loads_or_production_service_changes": true
+}

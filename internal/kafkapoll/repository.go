@@ -184,6 +184,14 @@ func (s *Store) Create(parent context.Context, input poll.CreateInput) (poll.Pol
 	if err := input.Validate(); err != nil {
 		return poll.Poll{}, err
 	}
+	// Reject before ownership/PG operations: time.Time's wider calendar must
+	// not reserve a poll whose signed nanosecond journal timestamps would wrap.
+	if input.StartsAt != nil {
+		starts, ends := input.StartsAt.UTC(), input.StartsAt.UTC().Add(time.Minute)
+		if !time.Unix(0, starts.UnixNano()).Equal(starts) || !time.Unix(0, ends.UnixNano()).Equal(ends) {
+			return poll.Poll{}, errors.New("poll window is outside the journal timestamp range")
+		}
+	}
 	ctx, cancel := s.operation(parent)
 	defer cancel()
 	if err := s.opMu.LockContext(ctx); err != nil {

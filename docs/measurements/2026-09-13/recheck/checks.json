@@ -1,0 +1,267 @@
+{
+  "scope": "Full Go checks before review and after storage fixes; affected httpbench package checked again after generator edits. Browser full suite run before and after fixes. Go integration environment gates were unset; actual PostgreSQL/Kafka were used by browser and HTTP profiles separately.",
+  "files_before": {
+    "branch": "simple-files",
+    "results": [
+      {
+        "command": [
+          "go",
+          "vet",
+          "./..."
+        ],
+        "exit_code": 0,
+        "started_at": "2026-09-13T15:53:40.808581+00:00",
+        "duration_seconds": 0.387378
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "started_at": "2026-09-13T15:53:41.196090+00:00",
+        "duration_seconds": 20.771678
+      }
+    ]
+  },
+  "files_after": {
+    "branch": "simple-files",
+    "results": [
+      {
+        "command": [
+          "go",
+          "vet",
+          "./..."
+        ],
+        "exit_code": 0,
+        "started_at": "2026-09-13T16:02:57.271408+00:00",
+        "duration_seconds": 0.56084
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit_code": 0,
+        "started_at": "2026-09-13T16:02:57.832360+00:00",
+        "duration_seconds": 25.526143
+      }
+    ]
+  },
+  "postgres_kafka_before": {
+    "checks": [
+      {
+        "command": [
+          "go",
+          "vet",
+          "./..."
+        ],
+        "exit": 0,
+        "wall_seconds": 0.488
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit": 0,
+        "wall_seconds": 13.758
+      }
+    ],
+    "real_integration_gates": false
+  },
+  "postgres_kafka_after": {
+    "checks": [
+      {
+        "command": [
+          "gofmt",
+          "-w",
+          "internal/votelog/types.go",
+          "internal/votelog/store.go",
+          "internal/votelog/time_bounds_test.go",
+          "internal/kafkapoll/repository.go",
+          "internal/kafkapoll/store_test.go"
+        ],
+        "exit": 0,
+        "wall_seconds": 0.024
+      },
+      {
+        "command": [
+          "go",
+          "vet",
+          "./..."
+        ],
+        "exit": 0,
+        "wall_seconds": 0.847
+      },
+      {
+        "command": [
+          "go",
+          "test",
+          "-race",
+          "-count=1",
+          "./..."
+        ],
+        "exit": 0,
+        "wall_seconds": 11.109
+      },
+      {
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit": 0,
+        "wall_seconds": 0.041
+      }
+    ],
+    "real_integration_gates": false,
+    "findings": [
+      {
+        "priority": "P2",
+        "problem": "Go calendar accepts dates outside the signed-nanosecond journal timestamp range",
+        "fix": "reject both unrepresentable start/end before metadata side effects and in low-level Kafka config",
+        "regressions": [
+          "TestJournalCalendarRangePreservesNanoseconds",
+          "TestCreateRejectsUnsupportedCalendarBeforeMetadataSideEffects"
+        ]
+      },
+      {
+        "kind": "unused API",
+        "removed": "votelog.Store.Config",
+        "callers_found": 0
+      }
+    ],
+    "reviewed_lifecycles": [
+      "closed writer recovery drains healthy partitions and joins old epoch before fencing",
+      "ownership loss permanently stops automatic reacquisition",
+      "persisted final restoration precedes wall-clock state checks",
+      "partition progress binds immutable definition and CLOSED offsets",
+      "narrow durability guard; legacy PostgreSQL benchmark API retained where called"
+    ]
+  },
+  "bench_before": [
+    {
+      "branch": "simple-files",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests",
+        "-v"
+      ],
+      "started_at": "2026-09-13T15:53:45.489547+00:00",
+      "elapsed_seconds": 0.2549267080030404,
+      "exit_code": 0
+    },
+    {
+      "branch": "postgres-kafka",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests",
+        "-v"
+      ],
+      "started_at": "2026-09-13T15:53:45.744621+00:00",
+      "elapsed_seconds": 5.04093695798656,
+      "exit_code": 0
+    }
+  ],
+  "bench_root_after": [
+    {
+      "label": "simple-files-python-after",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.33020379196386784
+    },
+    {
+      "label": "simple-files-httpbench-race",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./cmd/httpbench"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 5.220877167012077
+    }
+  ],
+  "bench_after": [
+    {
+      "label": "postgres-kafka-python-after",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.9746750830090605
+    },
+    {
+      "label": "postgres-kafka-httpbench-race",
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "./cmd/httpbench"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.70028095896123
+    },
+    {
+      "label": "simple-files-httpbench-vet",
+      "command": [
+        "go",
+        "vet",
+        "./cmd/httpbench"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.14974091696785763
+    },
+    {
+      "label": "postgres-kafka-httpbench-vet",
+      "command": [
+        "go",
+        "vet",
+        "./cmd/httpbench"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.21452629199484363
+    }
+  ],
+  "python_tests_after": {
+    "simple-files": 41,
+    "postgres-kafka": 65
+  },
+  "make_build": {
+    "simple-files": "PASS, all 5 commands",
+    "postgres-kafka": "PASS, all 8 commands"
+  },
+  "review_after_fixes": "Root read all production diffs and new regression tests; independent common HTTP interface/JS cleanup review found no further issue."
+}

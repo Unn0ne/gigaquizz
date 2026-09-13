@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -358,6 +359,64 @@ func TestWorkerDecoderCanRecoverAfterCorruptResponse(t *testing.T) {
 		if !bytes.Equal(body, valid) && err == nil {
 			t.Fatal("corrupt gzip accepted")
 		}
+	}
+}
+
+type journeyRoundTrip func(*http.Request) (*http.Response, error)
+
+func (f journeyRoundTrip) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+type journeyFailingBody struct {
+	io.Reader
+	err error
+}
+
+func (b journeyFailingBody) Close() error { return b.err }
+
+type journeyReadError struct{ err error }
+
+func (r journeyReadError) Read([]byte) (int, error) { return 0, r.err }
+
+func TestGzipHeaderAndCloseFailuresRetainTransportClassification(t *testing.T) {
+	var compressed bytes.Buffer
+	z := gzip.NewWriter(&compressed)
+	_, _ = z.Write([]byte("<html>fixture</html>"))
+	_ = z.Close()
+	valid := compressed.Bytes()
+	for _, test := range []struct {
+		name       string
+		reader     io.Reader
+		closeErr   error
+		timeouts   uint64
+		transports uint64
+	}{
+		{"header_deadline", io.MultiReader(bytes.NewReader(valid[:2]), journeyReadError{context.DeadlineExceeded}), nil, 1, 0},
+		{"header_cancel", io.MultiReader(bytes.NewReader(valid[:2]), journeyReadError{context.Canceled}), nil, 0, 1},
+		{"header_corrupt", strings.NewReader("bad gzip header"), nil, 0, 0},
+		{"close_deadline", bytes.NewReader(valid), context.DeadlineExceeded, 1, 0},
+		{"close_transport", bytes.NewReader(valid), errors.New("connection close failed"), 0, 1},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			m, _ := activeJourneyFixture(t)
+			m.Config.Definition = true
+			client := &http.Client{Transport: journeyRoundTrip(func(r *http.Request) (*http.Response, error) {
+				return &http.Response{StatusCode: http.StatusOK, Header: http.Header{"Content-Type": {"text/html"}, "Content-Encoding": {"gzip"}}, Body: journeyFailingBody{test.reader, test.closeErr}, Request: r}, nil
+			})}
+			var stats getStats
+			var decoder journeyDecoder
+			if getResource(context.Background(), m.Config, client, "/", 0, &stats, &decoder) || stats.Failures != 1 || stats.Timeouts != test.timeouts || stats.TransportFailures != test.transports || stats.ValidationFailures != 1-test.timeouts-test.transports {
+				t.Fatalf("wrong compressed response failure classification: %+v", stats)
+			}
+			reader, err := decoder.open(bytes.NewReader(valid))
+			if err != nil {
+				t.Fatal("decoder initialization failed after prior response", err)
+			}
+			_, err = io.Copy(io.Discard, reader)
+			decoder.release()
+			if err != nil {
+				t.Fatal("decoder retained prior response failure", err)
+			}
+		})
 	}
 }
 
