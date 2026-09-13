@@ -1,0 +1,16 @@
+{
+  "simple-files": {
+    "commit": "6857b63e54f0ffefcf8da7f89dcbe492d55237d1",
+    "binaries": {
+      "gigaquizz": "c42ce9d2800180429bf305e1c408798c575db8923fae8fd339a91260e06a74ca",
+      "httpbench": "c0a44866cb36312d2a41b6cd90383b0cd2bd30a49056d82ae3ccc1b22842584f"
+    }
+  },
+  "postgres-kafka": {
+    "commit": "5dece1d1e8be06fd2618c0173696324735f65762",
+    "binaries": {
+      "gigaquizz": "3bd76498f84f289b46f4d12b00ef1298b0bd05cc1c7eb087849c460a9903212b",
+      "httpbench": "875b59cebfad6e7716b8fd241b415752fb3f96999d12b0a12b559ce922756060"
+    }
+  }
+}

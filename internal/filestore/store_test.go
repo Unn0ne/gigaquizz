@@ -40,6 +40,10 @@ func openTest(t *testing.T, c Config) *Store {
 		t.Fatal(err)
 	}
 	t.Cleanup(s.Close)
+	// Drive the production background step explicitly in tests needing final data.
+	if _, err := s.FinalizeDue(context.Background()); err != nil {
+		t.Fatal(err)
+	}
 	return s
 }
 
@@ -222,7 +226,7 @@ func TestHTTPTokenProtocolRecords32HexButRejectsUUIDToken(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	server, err := httpapi.New(s, s, fstest.MapFS{}, httpapi.Config{AdminPassword: "test-password-long-enough", PublicURL: "http://example.test", MaxInflight: 8, OperationTimeout: time.Second})
+	server, err := httpapi.New(s, s, fstest.MapFS{"static/test.txt": &fstest.MapFile{Data: []byte("test")}}, httpapi.Config{AdminPassword: "test-password-long-enough", PublicURL: "http://example.test", MaxInflight: 8, OperationTimeout: time.Second})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -279,8 +283,8 @@ func TestBoundedExactResultsRemainPendingUntilBudgetRaised(t *testing.T) {
 	if err != nil || !r.Pending {
 		t.Fatalf("partial result published: %+v %v", r, err)
 	}
-	if err := s.Ping(context.Background()); err == nil {
-		t.Fatal("permanent finalization failure reported healthy")
+	if err := s.Ping(context.Background()); err != nil {
+		t.Fatal("historical calculation failure blocked healthy future admission")
 	}
 	if _, err := os.Stat(filepath.Join(e.directory, "result.json")); !errors.Is(err, os.ErrNotExist) {
 		t.Fatalf("partial result file: %v", err)

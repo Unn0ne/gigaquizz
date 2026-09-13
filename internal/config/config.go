@@ -11,15 +11,17 @@ import (
 )
 
 type Config struct {
-	Addr          string
-	PublicURL     string
-	AdminPassword string
-	DataDir       string
-	MaxInflight   int
-	MaxUnique     uint64
-	BatchSize     int
-	QueueVotes    int
-	Linger        time.Duration
+	Addr               string
+	PublicURL          string
+	AdminPassword      string
+	DataDir            string
+	MaxInflight        int
+	MaxUnique          uint64
+	MaxPartitionUnique uint64
+	Partitions         int
+	BatchSize          int
+	QueueVotes         int
+	Linger             time.Duration
 }
 
 // LoadEnv never evaluates shell syntax or replaces an existing environment value.
@@ -60,7 +62,7 @@ func LoadEnv(path string) error {
 }
 
 func Load() (Config, error) {
-	c := Config{Addr: env("HTTP_ADDR", "127.0.0.1:8080"), PublicURL: env("PUBLIC_URL", "http://127.0.0.1:8080"), AdminPassword: os.Getenv("ADMIN_PASSWORD"), DataDir: env("DATA_DIR", ".local/files"), MaxInflight: 4096, MaxUnique: 120000000, BatchSize: 4096, QueueVotes: 65536, Linger: 2 * time.Millisecond}
+	c := Config{Addr: env("HTTP_ADDR", "127.0.0.1:8080"), PublicURL: env("PUBLIC_URL", "http://127.0.0.1:8080"), AdminPassword: os.Getenv("ADMIN_PASSWORD"), DataDir: env("DATA_DIR", ".local/files"), MaxInflight: 4096, MaxUnique: 120000000, Partitions: 1, BatchSize: 4096, QueueVotes: 65536, Linger: 2 * time.Millisecond}
 	if len(c.AdminPassword) < 16 || strings.Contains(c.AdminPassword, "CHANGE_ME") {
 		return c, errors.New("set a unique ADMIN_PASSWORD of at least 16 characters")
 	}
@@ -69,6 +71,7 @@ func Load() (Config, error) {
 		dst      *int
 		min, max int
 	}{
+		{"FILE_PARTITIONS", &c.Partitions, 1, 256},
 		{"MAX_INFLIGHT", &c.MaxInflight, 1, 100000},
 		{"FILE_BATCH_VOTES", &c.BatchSize, 1, 131072},
 		{"FILE_QUEUE_VOTES", &c.QueueVotes, 1, 1048576},
@@ -87,6 +90,16 @@ func Load() (Config, error) {
 			return c, errors.New("invalid MAX_UNIQUE_VOTERS")
 		}
 		c.MaxUnique = n
+	}
+	if raw := os.Getenv("MAX_PARTITION_UNIQUE_VOTERS"); raw != "" {
+		n, err := strconv.ParseUint(raw, 10, 64)
+		if err != nil || n < 1 || n > 200000000 {
+			return c, errors.New("invalid MAX_PARTITION_UNIQUE_VOTERS")
+		}
+		c.MaxPartitionUnique = n
+	}
+	if c.MaxPartitionUnique == 0 {
+		c.MaxPartitionUnique = c.MaxUnique
 	}
 	if raw := os.Getenv("FILE_GROUP_LINGER"); raw != "" {
 		d, err := time.ParseDuration(raw)

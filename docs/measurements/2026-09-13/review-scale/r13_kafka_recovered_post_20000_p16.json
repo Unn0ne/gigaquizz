@@ -1,0 +1,2059 @@
+{
+  "mode": "postgres-kafka",
+  "label": "r13_kafka_recovered_post_20000_p16",
+  "started_at": "2026-09-13T15:36:05.443652+00:00",
+  "finished_at": "2026-09-13T15:38:02.345365+00:00",
+  "correct": true,
+  "scope": "Real local HTTP application, isolated real 60-second poll, exact private-ledger audit, process restart; no TLS/CDN capacity claim",
+  "diagnostic_cpu_profile": false,
+  "configuration": {
+    "rate_unique_s": 20000,
+    "planned_attempts": 1200000,
+    "workers": 4096,
+    "generator_queue": 4096,
+    "generators": 1,
+    "combined_resource_budget": {
+      "generators": 1,
+      "workers_per_generator": 4096,
+      "workers_total": 4096,
+      "queue_per_generator": 4096,
+      "queue_total": 4096,
+      "generator_GOMEMLIMIT_total_bytes": 2147483648,
+      "application_GOMEMLIMIT_bytes": 3221225472,
+      "memory_limit_semantics": "Go soft heap limits, not RSS caps or RAM reservations; excludes shared brokers and runtime overhead",
+      "estimated_owned_open_files_total": 13312,
+      "owned_child_open_file_limit": 16384
+    },
+    "max_lag_ms": 100,
+    "repeat_every": 0,
+    "journey": false,
+    "definition": false,
+    "file_partitions": null,
+    "max_partition_unique_voters": null,
+    "max_inflight": 4096,
+    "kafka_partitions": 16,
+    "batch_votes_override": 1024,
+    "queue_votes_override": null,
+    "linger_ms_override": null,
+    "app_GOMEMLIMIT": "3GiB",
+    "generator_GOMEMLIMIT": "2GiB",
+    "GOGC": "100",
+    "GOMAXPROCS": 10,
+    "owned_child_open_file_limit": 16384
+  },
+  "binary_sha256": {
+    "application": "c81384d94d9c8825b61d439d94d6791c3705356651324b26a0f7391fc90eed78",
+    "generator": "0213d701dd7c509f8c074ba42b39b7dbbebcf7c8fa679e25a9453330bc522090",
+    "reader": "0213d701dd7c509f8c074ba42b39b7dbbebcf7c8fa679e25a9453330bc522090"
+  },
+  "disk": {
+    "required_bytes_including_reserve": 9930786816,
+    "reserve_bytes": 8589934592,
+    "free_before": 23979413504,
+    "free_after": 23680315392
+  },
+  "checks": [
+    "real_60_second_window",
+    "production_final_result_ready",
+    "final_result_unchanged_after_process_restart",
+    "late_post_410",
+    "independent_exact_journal_audit"
+  ],
+  "errors": [],
+  "load": {
+    "mode": "http-post",
+    "complete": true,
+    "cancelled": false,
+    "planned_unique_per_second": 20000,
+    "planned_attempts": 1200000,
+    "planned_unique_keys": 1200000,
+    "repeat_every": 0,
+    "workers": 4096,
+    "queue": 4096,
+    "max_lag_ms": 100,
+    "scheduled_seconds": 60,
+    "wall_seconds_including_drain": 79.172670917,
+    "http_post_sent": 1200000,
+    "valid_recorded_ack": 1199987,
+    "unknown": 0,
+    "closed": 0,
+    "not_admitted": 0,
+    "not_open": 13,
+    "rejected": 0,
+    "generator_skipped": 0,
+    "journey_failed": 0,
+    "journey_started": 0,
+    "journey_completed_before_post": 0,
+    "http_get_sent": 0,
+    "http_get_failures": 0,
+    "http_get_body_bytes": 0,
+    "http_get_decoded_body_bytes": 0,
+    "journey_mean_ms": 0,
+    "journey_max_ms": 0,
+    "invalid_successful_responses": 0,
+    "ledger_bytes": 76800000,
+    "latency_p50_upper_bound_ms": 67.108864,
+    "latency_p95_upper_bound_ms": 268.435456,
+    "latency_p99_upper_bound_ms": 268.435456,
+    "latency_max_ms": 443.793375,
+    "latency_mean_ms": 68.19916508959084,
+    "post_sent_per_scheduled_second": [
+      19977,
+      20013,
+      20004,
+      20001,
+      19988,
+      20007,
+      19994,
+      19997,
+      19997,
+      20003,
+      20002,
+      20001,
+      20010,
+      19992,
+      20007,
+      19996,
+      20006,
+      19988,
+      19998,
+      20005,
+      19989,
+      20008,
+      19973,
+      20033,
+      19995,
+      19964,
+      20034,
+      19998,
+      20009,
+      19993,
+      19996,
+      20007,
+      19998,
+      20000,
+      20011,
+      19993,
+      19999,
+      20006,
+      19997,
+      20002,
+      19991,
+      20013,
+      19988,
+      19997,
+      19999,
+      20013,
+      19995,
+      19998,
+      19992,
+      20014,
+      19996,
+      19992,
+      20004,
+      19996,
+      20012,
+      19994,
+      20006,
+      19995,
+      20012,
+      19986
+    ],
+    "ack_received_per_scheduled_second": [
+      18033,
+      20414,
+      20420,
+      19452,
+      20213,
+      20323,
+      19701,
+      20142,
+      20006,
+      19913,
+      19725,
+      20521,
+      19715,
+      20437,
+      20002,
+      19347,
+      20516,
+      19853,
+      20137,
+      19712,
+      19894,
+      20426,
+      19781,
+      20044,
+      20000,
+      20242,
+      19517,
+      19661,
+      20852,
+      19563,
+      19769,
+      20697,
+      19475,
+      19986,
+      20387,
+      19864,
+      20044,
+      19889,
+      20220,
+      19602,
+      20063,
+      19938,
+      19783,
+      20465,
+      19867,
+      20383,
+      19627,
+      20343,
+      19665,
+      19931,
+      20031,
+      19874,
+      20246,
+      19611,
+      20241,
+      20387,
+      19568,
+      20347,
+      19843,
+      19314
+    ],
+    "method": "Uniform scheduled unique IDs; one independent POST per attempt; bounded workers and queue; stale/full attempts are skips; no request retries. Each worker buffers its private 64-byte full-ID/choice/admission/outcome ledger. 202 recorded is a durable attempt, not canonical uniqueness. No journal reconciliation occurs in this process.",
+    "post_latency_scope": "POST dispatch through response body read; excludes scheduler and preceding GETs"
+  },
+  "final_unique_votes": 1199987,
+  "final_choice_counts": [
+    1199987,
+    0
+  ],
+  "application_metrics": {
+    "accepted_responses": 0,
+    "conflict_responses": 0,
+    "definition_cache_entries": 1,
+    "definition_cache_hits": 0,
+    "definition_cache_misses": 0,
+    "definition_preparation_failures": 0,
+    "duplicate_responses": 0,
+    "http_admin_gate_rejections": 0,
+    "http_read_gate_rejections": 0,
+    "http_vote_gate_rejections": 0,
+    "inflight": 0,
+    "poll_preparation_failures": 0,
+    "public_gzip_body_bytes": 0,
+    "public_not_modified": 0,
+    "public_raw_body_bytes": 0,
+    "public_response_body_bytes": 0,
+    "recorded_responses": 1199987,
+    "rejected_attempts": 13,
+    "storage_active_votes": 0,
+    "storage_batch_ns": 937123565763,
+    "storage_batches": 36064,
+    "storage_busy_votes": 0,
+    "storage_durable_frames": 26871,
+    "storage_durable_votes": 1199987,
+    "storage_errors": 0,
+    "storage_failed_writers": 0,
+    "storage_preparation_failures": 0,
+    "storage_queue_rejections": 0,
+    "storage_queued_votes": 0,
+    "storage_writer_failures_client_closed": 0,
+    "storage_writer_failures_fenced": 0,
+    "storage_writer_failures_network": 0,
+    "storage_writer_failures_other": 0,
+    "storage_writer_failures_timeout": 0,
+    "unknown_outcomes": 0,
+    "vote_http_attempts": 1200000
+  },
+  "audit": {
+    "journal_inspection": {
+      "method": "kafka-stable-snapshot",
+      "strict_snapshot_complete": true,
+      "recovery_boot_records": 0,
+      "snapshot_partitions": 16
+    },
+    "mode": "independent-http-audit",
+    "correct": true,
+    "generators": 1,
+    "planned_unique_keys": 1200000,
+    "acknowledged_attempt_fraction": 0.9999891666666667,
+    "ledger_valid": true,
+    "journal_closed": true,
+    "saved_service_results_matched": true,
+    "planned_attempts": 1200000,
+    "confirmed_attempts": 1199987,
+    "matched_ack_attempts": 1199987,
+    "missing_ack_attempts": 0,
+    "unverified_ack_attempts": 0,
+    "unknown_client_attempts": 0,
+    "journey_failed_client_attempts": 0,
+    "unknown_attempts_found_committed": 0,
+    "journal_attempts": 1199987,
+    "canonical_unique_keys": 1199987,
+    "duplicate_logical_attempts": 0,
+    "unexpected_records": 0,
+    "unexpected_physical_copies": 0,
+    "receipt_mismatches": 0,
+    "canonical_choice_counts": [
+      1199987,
+      0
+    ],
+    "invalid_successful_responses": 0,
+    "compact_state_bytes": 12000000,
+    "wall_seconds": 0.929489708,
+    "method": "Separate process reads every CRC/SHA256-checked full-ID client record and the journal through CLOSED. AES inversion validates all 128 token bits and disjoint generator ranges; dense flags are exact, not a probabilistic hash. Each ACK matches token+choice+admitted_at with multiplicity one. Only unknown attempts can explain additional records. Canonical first journal occurrence is compared to saved final service counts. Complete range coverage is required by distributed-plan audits; correct does not mean every planned attempt was admitted. Kafka inspection additionally scans the entire captured stable raw-offset snapshot beyond CLOSED, including transaction markers and aborted data; only valid recovery BOOT controls may follow CLOSED. Any open transaction, changing snapshot or unread tail prevents a successful audit. This certifies the inspected snapshot, not future writes."
+  },
+  "load_coverage": {
+    "acknowledged_attempt_fraction": 0.9999891666666667,
+    "planned_attempts_without_ack": 13,
+    "all_planned_attempts_acknowledged": false
+  },
+  "generator_reports": [],
+  "resource_observations": [
+    {
+      "role": "application",
+      "sampled_interval_seconds": 58.77654724998865,
+      "mean_cpu_cores": 1.2425023826151016,
+      "maximum_sampled_RSS_bytes": 162430976
+    },
+    {
+      "role": "generator_or_reader",
+      "sampled_interval_seconds": 58.77654724998865,
+      "mean_cpu_cores": 1.0744081262788396,
+      "maximum_sampled_RSS_bytes": 627425280
+    },
+    {
+      "role": "shared_kafka_1",
+      "sampled_interval_seconds": 58.77654724998865,
+      "mean_cpu_cores": 1.1344660943827924,
+      "maximum_sampled_RSS_bytes": 597491712
+    },
+    {
+      "role": "shared_kafka_2",
+      "sampled_interval_seconds": 58.77654724998865,
+      "mean_cpu_cores": 1.262238145504785,
+      "maximum_sampled_RSS_bytes": 546504704
+    },
+    {
+      "role": "shared_kafka_3",
+      "sampled_interval_seconds": 58.77654724998865,
+      "mean_cpu_cores": 1.3573441063266123,
+      "maximum_sampled_RSS_bytes": 547422208
+    }
+  ],
+  "workload_resource_samples": [
+    {
+      "elapsed_seconds": 36.71959150000475,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:02.61",
+          "rss_bytes": 142491648
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:01.09",
+          "rss_bytes": 255410176
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:17.08",
+          "rss_bytes": 478494720
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "55:46.22",
+          "rss_bytes": 489652224
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:07.53",
+          "rss_bytes": 496205824
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 37.76960625004722,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:03.85",
+          "rss_bytes": 145358848
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:02.16",
+          "rss_bytes": 430587904
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:18.43",
+          "rss_bytes": 561561600
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "55:47.59",
+          "rss_bytes": 524845056
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:09.01",
+          "rss_bytes": 518602752
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 38.82139970903518,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:05.13",
+          "rss_bytes": 149618688
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:03.29",
+          "rss_bytes": 539066368
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:19.76",
+          "rss_bytes": 563085312
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "55:48.99",
+          "rss_bytes": 526827520
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:10.56",
+          "rss_bytes": 522829824
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 39.872878875001334,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:06.46",
+          "rss_bytes": 149880832
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:04.41",
+          "rss_bytes": 539918336
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:20.97",
+          "rss_bytes": 568721408
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "55:50.32",
+          "rss_bytes": 528171008
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:12.00",
+          "rss_bytes": 525516800
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 40.918441042013,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:07.76",
+          "rss_bytes": 149913600
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:05.55",
+          "rss_bytes": 540884992
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:22.19",
+          "rss_bytes": 571883520
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "55:51.67",
+          "rss_bytes": 529399808
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:13.41",
+          "rss_bytes": 530251776
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 41.96475658402778,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:09.02",
+          "rss_bytes": 149913600
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:06.66",
+          "rss_bytes": 541622272
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:23.38",
+          "rss_bytes": 573833216
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "55:53.06",
+          "rss_bytes": 533086208
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:14.94",
+          "rss_bytes": 531873792
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 43.00843170902226,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:10.40",
+          "rss_bytes": 149995520
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:07.83",
+          "rss_bytes": 543293440
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:24.70",
+          "rss_bytes": 577896448
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "55:54.34",
+          "rss_bytes": 533905408
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:16.31",
+          "rss_bytes": 534282240
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 44.057792750012595,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:11.72",
+          "rss_bytes": 150011904
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:08.94",
+          "rss_bytes": 543637504
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:25.97",
+          "rss_bytes": 581632000
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "55:55.72",
+          "rss_bytes": 535789568
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:17.76",
+          "rss_bytes": 535379968
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 45.10072983399732,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:12.96",
+          "rss_bytes": 150028288
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:10.02",
+          "rss_bytes": 545488896
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:27.14",
+          "rss_bytes": 582991872
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "55:57.11",
+          "rss_bytes": 541736960
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:19.25",
+          "rss_bytes": 542064640
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 46.150755167007446,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:14.22",
+          "rss_bytes": 150044672
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:11.08",
+          "rss_bytes": 545521664
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:28.39",
+          "rss_bytes": 583057408
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "55:58.43",
+          "rss_bytes": 541999104
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:20.79",
+          "rss_bytes": 543555584
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 47.21630600001663,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:15.54",
+          "rss_bytes": 150798336
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:12.26",
+          "rss_bytes": 554418176
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:29.50",
+          "rss_bytes": 583286784
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "55:59.91",
+          "rss_bytes": 542687232
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:22.09",
+          "rss_bytes": 543735808
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 48.26734437502455,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:16.85",
+          "rss_bytes": 150798336
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:13.34",
+          "rss_bytes": 554418176
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:30.76",
+          "rss_bytes": 584171520
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:01.29",
+          "rss_bytes": 542851072
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:23.53",
+          "rss_bytes": 543768576
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 49.312812499993015,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:18.15",
+          "rss_bytes": 150847488
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:14.46",
+          "rss_bytes": 556564480
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:31.89",
+          "rss_bytes": 584204288
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:02.70",
+          "rss_bytes": 543244288
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:25.01",
+          "rss_bytes": 543866880
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 50.366566084034275,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:19.47",
+          "rss_bytes": 150847488
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:15.57",
+          "rss_bytes": 556580864
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:33.19",
+          "rss_bytes": 585940992
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:04.03",
+          "rss_bytes": 544063488
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:26.35",
+          "rss_bytes": 544358400
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 51.42582220904296,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:20.78",
+          "rss_bytes": 150863872
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:16.70",
+          "rss_bytes": 556597248
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:34.50",
+          "rss_bytes": 586055680
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:05.33",
+          "rss_bytes": 544063488
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:27.85",
+          "rss_bytes": 544473088
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 52.473876959003974,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:22.13",
+          "rss_bytes": 150945792
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:17.84",
+          "rss_bytes": 556597248
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:35.62",
+          "rss_bytes": 586121216
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:06.65",
+          "rss_bytes": 544342016
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:29.25",
+          "rss_bytes": 544505856
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 53.51718379202066,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:23.40",
+          "rss_bytes": 150945792
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:18.98",
+          "rss_bytes": 557694976
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:36.80",
+          "rss_bytes": 586121216
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:07.89",
+          "rss_bytes": 544800768
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:30.69",
+          "rss_bytes": 545079296
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 54.56663416704396,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:24.70",
+          "rss_bytes": 150978560
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:20.15",
+          "rss_bytes": 557694976
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:38.02",
+          "rss_bytes": 586153984
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:09.30",
+          "rss_bytes": 544866304
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:32.07",
+          "rss_bytes": 545177600
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 55.61791687499499,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:26.02",
+          "rss_bytes": 150978560
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:21.27",
+          "rss_bytes": 557694976
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:39.28",
+          "rss_bytes": 586186752
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:10.72",
+          "rss_bytes": 544915456
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:33.56",
+          "rss_bytes": 545226752
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 56.67260383401299,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:27.35",
+          "rss_bytes": 151093248
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:22.49",
+          "rss_bytes": 557694976
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:40.55",
+          "rss_bytes": 586285056
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:11.99",
+          "rss_bytes": 544915456
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:35.03",
+          "rss_bytes": 545275904
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 57.728445667016786,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:28.71",
+          "rss_bytes": 151093248
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:23.62",
+          "rss_bytes": 557694976
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:41.70",
+          "rss_bytes": 586383360
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:13.39",
+          "rss_bytes": 545046528
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:36.56",
+          "rss_bytes": 545357824
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 58.7799372090376,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:30.02",
+          "rss_bytes": 151109632
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:24.83",
+          "rss_bytes": 557694976
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:42.96",
+          "rss_bytes": 586399744
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:14.81",
+          "rss_bytes": 545685504
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:37.93",
+          "rss_bytes": 545406976
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 59.82308779202867,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:31.32",
+          "rss_bytes": 151109632
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:25.93",
+          "rss_bytes": 557694976
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:44.02",
+          "rss_bytes": 586694656
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:16.18",
+          "rss_bytes": 545685504
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:39.39",
+          "rss_bytes": 545538048
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 60.866337209008634,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:32.67",
+          "rss_bytes": 151109632
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:27.10",
+          "rss_bytes": 557694976
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:45.20",
+          "rss_bytes": 586694656
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:17.41",
+          "rss_bytes": 545701888
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:40.78",
+          "rss_bytes": 545980416
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 61.919401541992556,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:33.98",
+          "rss_bytes": 151109632
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:28.18",
+          "rss_bytes": 557858816
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:46.32",
+          "rss_bytes": 586743808
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:18.75",
+          "rss_bytes": 545718272
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:42.10",
+          "rss_bytes": 546078720
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 62.966894417011645,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:35.32",
+          "rss_bytes": 151126016
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:29.28",
+          "rss_bytes": 559169536
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:47.55",
+          "rss_bytes": 586760192
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:20.10",
+          "rss_bytes": 545734656
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:43.58",
+          "rss_bytes": 546095104
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 64.01257041702047,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:36.63",
+          "rss_bytes": 151126016
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:30.38",
+          "rss_bytes": 559611904
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:48.76",
+          "rss_bytes": 597000192
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:21.35",
+          "rss_bytes": 545751040
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:45.08",
+          "rss_bytes": 546111488
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 65.0570495420252,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:37.89",
+          "rss_bytes": 151453696
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:31.54",
+          "rss_bytes": 559628288
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:50.03",
+          "rss_bytes": 597016576
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:22.75",
+          "rss_bytes": 545783808
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:46.61",
+          "rss_bytes": 546144256
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 66.1041748340358,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:39.14",
+          "rss_bytes": 151453696
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:32.64",
+          "rss_bytes": 559628288
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:51.25",
+          "rss_bytes": 597098496
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:24.07",
+          "rss_bytes": 545800192
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:47.90",
+          "rss_bytes": 546275328
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 67.15497850003885,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:40.50",
+          "rss_bytes": 151453696
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:33.82",
+          "rss_bytes": 559628288
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:52.40",
+          "rss_bytes": 597147648
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:25.30",
+          "rss_bytes": 545800192
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:49.40",
+          "rss_bytes": 546275328
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 68.20617516699713,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:41.80",
+          "rss_bytes": 151453696
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:34.82",
+          "rss_bytes": 559644672
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:53.59",
+          "rss_bytes": 597147648
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:26.62",
+          "rss_bytes": 545800192
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:50.85",
+          "rss_bytes": 546537472
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 69.2510853339918,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:43.09",
+          "rss_bytes": 151453696
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:35.93",
+          "rss_bytes": 559644672
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:54.79",
+          "rss_bytes": 597213184
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:28.04",
+          "rss_bytes": 545898496
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:52.26",
+          "rss_bytes": 546553856
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 70.30179150000913,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:44.39",
+          "rss_bytes": 151453696
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:37.00",
+          "rss_bytes": 559661056
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:55.98",
+          "rss_bytes": 597229568
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:29.28",
+          "rss_bytes": 545914880
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:53.61",
+          "rss_bytes": 546586624
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 71.35084616701351,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:45.65",
+          "rss_bytes": 151453696
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:38.17",
+          "rss_bytes": 559661056
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:57.05",
+          "rss_bytes": 597229568
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:30.64",
+          "rss_bytes": 545914880
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:55.10",
+          "rss_bytes": 546586624
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 72.3956535840407,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:46.98",
+          "rss_bytes": 151371776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:39.24",
+          "rss_bytes": 559480832
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:58.27",
+          "rss_bytes": 597229568
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:32.00",
+          "rss_bytes": 545931264
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:56.29",
+          "rss_bytes": 546603008
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 73.43582779204007,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:48.24",
+          "rss_bytes": 151371776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:40.37",
+          "rss_bytes": 559513600
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "57:59.44",
+          "rss_bytes": 597262336
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:33.22",
+          "rss_bytes": 545931264
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:57.71",
+          "rss_bytes": 546635776
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 74.48011770902667,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:49.56",
+          "rss_bytes": 151371776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:41.48",
+          "rss_bytes": 559513600
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:00.58",
+          "rss_bytes": 597262336
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:34.53",
+          "rss_bytes": 545947648
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "63:59.14",
+          "rss_bytes": 546652160
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 75.52819358400302,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:50.83",
+          "rss_bytes": 151306240
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:42.60",
+          "rss_bytes": 559513600
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:01.87",
+          "rss_bytes": 597278720
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:35.93",
+          "rss_bytes": 545947648
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:00.64",
+          "rss_bytes": 546652160
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 76.57372716703685,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:52.12",
+          "rss_bytes": 151306240
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:43.67",
+          "rss_bytes": 559513600
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:03.02",
+          "rss_bytes": 597278720
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:37.24",
+          "rss_bytes": 545947648
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:02.07",
+          "rss_bytes": 546652160
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 77.61982333404012,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:53.43",
+          "rss_bytes": 151371776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:44.75",
+          "rss_bytes": 559529984
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:04.23",
+          "rss_bytes": 597278720
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:38.68",
+          "rss_bytes": 545964032
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:03.54",
+          "rss_bytes": 546668544
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 78.66684083401924,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:54.73",
+          "rss_bytes": 151371776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:45.82",
+          "rss_bytes": 559529984
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:05.30",
+          "rss_bytes": 597311488
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:39.99",
+          "rss_bytes": 546193408
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:04.90",
+          "rss_bytes": 546930688
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 79.72568195901113,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:56.07",
+          "rss_bytes": 151371776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:47.00",
+          "rss_bytes": 559529984
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:06.52",
+          "rss_bytes": 597311488
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:41.22",
+          "rss_bytes": 546226176
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:06.29",
+          "rss_bytes": 546963456
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 80.77830704202643,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:57.37",
+          "rss_bytes": 151371776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:48.07",
+          "rss_bytes": 559529984
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:07.63",
+          "rss_bytes": 597311488
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:42.48",
+          "rss_bytes": 546226176
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:07.70",
+          "rss_bytes": 546963456
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 81.81933704204857,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:58.61",
+          "rss_bytes": 151371776
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:49.11",
+          "rss_bytes": 559529984
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:08.78",
+          "rss_bytes": 597327872
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:43.70",
+          "rss_bytes": 546209792
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:08.99",
+          "rss_bytes": 546979840
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 82.88675350003177,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "0:59.96",
+          "rss_bytes": 151388160
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:50.22",
+          "rss_bytes": 559529984
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:09.95",
+          "rss_bytes": 597327872
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:45.00",
+          "rss_bytes": 546324480
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:10.39",
+          "rss_bytes": 546979840
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 83.94155191699974,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "1:01.28",
+          "rss_bytes": 151388160
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:51.40",
+          "rss_bytes": 559546368
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:11.06",
+          "rss_bytes": 597377024
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:46.29",
+          "rss_bytes": 546373632
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:11.75",
+          "rss_bytes": 547045376
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 84.9917482919991,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "1:02.61",
+          "rss_bytes": 151420928
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:52.52",
+          "rss_bytes": 559546368
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:12.32",
+          "rss_bytes": 597409792
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:47.65",
+          "rss_bytes": 546390016
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:13.18",
+          "rss_bytes": 547209216
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 86.0511239170446,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "1:03.86",
+          "rss_bytes": 151420928
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:53.72",
+          "rss_bytes": 559562752
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:13.41",
+          "rss_bytes": 597442560
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:48.96",
+          "rss_bytes": 546439168
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:14.63",
+          "rss_bytes": 547225600
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 87.09911808400648,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "1:05.14",
+          "rss_bytes": 151420928
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:54.85",
+          "rss_bytes": 559890432
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:14.58",
+          "rss_bytes": 597442560
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:50.33",
+          "rss_bytes": 546439168
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:16.04",
+          "rss_bytes": 547258368
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 88.15184212499298,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "1:06.47",
+          "rss_bytes": 151420928
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:56.01",
+          "rss_bytes": 573751296
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:15.70",
+          "rss_bytes": 597442560
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:51.66",
+          "rss_bytes": 546455552
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:17.54",
+          "rss_bytes": 547274752
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 89.2082489170134,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "1:07.74",
+          "rss_bytes": 151437312
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:57.24",
+          "rss_bytes": 611549184
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:16.93",
+          "rss_bytes": 597458944
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:52.86",
+          "rss_bytes": 546455552
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:18.99",
+          "rss_bytes": 547274752
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 90.25296816701302,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "1:09.06",
+          "rss_bytes": 151437312
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:58.36",
+          "rss_bytes": 624197632
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:17.97",
+          "rss_bytes": 597475328
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:54.13",
+          "rss_bytes": 546455552
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:20.23",
+          "rss_bytes": 547274752
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 91.29904212499969,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "1:10.31",
+          "rss_bytes": 151633920
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "0:59.54",
+          "rss_bytes": 624918528
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:19.15",
+          "rss_bytes": 597475328
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:55.42",
+          "rss_bytes": 546488320
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:21.61",
+          "rss_bytes": 547291136
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 92.3426302089938,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "1:11.65",
+          "rss_bytes": 162430976
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:00.64",
+          "rss_bytes": 624918528
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:20.28",
+          "rss_bytes": 597475328
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:56.68",
+          "rss_bytes": 546504704
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:23.15",
+          "rss_bytes": 547307520
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 93.40183879202232,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "1:13.01",
+          "rss_bytes": 162430976
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:01.87",
+          "rss_bytes": 627425280
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:21.49",
+          "rss_bytes": 597475328
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:57.94",
+          "rss_bytes": 546504704
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:24.58",
+          "rss_bytes": 547356672
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 94.44632379204268,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "1:14.31",
+          "rss_bytes": 162430976
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:03.02",
+          "rss_bytes": 627425280
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:22.65",
+          "rss_bytes": 597475328
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "56:59.19",
+          "rss_bytes": 546504704
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:25.90",
+          "rss_bytes": 547405824
+        }
+      ]
+    },
+    {
+      "elapsed_seconds": 95.4961387499934,
+      "processes": [
+        {
+          "role": "application",
+          "cpu_time": "1:15.64",
+          "rss_bytes": 162430976
+        },
+        {
+          "role": "generator_or_reader",
+          "cpu_time": "1:04.24",
+          "rss_bytes": 627425280
+        },
+        {
+          "role": "shared_kafka_1",
+          "cpu_time": "58:23.76",
+          "rss_bytes": 597491712
+        },
+        {
+          "role": "shared_kafka_2",
+          "cpu_time": "57:00.41",
+          "rss_bytes": 546504704
+        },
+        {
+          "role": "shared_kafka_3",
+          "cpu_time": "64:27.31",
+          "rss_bytes": 547422208
+        }
+      ]
+    }
+  ],
+  "resource_scope": "CPU delta over sampled workload phase; peak sampled RSS is not exact peak; all processes share this laptop. CPU and RSS of independent generators are listed separately."
+}

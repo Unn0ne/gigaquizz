@@ -31,6 +31,21 @@ type Poll struct {
 	FinalizedAt *time.Time `json:"finalized_at,omitempty"`
 }
 
+// Definition contains only immutable public data. It is safe to cache across
+// the scheduled, open, processing and final states of the same poll.
+type Definition struct {
+	ID       string    `json:"id"`
+	Question string    `json:"question"`
+	Type     string    `json:"type"`
+	Options  []Option  `json:"options"`
+	StartsAt time.Time `json:"starts_at"`
+	EndsAt   time.Time `json:"ends_at"`
+}
+
+func (p Poll) Definition() Definition {
+	return Definition{ID: p.ID, Question: p.Question, Type: p.Type, Options: slices.Clone(p.Options), StartsAt: p.StartsAt, EndsAt: p.EndsAt}
+}
+
 func (p Poll) State(now time.Time) string {
 	if p.FinalizedAt != nil {
 		return "final"

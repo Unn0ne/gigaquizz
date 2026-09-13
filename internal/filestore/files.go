@@ -70,6 +70,67 @@ func syncDir(path string) error {
 	return err
 }
 
+// bootstrapRoot publishes all ownership metadata together. Incomplete staging
+// directories stay outside the root and cannot turn a subsequent first start
+// into adoption of an unowned directory. beforePublish is a fault-test seam.
+func bootstrapRoot(path string, beforePublish func() error) error {
+	parent := filepath.Dir(path)
+	if err := ensureDirectory(parent); err != nil {
+		return err
+	}
+	if info, err := os.Lstat(path); err == nil {
+		if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+			return errors.New("data path must be a directory without symlinks")
+		}
+		entries, err := os.ReadDir(path)
+		if err != nil {
+			return err
+		}
+		if len(entries) != 0 {
+			return nil // New performs strict existing-root validation and locking.
+		}
+	} else if !errors.Is(err, os.ErrNotExist) {
+		return err
+	}
+	staging, err := os.MkdirTemp(parent, ".gigaquizz-root-")
+	if err != nil {
+		return err
+	}
+	owner, err := os.OpenFile(filepath.Join(staging, ".owner"), os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
+	if err != nil {
+		return err
+	}
+	err = filelog.DurableSync(owner)
+	if closeErr := owner.Close(); err == nil {
+		err = closeErr
+	}
+	if err != nil {
+		return err
+	}
+	if err := createJSON(filepath.Join(staging, "marker.json"), rootMarker{"gigaquizz-filestore", 1}); err != nil {
+		return err
+	}
+	if err := os.Mkdir(filepath.Join(staging, "polls"), 0700); err != nil {
+		return err
+	}
+	if err := syncDir(filepath.Join(staging, "polls")); err != nil {
+		return err
+	}
+	if err := syncDir(staging); err != nil {
+		return err
+	}
+	if beforePublish != nil {
+		if err := beforePublish(); err != nil {
+			return err
+		}
+	}
+	// Rename refuses to replace a nonempty root published by a racing owner.
+	if err := os.Rename(staging, path); err != nil {
+		return err
+	}
+	return syncDir(parent)
+}
+
 // No symlinks at any component. Newly created directory entries are synced.
 func ensureDirectory(path string) error {
 	info, err := os.Lstat(path)
@@ -186,7 +247,11 @@ func createJSON(path string, value any) error {
 // The sole owner and per-poll finalizer ensure there is no concurrent
 // publisher. Failed publication leaves owned temporary data for inspection.
 func publishResult(directory string, value any) error {
-	path := filepath.Join(directory, "result.json")
+	return publishJSON(directory, "result.json", value)
+}
+
+func publishJSON(directory, name string, value any) error {
+	path := filepath.Join(directory, name)
 	if _, err := os.Lstat(path); !errors.Is(err, os.ErrNotExist) {
 		if err == nil {
 			return errors.New("result already exists")

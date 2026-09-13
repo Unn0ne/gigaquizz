@@ -18,7 +18,11 @@ func DurableSync(f *os.File) error { return durableSync(f) }
 // final frame is truncated; any complete CRC/config/sequence failure leaves
 // the file unchanged. Surviving unacknowledged complete frames remain votes.
 // The original deadline is retained. CLOSED is irreversible across restarts.
-func Recover(ctx context.Context, c Config) (_ *Store, err error) {
+func Recover(ctx context.Context, c Config) (*Store, error) {
+	return recoverWithVisitor(ctx, c, nil)
+}
+
+func recoverWithVisitor(ctx context.Context, c Config, visit func(Position, Vote) error) (_ *Store, err error) {
 	if err = c.validate(); err != nil {
 		return nil, err
 	}
@@ -46,7 +50,7 @@ func Recover(ctx context.Context, c Config) (_ *Store, err error) {
 	if err = syscall.Flock(int(f.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
 		return nil, fmt.Errorf("journal already owned: %w", err)
 	}
-	r, err := scanFile(ctx, c, f, nil)
+	r, err := scanFile(ctx, c, f, visit)
 	if err != nil {
 		return nil, err
 	}

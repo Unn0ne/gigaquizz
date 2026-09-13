@@ -21,6 +21,8 @@ import (
 type Config struct {
 	Directory             string
 	MaxUnique             uint64
+	MaxPartitionUnique    uint64
+	Partitions            int
 	BatchSize, QueueVotes int
 	Linger                time.Duration
 }
@@ -32,6 +34,7 @@ type rootMarker struct {
 
 type definition struct {
 	Version    int           `json:"version"`
+	Partitions int           `json:"partitions,omitempty"`
 	Poll       poll.Poll     `json:"poll"`
 	MaxUnique  uint64        `json:"max_unique"`
 	BatchSize  int           `json:"batch_size"`
@@ -39,14 +42,26 @@ type definition struct {
 	Linger     time.Duration `json:"linger_ns"`
 }
 
+type journalWriter interface {
+	Submit(context.Context, filelog.Input) (filelog.Receipt, error)
+	Seal(context.Context) (filelog.Manifest, error)
+	Close()
+	Metrics() map[string]uint64
+}
+
 type entry struct {
-	def        definition
-	directory  string
-	mu         sync.Mutex
-	finalizeMu sync.Mutex
-	writer     *filelog.Store
-	result     *poll.Results
-	finalError error // A failed exact calculation needs operator intervention.
+	def             definition
+	directory       string
+	mu              sync.Mutex
+	finalizeMu      sync.Mutex
+	writer          journalWriter
+	retainedMetrics map[string]uint64 // Immutable snapshot for this startup only; never persisted.
+	result          *poll.Results
+	finalError      error // A failed exact calculation needs operator intervention.
+	validationError error // A historical journal/result failed verification.
+	needsValidation bool
+	closing         bool // An observed deadline/finalization cannot reopen on clock rollback.
+	sealed          *filelog.Manifest
 }
 
 type Store struct {
@@ -60,6 +75,8 @@ type Store struct {
 	ops           sync.WaitGroup
 	closeOnce     sync.Once
 	now           func() time.Time
+	// Test-only recovery barrier, configured before concurrent operations.
+	recoverFinalization func(context.Context, *entry) (journalWriter, error)
 }
 
 var _ poll.Repository = (*Store)(nil)
@@ -77,16 +94,21 @@ func normalizeConfig(c Config) (Config, error) {
 	if c.MaxUnique == 0 {
 		c.MaxUnique = 120000000
 	}
+	if c.MaxPartitionUnique == 0 {
+		c.MaxPartitionUnique = c.MaxUnique
+	}
+	if c.Partitions == 0 {
+		c.Partitions = 1
+	}
 	if c.BatchSize == 0 {
 		c.BatchSize = 4096
 	}
 	if c.QueueVotes == 0 {
 		c.QueueVotes = 65536
 	}
-	if c.Linger == 0 {
-		c.Linger = 2 * time.Millisecond
-	}
-	if c.MaxUnique > 200000000 || c.BatchSize < 1 || c.BatchSize > 131072 || c.QueueVotes < 1 || c.QueueVotes > 1048576 || c.Linger < 0 || c.Linger > time.Second {
+	// Zero explicitly requests immediate flush. Configuration-loading callers
+	// supply the ordinary 2 ms default; do not silently replace an explicit zero.
+	if c.MaxUnique > 200000000 || c.MaxPartitionUnique > 200000000 || c.Partitions < 1 || c.Partitions > 256 || c.BatchSize < 1 || c.BatchSize > 131072 || c.QueueVotes < 1 || c.QueueVotes > 1048576 || c.Linger < 0 || c.Linger > time.Second {
 		return c, errors.New("invalid file repository bounds")
 	}
 	return c, nil
@@ -100,42 +122,40 @@ func New(ctx context.Context, config Config) (_ *Store, err error) {
 	if err := ctx.Err(); err != nil {
 		return nil, err
 	}
-	if err := ensureDirectory(c.Directory); err != nil {
+	if err := bootstrapRoot(c.Directory, nil); err != nil {
 		return nil, err
 	}
 	items, err := os.ReadDir(c.Directory)
 	if err != nil {
 		return nil, err
 	}
-	markerPath := filepath.Join(c.Directory, "marker.json")
-	_, markerErr := os.Lstat(markerPath)
-	if errors.Is(markerErr, os.ErrNotExist) && len(items) != 0 {
-		return nil, errors.New("refusing nonempty unowned data directory")
-	}
-	if markerErr != nil && !errors.Is(markerErr, os.ErrNotExist) {
-		return nil, markerErr
+	if len(items) != 3 {
+		return nil, errors.New("incomplete or foreign data directory inventory")
 	}
 	for _, item := range items {
 		if item.Type()&os.ModeSymlink != 0 || (item.Name() != "marker.json" && item.Name() != ".owner" && item.Name() != "polls") {
 			return nil, errors.New("foreign entry in data directory")
 		}
 	}
-	marker := rootMarker{"gigaquizz-filestore", 1}
-	flags := os.O_RDWR | syscall.O_NOFOLLOW
-	if markerErr == nil {
-		var got rootMarker
-		if err := readJSON(markerPath, &got); err != nil {
-			return nil, err
-		}
-		if got != marker {
-			return nil, errors.New("unknown data directory format")
-		}
-		if err := regular(filepath.Join(c.Directory, ".owner")); err != nil {
-			return nil, err
-		}
-	} else {
-		flags |= os.O_CREATE | os.O_EXCL
+	markerPath := filepath.Join(c.Directory, "marker.json")
+	var marker rootMarker
+	if err := readJSON(markerPath, &marker); err != nil {
+		return nil, err
 	}
+	if marker != (rootMarker{"gigaquizz-filestore", 1}) {
+		return nil, errors.New("unknown data directory format")
+	}
+	if err := regular(filepath.Join(c.Directory, ".owner")); err != nil {
+		return nil, err
+	}
+	info, err := os.Lstat(filepath.Join(c.Directory, "polls"))
+	if err != nil {
+		return nil, err
+	}
+	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return nil, errors.New("invalid polls directory")
+	}
+	flags := os.O_RDWR | syscall.O_NOFOLLOW
 	owner, err := os.OpenFile(filepath.Join(c.Directory, ".owner"), flags, 0600)
 	if err != nil {
 		return nil, err
@@ -150,22 +170,6 @@ func New(ctx context.Context, config Config) (_ *Store, err error) {
 			s.Close()
 		}
 	}()
-	if errors.Is(markerErr, os.ErrNotExist) {
-		if err = createJSON(markerPath, marker); err != nil {
-			return nil, err
-		}
-	} else {
-		var got rootMarker
-		if err = readJSON(markerPath, &got); err != nil {
-			return nil, err
-		}
-		if got != marker {
-			return nil, errors.New("unknown data directory format")
-		}
-	}
-	if err = ensureDirectory(filepath.Join(c.Directory, "polls")); err != nil {
-		return nil, err
-	}
 	if err = syncDir(c.Directory); err != nil {
 		return nil, err
 	}
@@ -176,9 +180,6 @@ func New(ctx context.Context, config Config) (_ *Store, err error) {
 		return nil, err
 	}
 	if err = s.load(ctx); err != nil {
-		return nil, err
-	}
-	if _, err = s.FinalizeDue(ctx); err != nil {
 		return nil, err
 	}
 	return s, nil
@@ -218,15 +219,24 @@ func (s *Store) Ping(ctx context.Context) error {
 	}
 	defer s.ops.Done()
 	s.mu.RLock()
-	defer s.mu.RUnlock()
-	if s.creationError != nil {
-		return s.creationError
-	}
+	creationError := s.creationError
+	entries := make([]*entry, 0, len(s.entries))
+	now := s.now()
 	for _, e := range s.entries {
+		// Historical failures belong to that poll and do not block readiness.
+		if now.Before(e.def.Poll.EndsAt) {
+			entries = append(entries, e)
+		}
+	}
+	s.mu.RUnlock()
+	if creationError != nil {
+		return creationError
+	}
+	for _, e := range entries {
 		e.mu.Lock()
-		poisoned := e.finalError != nil || (e.writer != nil && e.writer.Metrics()["poisoned"] != 0)
+		failed, w := e.validationError != nil || e.finalError != nil, e.writer
 		e.mu.Unlock()
-		if poisoned {
+		if failed || (w != nil && w.Metrics()["poisoned"] != 0) {
 			return errors.New("file writer or finalization failed")
 		}
 	}
@@ -313,6 +323,10 @@ func (s *Store) Create(ctx context.Context, in poll.CreateInput) (poll.Poll, err
 	// published poll that could prevent other polls from recovering.
 	finalDirectory := filepath.Join(s.c.Directory, "polls", id)
 	e := &entry{def: definition{Version: 1, Poll: p, MaxUnique: s.c.MaxUnique, BatchSize: s.c.BatchSize, QueueVotes: s.c.QueueVotes, Linger: s.c.Linger}, directory: filepath.Join(s.c.Directory, "polls", ".creating-"+id)}
+	if s.c.Partitions > 1 {
+		e.def.Version = 2
+		e.def.Partitions = s.c.Partitions
+	}
 	if err := os.Mkdir(e.directory, 0700); err != nil {
 		return poll.Poll{}, err
 	}
@@ -322,7 +336,7 @@ func (s *Store) Create(ctx context.Context, in poll.CreateInput) (poll.Poll, err
 	if err := createJSON(filepath.Join(e.directory, "definition.json"), e.def); err != nil {
 		return poll.Poll{}, err
 	}
-	w, err := filelog.New(ctx, e.logConfig())
+	w, err := e.newWriter(ctx)
 	if err != nil {
 		return poll.Poll{}, err
 	}
@@ -359,6 +373,12 @@ func (s *Store) Get(ctx context.Context, id string) (poll.Poll, error) {
 	e := s.lookup(id)
 	if e == nil {
 		return poll.Poll{}, poll.ErrNotFound
+	}
+	e.mu.Lock()
+	err := e.validationError
+	e.mu.Unlock()
+	if err != nil {
+		return poll.Poll{}, err
 	}
 	return e.publicPoll(), nil
 }
@@ -415,21 +435,29 @@ func (s *Store) Vote(ctx context.Context, id, token string, choices []int) (poll
 		mask |= 1 << (choice - 1)
 	}
 	e.mu.Lock()
-	if e.result != nil {
+	if e.validationError != nil {
+		err := e.validationError
+		e.mu.Unlock()
+		return poll.Receipt{}, err
+	}
+	if e.result != nil || e.closing {
 		e.mu.Unlock()
 		return poll.Receipt{Status: "closed"}, nil
 	}
+	now := s.now()
+	if !now.Before(e.def.Poll.EndsAt) {
+		// This is a poll-wide irreversible observation, even when no lazy
+		// writer has been opened or a different partition sees the next vote.
+		e.closing = true
+		e.mu.Unlock()
+		return poll.Receipt{Status: "closed"}, nil
+	}
+	if now.Before(e.def.Poll.StartsAt) {
+		e.mu.Unlock()
+		return poll.Receipt{Status: "not_open"}, nil
+	}
 	if e.writer == nil {
-		now := s.now()
-		if now.Before(e.def.Poll.StartsAt) {
-			e.mu.Unlock()
-			return poll.Receipt{Status: "not_open"}, nil
-		}
-		if !now.Before(e.def.Poll.EndsAt) {
-			e.mu.Unlock()
-			return poll.Receipt{Status: "closed"}, nil
-		}
-		e.writer, err = filelog.Recover(ctx, e.logConfig())
+		e.writer, err = e.recoverWriter(ctx)
 		if err != nil {
 			e.mu.Unlock()
 			return poll.Receipt{}, err
@@ -443,6 +471,11 @@ func (s *Store) Vote(ctx context.Context, id, token string, choices []int) (poll
 		case errors.Is(err, filelog.ErrNotOpen):
 			return poll.Receipt{Status: "not_open"}, nil
 		case errors.Is(err, filelog.ErrClosed):
+			// One partition can already have observed the deadline or CLOSED.
+			// Persist that decision in the common in-memory admission gate.
+			e.mu.Lock()
+			e.closing = true
+			e.mu.Unlock()
 			return poll.Receipt{Status: "closed"}, nil
 		case errors.Is(err, filelog.ErrInvalid):
 			return poll.Receipt{Status: "invalid"}, nil
@@ -467,6 +500,9 @@ func (s *Store) Results(ctx context.Context, id string) (poll.Results, error) {
 	}
 	e.mu.Lock()
 	defer e.mu.Unlock()
+	if e.validationError != nil {
+		return poll.Results{}, e.validationError
+	}
 	if e.result != nil {
 		r := *e.result
 		r.Options = append([]poll.OptionCount(nil), r.Options...)

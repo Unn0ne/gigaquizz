@@ -20,6 +20,7 @@ import (
 )
 
 type workerStats struct {
+	Decoder          journeyDecoder
 	Counts           [stateCount]uint64
 	InvalidPositive  uint64
 	Sent             uint64
@@ -39,7 +40,7 @@ type workloadReport struct {
 	Mode             string      `json:"mode"`
 	Complete         bool        `json:"complete"`
 	Cancelled        bool        `json:"cancelled"`
-	UniqueRate       uint64      `json:"planned_unique_per_second"`
+	UniqueRate       float64     `json:"planned_unique_per_second"`
 	Attempts         uint64      `json:"planned_attempts"`
 	UniqueKeys       uint64      `json:"planned_unique_keys"`
 	RepeatEvery      uint64      `json:"repeat_every"`
@@ -62,6 +63,7 @@ type workloadReport struct {
 	GETSent          uint64      `json:"http_get_sent"`
 	GETFailures      uint64      `json:"http_get_failures"`
 	GETBytes         uint64      `json:"http_get_body_bytes"`
+	GETDecodedBytes  uint64      `json:"http_get_decoded_body_bytes"`
 	GETStages        []getReport `json:"http_get_stages,omitempty"`
 	JourneyMeanMS    float64     `json:"journey_mean_ms"`
 	JourneyMaxMS     float64     `json:"journey_max_ms"`
@@ -173,7 +175,7 @@ func executeWorkload(ctx context.Context, m privateManifest, client *http.Client
 			defer workers.Done()
 			block, _ := aes.NewCipher(m.Seed[:])
 			for a := range jobs {
-				a.Token = tokenFor(block, m.Namespace, a.Key)
+				a.Token = tokenFor(block, m.Namespace, c.KeyOffset+a.Key)
 				if ctx.Err() != nil || time.Since(start)-time.Duration(a.ScheduledNS) > c.MaxLag || writers[i].err != nil {
 					a.State = stateSkipped
 				} else {
@@ -190,7 +192,7 @@ func executeWorkload(ctx context.Context, m privateManifest, client *http.Client
 	block, _ := aes.NewCipher(m.Seed[:])
 	scheduler := writers[c.Workers]
 	for key := uint64(0); key < c.keys(); key++ {
-		offset := time.Duration(key * uint64(time.Second) / c.Rate)
+		offset := c.scheduledOffset(key)
 		// Wake in at most 1ms batches instead of allocating a timer per request.
 		if ctx.Err() == nil {
 			remaining := start.Add(offset).Sub(time.Now())
@@ -216,13 +218,13 @@ func executeWorkload(ctx context.Context, m privateManifest, client *http.Client
 				default:
 				}
 			}
-			a.Token = tokenFor(block, m.Namespace, key)
+			a.Token = tokenFor(block, m.Namespace, c.KeyOffset+key)
 			a.State = stateSkipped
 			scheduler.append(a)
 			stats[c.Workers].Counts[stateSkipped]++
 		}
 		emit(1)
-		if c.RepeatEvery != 0 && (key+1)%c.RepeatEvery == 0 {
+		if c.RepeatEvery != 0 && (c.KeyOffset+key+1)%c.RepeatEvery == 0 {
 			emit(2)
 		}
 	}
@@ -366,6 +368,11 @@ func summarize(c config, workers []workerStats, elapsed time.Duration, bytes uin
 			all.GET[i].Sent += g.Sent
 			all.GET[i].Failures += g.Failures
 			all.GET[i].Bytes += g.Bytes
+			all.GET[i].DecodedBytes += g.DecodedBytes
+			all.GET[i].Timeouts += g.Timeouts
+			all.GET[i].TransportFailures += g.TransportFailures
+			all.GET[i].StatusFailures += g.StatusFailures
+			all.GET[i].ValidationFailures += g.ValidationFailures
 			all.GET[i].LatencyNS += g.LatencyNS
 			if g.MaxNS > all.GET[i].MaxNS {
 				all.GET[i].MaxNS = g.MaxNS
@@ -387,13 +394,16 @@ func summarize(c config, workers []workerStats, elapsed time.Duration, bytes uin
 		}
 		return 0
 	}
-	r := workloadReport{Mode: "http-post", UniqueRate: c.Rate, Attempts: c.attempts(), UniqueKeys: c.keys(), RepeatEvery: c.RepeatEvery, Workers: c.Workers, Queue: c.Queue, MaxLagMS: float64(c.MaxLag) / 1e6, DurationSeconds: c.Duration.Seconds(), WallSeconds: elapsed.Seconds(), Sent: all.Sent, ACK: all.Counts[stateACK], Unknown: all.Counts[stateUnknown], Closed: all.Counts[stateClosed], NotAdmitted: all.Counts[stateBusy], NotOpen: all.Counts[stateNotOpen], Rejected: all.Counts[stateRejected], Skipped: all.Counts[stateSkipped], InvalidPositive: all.InvalidPositive, LedgerBytes: bytes, LatencyP50MS: quantile(50), LatencyP95MS: quantile(95), LatencyP99MS: quantile(99), LatencyMaxMS: float64(all.MaxLatencyNS) / 1e6, SentPerSecond: all.PerSecondSent, ACKPerSecond: all.PerSecondACK, Method: "Uniform scheduled unique IDs; one independent POST per attempt; bounded workers and queue; stale/full attempts are skips; no request retries. Each worker buffers its private 64-byte full-ID/choice/admission/outcome ledger. 202 recorded is a durable attempt, not canonical uniqueness. No journal reconciliation occurs in this process."}
+	r := workloadReport{Mode: "http-post", UniqueRate: float64(c.keys()) / c.Duration.Seconds(), Attempts: c.attempts(), UniqueKeys: c.keys(), RepeatEvery: c.RepeatEvery, Workers: c.Workers, Queue: c.Queue, MaxLagMS: float64(c.MaxLag) / 1e6, DurationSeconds: c.Duration.Seconds(), WallSeconds: elapsed.Seconds(), Sent: all.Sent, ACK: all.Counts[stateACK], Unknown: all.Counts[stateUnknown], Closed: all.Counts[stateClosed], NotAdmitted: all.Counts[stateBusy], NotOpen: all.Counts[stateNotOpen], Rejected: all.Counts[stateRejected], Skipped: all.Counts[stateSkipped], InvalidPositive: all.InvalidPositive, LedgerBytes: bytes, LatencyP50MS: quantile(50), LatencyP95MS: quantile(95), LatencyP99MS: quantile(99), LatencyMaxMS: float64(all.MaxLatencyNS) / 1e6, SentPerSecond: all.PerSecondSent, ACKPerSecond: all.PerSecondACK, Method: "Uniform scheduled unique IDs; one independent POST per attempt; bounded workers and queue; stale/full attempts are skips; no request retries. Each worker buffers its private 64-byte full-ID/choice/admission/outcome ledger. 202 recorded is a durable attempt, not canonical uniqueness. No journal reconciliation occurs in this process."}
 	if all.Sent > 0 {
 		r.LatencyMeanMS = float64(all.LatencyNS) / float64(all.Sent) / 1e6
 	}
 	r.LatencyScope = "POST dispatch through response body read; excludes scheduler and preceding GETs"
 	if c.Journey {
 		r.Mode = "http-journey"
+		if c.Definition {
+			r.Mode = "http-journey-definition-gzip"
+		}
 		r.JourneyFailed = all.Counts[stateJourneyFailed]
 		r.JourneyStarted = all.JourneyStarted
 		r.JourneyCompleted = all.JourneyCompleted
@@ -405,11 +415,15 @@ func summarize(c config, workers []workerStats, elapsed time.Duration, bytes uin
 			r.GETSent += g.Sent
 			r.GETFailures += g.Failures
 			r.GETBytes += g.Bytes
-			stage := getReport{Name: journeyNames[i], Sent: g.Sent, Failures: g.Failures, Bytes: g.Bytes, MaxMS: float64(g.MaxNS) / 1e6}
+			r.GETDecodedBytes += g.DecodedBytes
+			stage := getReport{Timeouts: g.Timeouts, TransportFailures: g.TransportFailures, StatusFailures: g.StatusFailures, ValidationFailures: g.ValidationFailures, DecodedBytes: g.DecodedBytes, Name: journeyNames[i], Sent: g.Sent, Failures: g.Failures, Bytes: g.Bytes, MaxMS: float64(g.MaxNS) / 1e6}
 			if g.Sent > 0 {
 				stage.MeanMS = float64(g.LatencyNS) / float64(g.Sent) / 1e6
 			}
 			r.GETStages = append(r.GETStages, stage)
+		}
+		if c.Definition {
+			r.Method += " Uses immutable /definition and explicitly negotiated gzip with bounded decoding; encoded and decoded body bytes reported separately."
 		}
 		r.Method += " Each original attempt first fetches HTML, app.css, common.js, poll.js and the original question sequentially with no browser cache or JS execution. Repeats send only POST. The GET chain must finish before the original scheduled slot plus max-lag; a failed/expired chain is journey_failed and sends no POST. GET metrics count client.Do calls and actually read response-body bytes, excluding headers, transport/TLS overhead and the one setup validation GET; they do not include any transparent GET connection repair inside Go Transport."
 	}

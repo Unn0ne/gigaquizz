@@ -49,74 +49,28 @@ func (s *Store) load(ctx context.Context) error {
 				return poll.ErrOverlap
 			}
 		}
-		files, err := os.ReadDir(e.directory)
-		if err != nil {
+		s.entries[item.Name()] = e
+		if !s.now().Before(e.def.Poll.EndsAt) {
+			// Definitions reserve the immutable schedule immediately. Historical
+			// journals and results are verified independently after serving starts.
+			e.needsValidation = true
+			e.closing = true
+			continue
+		}
+		if err := validateInventory(e); err != nil {
 			return err
 		}
-		for _, f := range files {
-			if f.Type()&os.ModeSymlink != 0 || (f.Name() != "definition.json" && f.Name() != "journal" && f.Name() != "result.json" && !(strings.HasPrefix(f.Name(), ".result-") && strings.HasSuffix(f.Name(), ".tmp"))) {
-				return errors.New("foreign file in poll directory")
-			}
-		}
-		journalFiles, err := os.ReadDir(filepath.Join(e.directory, "journal"))
-		if err != nil {
-			return err
-		}
-		for _, f := range journalFiles {
-			if f.Type()&os.ModeSymlink != 0 || (f.Name() != "poll.json" && f.Name() != "votes.wal") {
-				return errors.New("foreign file in vote journal")
-			}
-		}
-		w, err := filelog.Recover(ctx, e.logConfig())
+		w, err := e.recoverWriter(ctx)
 		if err != nil {
 			return err
 		}
 		e.writer = w
-		s.entries[item.Name()] = e
-		if e.def.Poll.State(s.now()) != "open" {
-			if !s.now().Before(e.def.Poll.EndsAt) {
-				if _, err := w.Seal(ctx); err != nil {
-					return err
-				}
-			}
+		if s.now().Before(e.def.Poll.StartsAt) {
 			w.Close()
 			e.writer = nil
 		}
-		if _, err := os.Lstat(filepath.Join(e.directory, "result.json")); err == nil {
-			var disk diskResult
-			if err := readJSON(filepath.Join(e.directory, "result.json"), &disk); err != nil {
-				return err
-			}
-			checksum := disk.Checksum
-			disk.Checksum = ""
-			if checksum != hashJSON(disk) || disk.Version != 1 || disk.DefinitionHash != hashJSON(e.def) || disk.Results.PollID != e.def.Poll.ID || disk.Results.State != "final" || disk.Results.Pending || disk.Results.CalculatedAt.IsZero() || len(disk.Results.Options) != len(e.def.Poll.Options) || disk.Results.TotalVotes < 0 {
-				return errors.New("invalid stored result")
-			}
-			for i, option := range disk.Results.Options {
-				if option.ID != e.def.Poll.Options[i].ID || option.Label != e.def.Poll.Options[i].Label || option.Votes < 0 || option.Votes > disk.Results.TotalVotes {
-					return errors.New("invalid stored option counts")
-				}
-			}
-			if e.writer != nil {
-				e.writer.Close()
-				e.writer = nil
-			}
-			manifest, err := filelog.Replay(ctx, e.logConfig(), nil)
-			if err != nil {
-				return err
-			}
-			if len(manifest.Partitions) != 1 || len(disk.Manifest.Partitions) != 1 || manifest.Partitions[0] != disk.Manifest.Partitions[0] {
-				return errors.New("stored result CLOSED mismatch")
-			}
-			e.result = &disk.Results
-			if err := syncMetadata(filepath.Join(e.directory, "result.json")); err != nil {
-				return err
-			}
-			if err := syncDir(e.directory); err != nil {
-				return err
-			}
-		} else if !errors.Is(err, os.ErrNotExist) {
-			return err
+		if _, err := os.Lstat(filepath.Join(e.directory, "result.json")); !errors.Is(err, os.ErrNotExist) {
+			return errors.New("premature result for an unfinished poll")
 		}
 	}
 	return nil
@@ -124,7 +78,7 @@ func (s *Store) load(ctx context.Context) error {
 
 func validateDefinition(d definition, id string) error {
 	p := d.Poll
-	if d.Version != 1 || p.ID != id || p.FinalizedAt != nil || p.CreatedAt.IsZero() || p.EndsAt.Sub(p.StartsAt) != time.Minute {
+	if (d.Version != 1 && d.Version != 2) || (d.Version == 1 && d.Partitions != 0) || (d.Version == 2 && (d.Partitions < 2 || d.Partitions > 256)) || p.ID != id || p.FinalizedAt != nil || p.CreatedAt.IsZero() || p.EndsAt.Sub(p.StartsAt) != time.Minute {
 		return errors.New("invalid immutable poll definition")
 	}
 	input := poll.CreateInput{Question: p.Question, Type: p.Type}
@@ -146,8 +100,78 @@ func validateDefinition(d definition, id string) error {
 		}
 	}
 	_, err := normalizeConfig(Config{Directory: ".", MaxUnique: d.MaxUnique, BatchSize: d.BatchSize, QueueVotes: d.QueueVotes, Linger: d.Linger})
-	if d.MaxUnique == 0 || d.BatchSize == 0 || d.QueueVotes == 0 || d.Linger == 0 {
+	if d.MaxUnique == 0 || d.BatchSize == 0 || d.QueueVotes == 0 {
 		return errors.New("missing persisted limits")
 	}
 	return err
+}
+
+func validateInventory(e *entry) error {
+	files, err := os.ReadDir(e.directory)
+	if err != nil {
+		return err
+	}
+	for _, f := range files {
+		if f.Type()&os.ModeSymlink != 0 || (f.Name() != "definition.json" && f.Name() != "journal" && f.Name() != "result.json" && !e.isCheckpoint(f.Name()) && !(strings.HasPrefix(f.Name(), ".result-") && strings.HasSuffix(f.Name(), ".tmp"))) {
+			return errors.New("foreign file in poll directory")
+		}
+	}
+	if e.def.Version == 2 {
+		return filelog.CheckGroup(e.groupConfig())
+	}
+	journalFiles, err := os.ReadDir(filepath.Join(e.directory, "journal"))
+	if err != nil {
+		return err
+	}
+	for _, f := range journalFiles {
+		if f.Type()&os.ModeSymlink != 0 || (f.Name() != "poll.json" && f.Name() != "votes.wal") {
+			return errors.New("foreign file in vote journal")
+		}
+	}
+	return nil
+}
+
+func readVerifiedResult(e *entry, manifest filelog.Manifest) (*poll.Results, error) {
+	path := filepath.Join(e.directory, "result.json")
+	if _, err := os.Lstat(path); errors.Is(err, os.ErrNotExist) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+	var disk diskResult
+	if err := readJSON(path, &disk); err != nil {
+		return nil, err
+	}
+	checksum := disk.Checksum
+	disk.Checksum = ""
+	if checksum != hashJSON(disk) || disk.Version != 1 || disk.DefinitionHash != hashJSON(e.def) || disk.Results.PollID != e.def.Poll.ID || disk.Results.State != "final" || disk.Results.Pending || disk.Results.CalculatedAt.Before(e.def.Poll.EndsAt) || len(disk.Results.Options) != len(e.def.Poll.Options) || disk.Results.TotalVotes < 0 {
+		return nil, errors.New("invalid stored result")
+	}
+	for i, option := range disk.Results.Options {
+		if option.ID != e.def.Poll.Options[i].ID || option.Label != e.def.Poll.Options[i].Label || option.Votes < 0 || option.Votes > disk.Results.TotalVotes {
+			return nil, errors.New("invalid stored option counts")
+		}
+	}
+	if !sameManifest(manifest, disk.Manifest) {
+		return nil, errors.New("stored result CLOSED mismatch")
+	}
+	if err := syncMetadata(path); err != nil {
+		return nil, err
+	}
+	if err := syncDir(e.directory); err != nil {
+		return nil, err
+	}
+	return &disk.Results, nil
+}
+
+func sameManifest(a, b filelog.Manifest) bool {
+	if len(a.Partitions) != len(b.Partitions) {
+		return false
+	}
+	for i := range a.Partitions {
+		if a.Partitions[i] != b.Partitions[i] {
+			return false
+		}
+	}
+	return true
 }

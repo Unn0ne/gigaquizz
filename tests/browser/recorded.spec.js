@@ -21,11 +21,11 @@ function poll() {
 
 test('202 persists the sent attempt and does not claim a canonical choice', async ({ page }) => {
   await assets(page, 'poll');
-  await page.route(`**/api/polls/${id}`, route => route.fulfill({ json: poll() }));
+  await page.route(`**/api/polls/${id}/definition`, route => route.fulfill({ json: poll(), headers: { Date: new Date().toUTCString(), Age: '0' } }));
   let requests = 0;
   await page.route(`**/api/polls/${id}/votes`, route => {
     requests++;
-    return route.fulfill({ status: 202, json: { status: 'recorded', choices: [2] } });
+    return route.fulfill({ status: 202, json: { status: 'recorded', choices: [1], accepted_at: new Date().toISOString() } });
   });
   await page.goto(`/p/${id}`);
   await page.getByLabel('Очно', { exact: true }).check();
@@ -67,13 +67,13 @@ test('pending results hide numbers until a final aggregate is available', async 
 
 test('busy is a definite refusal with a delayed manual retry', async ({ page }) => {
   await assets(page, 'poll');
-  await page.route(`**/api/polls/${id}`, route => route.fulfill({ json: poll() }));
+  await page.route(`**/api/polls/${id}/definition`, route => route.fulfill({ json: poll(), headers: { Date: new Date().toUTCString(), Age: '0' } }));
   const bodies = [];
   await page.route(`**/api/polls/${id}/votes`, route => {
     bodies.push(route.request().postDataJSON());
     return bodies.length === 1
       ? route.fulfill({ status: 503, headers: { 'Retry-After': '1' }, json: { outcome: 'not_admitted' } })
-      : route.fulfill({ status: 202, json: { status: 'recorded' } });
+      : route.fulfill({ status: 202, json: { status: 'recorded', choices: [1], accepted_at: new Date().toISOString() } });
   });
   await page.goto(`/p/${id}`);
   await page.getByLabel('Очно', { exact: true }).check();

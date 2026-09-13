@@ -101,8 +101,8 @@ func sequence(c config, key uint64, choice uint32) (uint64, error) {
 	if choice == 1 {
 		return key, nil
 	}
-	if choice == 2 && c.RepeatEvery != 0 && (key+1)%c.RepeatEvery == 0 {
-		return c.keys() + (key+1)/c.RepeatEvery - 1, nil
+	if choice == 2 && c.RepeatEvery != 0 && (c.KeyOffset+key+1)%c.RepeatEvery == 0 {
+		return c.keys() + (c.KeyOffset+key+1)/c.RepeatEvery - c.KeyOffset/c.RepeatEvery - 1, nil
 	}
 	return 0, errors.New("unplanned key or choice")
 }
@@ -153,21 +153,32 @@ func createManifest(c config, pollData privateManifest) (privateManifest, error)
 	m := pollData
 	m.Version = 1
 	m.Config = c
-	if _, err := rand.Read(m.Seed[:]); err != nil {
-		return m, err
-	}
-	if _, err := rand.Read(m.Namespace[:]); err != nil {
-		return m, err
-	}
-	// The permutation can theoretically contain the protocol's forbidden zero
-	// token. Reject that seed before transmitting any request.
-	for {
-		b, _ := aes.NewCipher(m.Seed[:])
-		if _, err := keyFor(b, m.Namespace, [16]byte{}, c.keys()); err != nil {
-			break
+	if c.PlanFile != "" {
+		p, err := loadDistributedPlan(c.PlanFile)
+		if err != nil {
+			return m, err
 		}
+		if c.Generator < 0 || c.Generator >= len(p.Generators) || !sameConfig(c, p.Generators[c.Generator]) || !samePoll(m.Poll, p.Poll) {
+			return m, errors.New("generator configuration differs from distributed plan")
+		}
+		m.Seed, m.Namespace, m.PlanSHA256 = p.Seed, p.Namespace, p.digest()
+	} else {
 		if _, err := rand.Read(m.Seed[:]); err != nil {
 			return m, err
+		}
+		if _, err := rand.Read(m.Namespace[:]); err != nil {
+			return m, err
+		}
+		// The permutation can theoretically contain the protocol's forbidden zero
+		// token. Reject that seed before transmitting any request.
+		for {
+			b, _ := aes.NewCipher(m.Seed[:])
+			if _, err := keyFor(b, m.Namespace, [16]byte{}, c.KeyOffset+c.keys()); err != nil {
+				break
+			}
+			if _, err := rand.Read(m.Seed[:]); err != nil {
+				return m, err
+			}
 		}
 	}
 	if err := os.Mkdir(c.Directory, 0700); err != nil {
@@ -215,6 +226,13 @@ func syncDirectory(dir string) error {
 }
 
 func preflight(c config) error {
+	var limit syscall.Rlimit
+	if err := syscall.Getrlimit(syscall.RLIMIT_NOFILE, &limit); err != nil {
+		return err
+	}
+	if err := checkFileBudget(c.Workers, limit.Cur); err != nil {
+		return err
+	}
 	parent := filepath.Dir(c.Directory)
 	i, err := os.Lstat(parent)
 	if err != nil || !i.IsDir() || i.Mode()&os.ModeSymlink != 0 {
@@ -230,6 +248,16 @@ func preflight(c config) error {
 	free := uint64(fs.Bavail) * uint64(fs.Bsize)
 	if free < (8<<30)+c.attempts()*ledgerBytes {
 		return errors.New("ledger preflight requires 8GiB free reserve after planned ledger")
+	}
+	return nil
+}
+
+func checkFileBudget(workers int, soft uint64) error {
+	// A private ledger and at most one connection per worker, plus scheduler,
+	// DNS, standard descriptors and bounded transport overhead. Never change
+	// the parent shell or system limit from this standalone generator.
+	if workers < 1 || soft < uint64(2*workers+64) {
+		return errors.New("open-file limit too small: require at least 2*workers+64; raise the child limit explicitly")
 	}
 	return nil
 }

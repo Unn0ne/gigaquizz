@@ -9,7 +9,6 @@ import (
 	"io/fs"
 	"mime"
 	"net/http"
-	"net/url"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -18,37 +17,48 @@ import (
 )
 
 type Config struct {
-	AdminPassword    string
-	PublicURL        string
-	MaxInflight      int
-	OperationTimeout time.Duration
+	AdminPassword          string
+	PublicURL              string
+	MaxInflight            int
+	OperationTimeout       time.Duration
+	DefinitionCacheEntries int
 }
 
 type Server struct {
-	votes         poll.Repository
-	admin         poll.Repository
-	auth          *auth
-	origin        string
-	files         fs.FS
-	inflight      chan struct{}
-	readInflight  chan struct{}
-	adminInflight chan struct{}
-	timeout       time.Duration
-	ready         atomic.Bool
-	attempts      atomic.Uint64
-	accepted      atomic.Uint64
-	recorded      atomic.Uint64
-	duplicates    atomic.Uint64
-	conflicts     atomic.Uint64
-	rejected      atomic.Uint64
-	unknown       atomic.Uint64
-	storageErrors atomic.Uint64
+	votes               PublicRepository
+	admin               AdminRepository
+	auth                *auth
+	origin              string
+	inflight            chan struct{}
+	readInflight        chan struct{}
+	adminInflight       chan struct{}
+	timeout             time.Duration
+	ready               atomic.Bool
+	attempts            atomic.Uint64
+	accepted            atomic.Uint64
+	recorded            atomic.Uint64
+	duplicates          atomic.Uint64
+	conflicts           atomic.Uint64
+	rejected            atomic.Uint64
+	unknown             atomic.Uint64
+	storageErrors       atomic.Uint64
+	gateVotes           atomic.Uint64
+	gateReads           atomic.Uint64
+	gateAdmin           atomic.Uint64
+	queueRefusals       atomic.Uint64
+	preparationFailures atomic.Uint64
+	publicBytes         atomic.Uint64
+	publicRawBytes      atomic.Uint64
+	publicGzipBytes     atomic.Uint64
+	public304           atomic.Uint64
+	definitions         *definitionCache
+	assets              map[string]*representation
 }
 
-func New(votes, admin poll.Repository, files fs.FS, cfg Config) (*Server, error) {
-	u, err := url.Parse(cfg.PublicURL)
-	if err != nil || (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" || u.User != nil || u.RawQuery != "" || u.Fragment != "" || (u.Path != "" && u.Path != "/") {
-		return nil, errors.New("PUBLIC_URL must be an http(s) origin")
+func New(votes PublicRepository, admin AdminRepository, files fs.FS, cfg Config) (*Server, error) {
+	origin, err := canonicalOrigin(cfg.PublicURL, false)
+	if err != nil {
+		return nil, err
 	}
 	if len(cfg.AdminPassword) < 16 {
 		return nil, errors.New("ADMIN_PASSWORD must contain at least 16 bytes")
@@ -56,16 +66,44 @@ func New(votes, admin poll.Repository, files fs.FS, cfg Config) (*Server, error)
 	if cfg.MaxInflight < 1 || cfg.OperationTimeout <= 0 {
 		return nil, errors.New("invalid concurrency or timeout configuration")
 	}
-	return &Server{votes: votes, admin: admin, files: files, origin: u.Scheme + "://" + u.Host, auth: newAuth(cfg.AdminPassword, u.Scheme == "https"), inflight: make(chan struct{}, cfg.MaxInflight), readInflight: make(chan struct{}, 16), adminInflight: make(chan struct{}, 8), timeout: cfg.OperationTimeout}, nil
+	if cfg.DefinitionCacheEntries == 0 {
+		cfg.DefinitionCacheEntries = 128
+	}
+	if cfg.DefinitionCacheEntries < 1 || cfg.DefinitionCacheEntries > 1024 {
+		return nil, errors.New("invalid definition cache bound")
+	}
+	assets, err := prepareAssets(files)
+	if err != nil {
+		return nil, err
+	}
+	return &Server{votes: votes, admin: admin, origin: origin, auth: newAuth(cfg.AdminPassword, strings.HasPrefix(origin, "https://")), inflight: make(chan struct{}, cfg.MaxInflight), readInflight: make(chan struct{}, 16), adminInflight: make(chan struct{}, 8), timeout: cfg.OperationTimeout, definitions: newDefinitionCache(cfg.DefinitionCacheEntries), assets: assets}, nil
 }
 
 func (s *Server) SetReady(ready bool) { s.ready.Store(ready) }
 
 func (s *Server) Metrics() map[string]uint64 {
 	metrics := map[string]uint64{"vote_http_attempts": s.attempts.Load(), "accepted_responses": s.accepted.Load(), "recorded_responses": s.recorded.Load(), "duplicate_responses": s.duplicates.Load(), "conflict_responses": s.conflicts.Load(), "rejected_attempts": s.rejected.Load(), "unknown_outcomes": s.unknown.Load(), "storage_errors": s.storageErrors.Load(), "inflight": uint64(len(s.inflight))}
+	metrics["http_vote_gate_rejections"] = s.gateVotes.Load()
+	metrics["http_read_gate_rejections"] = s.gateReads.Load()
+	metrics["http_admin_gate_rejections"] = s.gateAdmin.Load()
+	metrics["storage_queue_rejections"] = s.queueRefusals.Load()
+	metrics["poll_preparation_failures"] = s.preparationFailures.Load()
+	metrics["definition_cache_hits"] = s.definitions.hits.Load()
+	metrics["definition_cache_misses"] = s.definitions.misses.Load()
+	metrics["definition_cache_entries"] = uint64(len(s.definitions.current.Load().entries))
+	metrics["definition_preparation_failures"] = s.definitions.failures.Load()
+	metrics["public_response_body_bytes"] = s.publicBytes.Load()
+	metrics["public_raw_body_bytes"] = s.publicRawBytes.Load()
+	metrics["public_gzip_body_bytes"] = s.publicGzipBytes.Load()
+	metrics["public_not_modified"] = s.public304.Load()
 	if repository, ok := s.votes.(interface{ Diagnostics() map[string]uint64 }); ok {
 		diagnostics := repository.Diagnostics()
 		for _, key := range [...]string{
+			"storage_queued_votes", "storage_active_votes", "storage_failed_writers",
+			"storage_durable_votes", "storage_durable_frames", "storage_batches", "storage_batch_ns",
+			"storage_busy_votes", "storage_preparation_failures",
+			"storage_writer_failures_timeout", "storage_writer_failures_fenced", "storage_writer_failures_network",
+			"storage_writer_failures_client_closed", "storage_writer_failures_other",
 			"db_vote_sql_calls", "db_vote_sql_ns",
 			"db_proof_queries", "db_proof_query_ns", "db_proof_retries", "db_proof_wait_ns",
 			"db_pool_acquire_count", "db_pool_acquire_ns", "db_pool_empty_acquire_count",
@@ -100,11 +138,13 @@ func (s *Server) Handler() http.Handler {
 	mux.Handle("GET /api/admin/polls", s.protected(http.HandlerFunc(s.listPolls)))
 	mux.Handle("GET /api/admin/polls/{id}/results", s.protected(http.HandlerFunc(s.results)))
 	mux.HandleFunc("GET /api/polls/{id}", s.getPoll)
+	mux.HandleFunc("GET /api/polls/{id}/definition", s.getDefinition)
+	mux.HandleFunc("GET /api/time", s.getTime)
 	mux.HandleFunc("POST /api/polls/{id}/votes", s.vote)
 	mux.HandleFunc("GET /{$}", s.page("index.html"))
 	mux.HandleFunc("GET /admin", s.page("admin.html"))
 	mux.HandleFunc("GET /p/{id}", s.page("poll.html"))
-	mux.Handle("GET /static/", http.FileServerFS(s.files))
+	mux.HandleFunc("GET /static/", s.staticAsset)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("Referrer-Policy", "no-referrer")
@@ -112,9 +152,6 @@ func (s *Server) Handler() http.Handler {
 		w.Header().Set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
 		w.Header().Set("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")
 		w.Header().Set("Cache-Control", "no-store")
-		if strings.HasPrefix(r.URL.Path, "/static/") {
-			w.Header().Set("Cache-Control", "public, max-age=300")
-		}
 		if r.Method != http.MethodGet && r.Method != http.MethodHead && !s.sameOrigin(r) {
 			writeError(w, 403, "Запрос с другого сайта запрещён")
 			return
@@ -128,11 +165,12 @@ func (s *Server) sameOrigin(r *http.Request) bool {
 		return false
 	}
 	if origin := r.Header.Get("Origin"); origin != "" {
-		return origin == s.origin
+		got, err := canonicalOrigin(origin, false)
+		return err == nil && got == s.origin
 	}
 	if ref := r.Referer(); ref != "" {
-		u, err := url.Parse(ref)
-		return err == nil && u.Scheme+"://"+u.Host == s.origin
+		got, err := canonicalOrigin(ref, true)
+		return err == nil && got == s.origin
 	}
 	return true // Non-browser JSON clients, e.g. the load generator.
 }
@@ -147,6 +185,7 @@ func (s *Server) protected(next http.Handler) http.Handler {
 		case s.adminInflight <- struct{}{}:
 			defer func() { <-s.adminInflight }()
 		default:
+			s.gateAdmin.Add(1)
 			w.Header().Set("Retry-After", "1")
 			writeError(w, 503, "Повторите запрос позже")
 			return
@@ -161,13 +200,16 @@ func (s *Server) page(name string) http.HandlerFunc {
 			http.NotFound(w, r)
 			return
 		}
-		b, err := fs.ReadFile(s.files, "static/"+name)
-		if err != nil {
+		asset := s.assets["/static/"+name]
+		if asset == nil {
 			writeError(w, 500, "Страница недоступна")
 			return
 		}
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		_, _ = w.Write(b)
+		policy := "no-store"
+		if name == "poll.html" {
+			policy = "public, max-age=300"
+		}
+		s.serveRepresentation(w, r, asset, policy)
 	}
 }
 
@@ -218,9 +260,11 @@ func (s *Server) createPoll(w http.ResponseWriter, r *http.Request) {
 	}
 	if err != nil {
 		s.storageErrors.Add(1)
+		s.preparationFailures.Add(1)
 		writeError(w, 503, "Не удалось подтвердить создание опроса. Проверьте список перед повтором")
 		return
 	}
+	s.cacheDefinition(p)
 	writeJSON(w, 201, public(p))
 }
 
@@ -245,6 +289,7 @@ func (s *Server) getPoll(w http.ResponseWriter, r *http.Request) {
 	case s.readInflight <- struct{}{}:
 		defer func() { <-s.readInflight }()
 	default:
+		s.gateReads.Add(1)
 		w.Header().Set("Retry-After", "1")
 		writeError(w, 503, "Опрос временно недоступен. Повторите запрос позже")
 		return
@@ -266,6 +311,7 @@ func (s *Server) getPoll(w http.ResponseWriter, r *http.Request) {
 		writeError(w, 503, "Опрос временно недоступен")
 		return
 	}
+	s.cacheDefinition(p)
 	writeJSON(w, 200, public(p))
 }
 
@@ -296,6 +342,7 @@ func (s *Server) vote(w http.ResponseWriter, r *http.Request) {
 	case s.inflight <- struct{}{}:
 		defer func() { <-s.inflight }()
 	default:
+		s.gateVotes.Add(1)
 		s.rejected.Add(1)
 		w.Header().Set("Retry-After", "1")
 		writeJSON(w, 503, map[string]string{"error": "Сервис занят. Повторите с тем же идентификатором", "outcome": "not_admitted"})
@@ -367,6 +414,7 @@ func (s *Server) vote(w http.ResponseWriter, r *http.Request) {
 		status = 404
 		s.rejected.Add(1)
 	case "busy":
+		s.queueRefusals.Add(1)
 		s.rejected.Add(1)
 		w.Header().Set("Retry-After", "1")
 		writeJSON(w, 503, map[string]string{"error": "Сервис занят. Повторите с тем же идентификатором", "outcome": "not_admitted"})

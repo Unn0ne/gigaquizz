@@ -8,6 +8,8 @@ import argparse
 from contextlib import ExitStack
 from datetime import datetime, timedelta, timezone
 import fcntl
+from functools import partial
+import math
 import hashlib
 import http.cookiejar
 import json
@@ -32,11 +34,27 @@ MAX_KAFKA_LAB = 26 * 1024**3
 CHILD_OPEN_FILES = 16384
 
 
-def child_limits():
+def child_limits(open_files=CHILD_OPEN_FILES, signal_mask=None):
     # Only the freshly forked benchmark child is changed, never this shell,
     # another service or a system-wide sysctl. 4096 workers use ledger + socket.
     _, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
-    resource.setrlimit(resource.RLIMIT_NOFILE, (CHILD_OPEN_FILES, hard))
+    resource.setrlimit(resource.RLIMIT_NOFILE, (open_files, hard))
+    if signal_mask is not None:
+        signal.pthread_sigmask(signal.SIG_SETMASK, signal_mask)
+
+
+def spawn_owned(command, registry, open_files, **kwargs):
+    # Registration must precede delivery of a pending Ctrl-C/SIGTERM. Otherwise
+    # Popen can return a live PID just as the handler raises, before assignment.
+    # This harness targets Unix hosts (flock/resource were already required).
+    previous = signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGINT, signal.SIGTERM})
+    try:
+        kwargs['preexec_fn'] = partial(child_limits, open_files, previous)
+        process = subprocess.Popen(command, **kwargs)
+        registry.append(process)
+    finally:
+        signal.pthread_sigmask(signal.SIG_SETMASK, previous)
+    return process
 
 
 def now():
@@ -101,12 +119,107 @@ def psql_environment(database):
     return env
 
 
-def plan_bytes(rate, repeat_every, mode):
+def plan_bytes(rate, repeat_every, mode, partitions=4, generators=1, workers=256):
     attempts = rate * 60 + (rate * 60 // repeat_every if repeat_every else 0)
     # Conservative old single-record encoding, RF3, index/protocol headroom,
     # 64-byte private client records and fixed service/segment allowance.
     per_attempt = (68 if mode == 'simple-files' else 96 * 3 * 2) + 80
-    return attempts, RESERVE + attempts * per_attempt + 512 * 1024**2
+    indexes = max(512 * 1024**2, partitions * 3 * 2 * 1024**2 + 64 * 1024**2) if mode == 'postgres-kafka' else 512 * 1024**2
+    private_inventory = generators * (workers + 1) * 4096 + (1024**2 if generators > 1 else 0)
+    return attempts, RESERVE + attempts * per_attempt + indexes + private_inventory
+
+
+
+def local_budget(args):
+    generators = getattr(args, 'generators', 1)
+    workers = getattr(args, 'workers', 256)
+    queue = getattr(args, 'queue', 4096)
+    check(1 <= generators <= 4, 'local generator count must be 1..4')
+    check(1 <= workers <= 4096 and 1 <= queue <= 1_000_000, 'invalid per-generator resource bounds')
+    total_workers = generators * workers
+    # A child generator owns one ledger and one connection per worker. The
+    # application can receive connections from every generator simultaneously.
+    open_files = max(CHILD_OPEN_FILES, 2 * total_workers + 512)
+    return {'generators': generators, 'workers_per_generator': workers,
+            'workers_total': total_workers, 'queue_per_generator': queue,
+            'queue_total': generators * queue,
+            'generator_GOMEMLIMIT_total_bytes': generators * 2 * 1024**3,
+            'application_GOMEMLIMIT_bytes': int(getattr(args, 'app_memory', '3GiB')[0]) * 1024**3,
+            'memory_limit_semantics': 'Go soft heap limits, not RSS caps or RAM reservations; excludes shared brokers and runtime overhead',
+            'estimated_owned_open_files_total': 3 * total_workers + 512 * (generators + 1),
+            'owned_child_open_file_limit': open_files}
+
+
+def require_plan_support(binary, reader=False):
+    try:
+        result = subprocess.run([str(binary), '-h'], stdin=subprocess.DEVNULL,
+                                capture_output=True, text=True, timeout=5)
+    except subprocess.TimeoutExpired:
+        raise RuntimeError('binary plan-capability probe exceeded its five-second deadline') from None
+    help_text = result.stdout + result.stderr
+    required = ('audit-plan', 'ledgers') if reader else ('prepare-plan', 'total-unique', 'generators', 'plan', 'generator')
+    check(result.returncode == 0 and len(help_text) <= 65536 and
+          all(re.search(r'(?m)^\s+-' + flag + r'(?:\s|$)', help_text) for flag in required),
+          'multiple generators require plan-capable load and audit binaries; frozen POST-only binaries support --generators 1 only')
+
+
+LOAD_SUM_FIELDS = (
+    'planned_attempts', 'planned_unique_keys', 'http_post_sent', 'valid_recorded_ack',
+    'unknown', 'closed', 'not_admitted', 'not_open', 'rejected', 'generator_skipped',
+    'journey_failed', 'journey_started', 'journey_completed_before_post', 'http_get_sent',
+    'http_get_failures', 'http_get_body_bytes', 'http_get_decoded_body_bytes',
+    'invalid_successful_responses', 'ledger_bytes',
+)
+OUTCOME_FIELDS = ('valid_recorded_ack', 'unknown', 'closed', 'not_admitted', 'not_open',
+                  'rejected', 'generator_skipped', 'journey_failed')
+GET_SUM_FIELDS = ('sent', 'failures', 'response_body_bytes', 'decoded_body_bytes',
+                  'timeouts', 'transport_failures', 'status_failures', 'validation_failures')
+
+
+def aggregate_load_reports(loads, attempts, unique):
+    check(1 < len(loads) <= 4, 'invalid generator report inventory')
+    for load in loads:
+        check(load.get('complete') is True and load.get('cancelled') is False, 'a generator did not finish its complete plan')
+        check(all(type(load.get(key, 0)) is int and load.get(key, 0) >= 0 for key in LOAD_SUM_FIELDS),
+              'invalid generator counter type')
+        check(sum(load.get(key, 0) for key in OUTCOME_FIELDS) == load.get('planned_attempts'),
+              'generator outcomes do not cover its planned attempts')
+        check(all(load.get(key) == loads[0].get(key) for key in ('mode', 'repeat_every', 'max_lag_ms', 'scheduled_seconds', 'post_latency_scope')),
+              'incompatible generator report modes or windows')
+    result = {key: sum(load.get(key, 0) for load in loads) for key in LOAD_SUM_FIELDS}
+    check(result['planned_attempts'] == attempts and result['planned_unique_keys'] == unique,
+          'combined generator population differs from the single profile plan')
+    result.update(mode=loads[0]['mode'], complete=True, cancelled=False, generators=len(loads),
+                  planned_unique_per_second=unique / 60, scheduled_seconds=60,
+                  repeat_every=loads[0]['repeat_every'], max_lag_ms=loads[0]['max_lag_ms'],
+                  workers=sum(load['workers'] for load in loads), queue=sum(load['queue'] for load in loads),
+                  post_latency_scope=loads[0]['post_latency_scope'],
+                  method='Sum of disjoint ranges in one private plan; one independent reader reconciles every range. No combined latency quantiles are inferred from per-generator quantiles.',
+                  latency_quantiles='See individual load reports; histograms are not exported by the generator.')
+    for value, weight in (('latency_mean_ms', 'http_post_sent'), ('journey_mean_ms', 'journey_started')):
+        check(all(isinstance(load.get(value, 0), (int, float)) and math.isfinite(load.get(value, 0)) and load.get(value, 0) >= 0 for load in loads),
+              'invalid generator latency')
+        result[value] = sum(load.get(value, 0) * load.get(weight, 0) for load in loads) / result[weight] if result[weight] else 0
+    for key in ('latency_max_ms', 'journey_max_ms'):
+        result[key] = max(load.get(key, 0) for load in loads)
+    for key in ('post_sent_per_scheduled_second', 'ack_received_per_scheduled_second'):
+        check(all(len(load.get(key, [])) == 60 and all(type(x) is int and x >= 0 for x in load[key]) for load in loads),
+              'invalid generator per-second inventory')
+        result[key] = [sum(load[key][i] for load in loads) for i in range(60)]
+    stages = [load.get('http_get_stages', []) for load in loads]
+    check(all([stage.get('stage') for stage in x] == [stage.get('stage') for stage in stages[0]] for x in stages),
+          'generator GET stages differ')
+    if stages[0]:
+        result['http_get_stages'] = []
+        for i, first in enumerate(stages[0]):
+            members = [x[i] for x in stages]
+            check(all(type(m.get(key, 0)) is int and m.get(key, 0) >= 0 for m in members for key in GET_SUM_FIELDS),
+                  'invalid GET stage counters')
+            combined = {key: sum(m.get(key, 0) for m in members) for key in GET_SUM_FIELDS}
+            combined.update(stage=first['stage'], max_latency_ms=max(m.get('max_latency_ms', 0) for m in members))
+            combined['mean_latency_ms'] = sum(m.get('mean_latency_ms', 0) * m['sent'] for m in members) / combined['sent'] if combined['sent'] else 0
+            result['http_get_stages'].append(combined)
+    return result
 
 
 def allocated_bytes(root):
@@ -118,21 +231,26 @@ def run(args):
     source = Path(__file__).resolve().parents[1]
     runtime = Path(args.runtime_root).resolve() if args.runtime_root else source
     check(runtime.is_dir(), 'runtime directory must exist')
+    budget = local_budget(args)
     _, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
-    check(hard == resource.RLIM_INFINITY or hard >= CHILD_OPEN_FILES, 'child open-file budget requires a hard limit of at least 16384')
+    check(hard == resource.RLIM_INFINITY or hard >= budget['owned_child_open_file_limit'], 'hard open-file limit is below the combined owned-child budget')
     app = Path(args.server_binary).resolve() if args.server_binary else source / 'bin/gigaquizz'
     generator = Path(args.load_binary).resolve() if args.load_binary else source / 'bin/httpbench'
-    for binary in (app, generator):
+    reader = Path(args.audit_binary).resolve() if getattr(args, 'audit_binary', None) else source / 'bin/httpbench'
+    for binary in (app, generator, reader):
         check(binary.is_file() and os.access(binary, os.X_OK), 'build the application and httpbench first')
-    attempts, required = plan_bytes(args.rate, args.repeat_every, args.mode)
+    attempts, required = plan_bytes(args.rate, args.repeat_every, args.mode, getattr(args, 'partitions', 4), budget['generators'], budget['workers_per_generator'])
     check(attempts <= 10_000_000, 'maximum 10 million planned attempts per local profile')
+    if budget['generators'] > 1:
+        require_plan_support(generator)
+        require_plan_support(reader, reader=True)
     check(shutil.disk_usage(runtime).free >= required, 'insufficient disk for this profile plus reserve; old data is preserved')
     if args.mode == 'postgres-kafka':
         lab = runtime / '.local/kafka-lab'
         marker = lab / '.gigaquizz-kafka-lab'
         check(not lab.is_symlink() and marker.is_file() and not marker.is_symlink() and
               marker.read_text() == 'gigaquizz native Kafka lab v1\n', 'owned local Kafka lab marker required')
-        check(allocated_bytes(lab) + attempts * 96 * 3 * 2 + 512 * 1024**2 <= MAX_KAFKA_LAB,
+        check(allocated_bytes(lab) + required - RESERVE - attempts * 80 <= MAX_KAFKA_LAB,
               'predicted retained Kafka lab exceeds 26GiB; preserve old data and use a smaller profile')
     base = 'http://127.0.0.1:' + str(args.port)
     with socket.socket() as probe:
@@ -150,14 +268,22 @@ def run(args):
             fcntl.flock(shared, fcntl.LOCK_EX | fcntl.LOCK_NB)
         directory = root / args.label
         directory.mkdir(mode=0o700, exist_ok=False)
-        return owned_profile(args, source, runtime, app, generator, base, directory, attempts, required)
+        return owned_profile(args, source, runtime, app, generator, base, directory, attempts, required, reader)
 
 
-def owned_profile(args, source, runtime, app, generator, base, directory, attempts, required):
+def owned_profile(args, source, runtime, app, generator, base, directory, attempts, required, reader=None):
+    # run() always supplies the current reader separately from a frozen workload.
+    reader = reader or generator
+    budget = local_budget(args)
+    generators = budget['generators']
+    owned_children = []
+    spawn = partial(spawn_owned, registry=owned_children, open_files=budget['owned_child_open_file_limit'])
     password = secrets.token_urlsafe(32)
     values = {'HTTP_ADDR': '127.0.0.1:' + str(args.port), 'PUBLIC_URL': base,
               'ADMIN_PASSWORD': password, 'DATA_DIR': str(directory / 'data'),
-              'MAX_INFLIGHT': str(args.max_inflight), 'MAX_UNIQUE_VOTERS': str(args.rate * 60 + 100)}
+              'FILE_PARTITIONS': str(getattr(args, 'file_partitions', 1)),
+              'MAX_INFLIGHT': str(args.max_inflight), 'MAX_UNIQUE_VOTERS': str(args.rate * 60 + 100),
+              'MAX_PARTITION_UNIQUE_VOTERS': str(args.rate * 60 + 100)}
     if args.mode == 'postgres-kafka':
         database = os.environ.get('TEST_DATABASE_URL', '')
         check(local_database(database, runtime), 'TEST_DATABASE_URL must target the local test database')
@@ -188,6 +314,7 @@ def owned_profile(args, source, runtime, app, generator, base, directory, attemp
     admin = urllib.request.build_opener(urllib.request.ProxyHandler({}),
                                        urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
     child = workload = None
+    generator_children = []
     app_starts = 0
     stage = 'startup'
     profile_started = time.monotonic()
@@ -205,16 +332,21 @@ def owned_profile(args, source, runtime, app, generator, base, directory, attemp
               'scope': 'Real local HTTP application, isolated real 60-second poll, exact private-ledger audit, process restart; no TLS/CDN capacity claim',
               'diagnostic_cpu_profile': getattr(args, 'cpu_profile', False),
               'configuration': {'rate_unique_s': args.rate, 'planned_attempts': attempts,
-                                'workers': args.workers, 'generator_queue': args.queue,
+                                'workers': args.workers, 'generator_queue': args.queue, 'generators': generators,
+                                'combined_resource_budget': budget,
                                 'max_lag_ms': args.max_lag_ms, 'repeat_every': args.repeat_every,
                                 'journey': getattr(args, 'journey', False),
+                                'definition': getattr(args, 'definition', False),
+                                'file_partitions': getattr(args, 'file_partitions', 1) if args.mode == 'simple-files' else None,
+                                'max_partition_unique_voters': args.rate * 60 + 100 if args.mode == 'simple-files' else None,
                                 'max_inflight': args.max_inflight, 'kafka_partitions': args.partitions if args.mode == 'postgres-kafka' else None,
                                 'batch_votes_override': args.batch_votes, 'queue_votes_override': args.queue_votes,
                                 'linger_ms_override': args.linger_ms, 'app_GOMEMLIMIT': args.app_memory,
                                 'generator_GOMEMLIMIT': '2GiB', 'GOGC': '100', 'GOMAXPROCS': os.cpu_count() or 1,
-                                'owned_child_open_file_limit': CHILD_OPEN_FILES},
+                                'owned_child_open_file_limit': budget['owned_child_open_file_limit']},
               'binary_sha256': {'application': hashlib.sha256(app.read_bytes()).hexdigest(),
-                                'generator_and_reader': hashlib.sha256(generator.read_bytes()).hexdigest()},
+                                'generator': hashlib.sha256(generator.read_bytes()).hexdigest(),
+                                'reader': hashlib.sha256(reader.read_bytes()).hexdigest()},
               'disk': {'required_bytes_including_reserve': required, 'reserve_bytes': RESERVE,
                        'free_before': shutil.disk_usage(runtime).free},
               'samples': [], 'checks': [], 'errors': []}
@@ -236,6 +368,9 @@ def owned_profile(args, source, runtime, app, generator, base, directory, attemp
         for role, process in (('application', child), ('generator_or_reader', workload)):
             if process is not None and process.poll() is None:
                 roles[role] = process.pid
+        for i, process in enumerate(generator_children):
+            if process.poll() is None:
+                roles['generator_' + str(i).zfill(3)] = process.pid
         measured_stage = stage
         at = datetime.now(timezone.utc)
         if stage == 'workload' and poll_window:
@@ -268,8 +403,8 @@ def owned_profile(args, source, runtime, app, generator, base, directory, attemp
         command = [str(app), '-env', str(config)]
         if getattr(args, 'cpu_profile', False):
             command += ['-cpu-profile', str(directory / ('cpu-' + str(app_starts) + '.pprof'))]
-        child = subprocess.Popen(command, cwd=source, env=env,
-                                 stdin=subprocess.DEVNULL, stdout=log, stderr=log, preexec_fn=child_limits)
+        child = spawn(command, cwd=source, env=env,
+                                 stdin=subprocess.DEVNULL, stdout=log, stderr=log)
         until = time.monotonic() + 90
         while time.monotonic() < until:
             check(child.poll() is None, 'owned application exited; inspect private application.log')
@@ -282,11 +417,34 @@ def owned_profile(args, source, runtime, app, generator, base, directory, attemp
             time.sleep(.2)
         raise RuntimeError('owned application readiness deadline exceeded')
 
+    def wait_processes(processes, seconds, label):
+        deadline = time.monotonic() + seconds
+        while True:
+            statuses = [process.poll() for process in processes]
+            check(all(status is None or status == 0 for status in statuses), label + ' failed; inspect private report')
+            if all(status is not None for status in statuses):
+                return
+            check(child.poll() is None, 'application exited during ' + label)
+            check(time.monotonic() < deadline, label + ' exceeded bounded deadline')
+            sample()
+            time.sleep(1)
+
+    def wait_final(results_path):
+        deadline = time.monotonic() + 180
+        while True:
+            status, result = request(results_path, authenticated=True)
+            if status == 200 and result.get('state') == 'final' and not result.get('pending'):
+                return result
+            check(child.poll() is None, 'application exited while finalization was pending')
+            check(time.monotonic() < deadline, 'application finalization exceeded bounded deadline')
+            sample()
+            time.sleep(1)
+
     with (directory / 'application.log').open('xb') as log:
         try:
             phase('startup')
             start(log)
-            starts = datetime.now(timezone.utc) + timedelta(seconds=35 if args.mode == 'postgres-kafka' else 8)
+            starts = datetime.now(timezone.utc) + timedelta(seconds=35 if args.mode == 'postgres-kafka' else 20 if generators > 1 else 8)
             status, poll = request('/api/admin/polls', {'question': 'HTTP throughput and exact recovery', 'type': 'single',
                                   'options': ['First', 'Second'], 'starts_at': starts.isoformat()}, True)
             check(status == 201, 'isolated poll creation failed')
@@ -304,6 +462,8 @@ def owned_profile(args, source, runtime, app, generator, base, directory, attemp
                        '-ledger-dir', str(directory / 'ledger'), '-repeat-every', str(args.repeat_every), '-allow-high-load']
             if getattr(args, 'journey', False):
                 command.append('-journey')
+            if getattr(args, 'definition', False):
+                command.append('-definition')
             gen_env = os.environ.copy()
             for key in tuple(gen_env):
                 if key.startswith(('KAFKA_', 'FILE_', 'DURABILITY_', 'PG')) or key in ('POLL_PREPARATION_SECONDS', 'VOTE_DB_CONNECTIONS', 'MAX_STORED_POLLS'):
@@ -311,31 +471,54 @@ def owned_profile(args, source, runtime, app, generator, base, directory, attemp
             gen_env.update(GOMEMLIMIT='2GiB', GOGC='100', GOMAXPROCS=str(os.cpu_count() or 1))
             gen_env.pop('TEST_DATABASE_URL', None)
             gen_env.pop('ADMIN_PASSWORD', None)
+            plan_path = directory / 'plan.json'
+            ledger_root = directory / 'ledger'
+            if generators > 1:
+                ledger_root.mkdir(mode=0o700)
+                prepare = command[:]
+                prepare.remove('-allow-high-load')
+                index = prepare.index('-ledger-dir')
+                del prepare[index:index + 2]
+                prepare += ['-prepare-plan', str(plan_path), '-total-unique', str(args.rate * 60), '-generators', str(generators)]
+                phase('prepare_plan')
+                with (directory / 'plan-report.json').open('x') as output, (directory / 'plan.stderr').open('x') as error:
+                    workload = spawn(prepare, cwd=source, env=gen_env, stdin=subprocess.DEVNULL,
+                                                stdout=output, stderr=error)
+                    wait_processes([workload], 30, 'plan preparation')
+                prepared = json.loads((directory / 'plan-report.json').read_text())
+                check(prepared.get('complete') is True and prepared.get('generators') == generators and
+                      prepared.get('planned_unique_keys') == args.rate * 60 and prepared.get('planned_attempts') == attempts and
+                      prepared.get('http_votes_sent') == 0, 'prepared plan differs from the bounded profile population')
+                report['checks'].append('disjoint_global_plan_prepared')
+                workload = None
             phase('workload')
-            with (directory / 'load.json').open('x') as output, (directory / 'load.stderr').open('x') as error:
-                workload = subprocess.Popen(command, cwd=source, env=gen_env, stdin=subprocess.DEVNULL,
-                                            stdout=output, stderr=error, preexec_fn=child_limits)
-                deadline = time.monotonic() + 150
-                while workload.poll() is None:
-                    sample()
-                    check(child.poll() is None, 'application exited during load')
-                    check(time.monotonic() < deadline, 'bounded workload deadline exceeded')
-                    time.sleep(1)
-                check(workload.returncode == 0, 'HTTP generator failed; inspect private report')
-            report['load'] = json.loads((directory / 'load.json').read_text())
+            if generators == 1:
+                with (directory / 'load.json').open('x') as output, (directory / 'load.stderr').open('x') as error:
+                    workload = spawn(command, cwd=source, env=gen_env, stdin=subprocess.DEVNULL,
+                                                stdout=output, stderr=error)
+                    wait_processes([workload], 150, 'HTTP generator')
+                report['load'] = json.loads((directory / 'load.json').read_text())
+            else:
+                with ExitStack() as streams:
+                    for i in range(generators):
+                        name = 'load-' + str(i).zfill(3)
+                        output = streams.enter_context((directory / (name + '.json')).open('x'))
+                        error = streams.enter_context((directory / (name + '.stderr')).open('x'))
+                        launch = [str(generator), '-plan', str(plan_path), '-generator', str(i),
+                                  '-ledger-dir', str(ledger_root / ('generator-' + str(i).zfill(3))), '-allow-high-load']
+                        generator_children.append(spawn(launch, cwd=source, env=gen_env, stdin=subprocess.DEVNULL,
+                                                                   stdout=output, stderr=error))
+                    wait_processes(generator_children, 150, 'HTTP generators')
+                loads = [json.loads((directory / ('load-' + str(i).zfill(3) + '.json')).read_text()) for i in range(generators)]
+                report['generator_loads'] = loads
+                report['load'] = aggregate_load_reports(loads, attempts, args.rate * 60)
+                private_json(directory / 'load.json', report['load'])
             check(report['load'].get('complete') is True and report['load'].get('cancelled') is False,
                   'generator did not finish its full planned window')
             check(report['load'].get('planned_attempts') == attempts, 'generator plan differs from the profile disk/population plan')
             phase('final_result')
             results_path = '/api/admin/polls/' + poll['id'] + '/results'
-            deadline = time.monotonic() + 180
-            while True:
-                status, result = request(results_path, authenticated=True)
-                if status == 200 and result.get('state') == 'final' and not result.get('pending'):
-                    break
-                check(time.monotonic() < deadline, 'application finalization exceeded bounded deadline')
-                sample()
-                time.sleep(1)
+            result = wait_final(results_path)
             private_json(directory / 'results.json', result)
             report['final_unique_votes'] = result['total_votes']
             report['final_choice_counts'] = [x['votes'] for x in result['options']]
@@ -346,15 +529,19 @@ def owned_profile(args, source, runtime, app, generator, base, directory, attemp
             phase('restart')
             stop(child)
             start(log)
-            status, after = request(results_path, authenticated=True)
-            check(status == 200 and after == result, 'final result changed after application restart')
+            after = wait_final(results_path)
+            check(after == result, 'final result changed after application restart')
             check(request('/api/polls/' + poll['id'] + '/votes', {'token': secrets.token_hex(16), 'choices': [1]})[0] == 410,
                   'restarted closed poll admitted a late vote')
             report['checks'] += ['final_result_unchanged_after_process_restart', 'late_post_410']
             stop(child)
-            audit = [str(generator), '-audit-only', str(directory / 'ledger/manifest.json'), '-results', str(directory / 'results.json')]
+            audit = [str(reader), '-results', str(directory / 'results.json')]
+            if generators == 1:
+                audit += ['-audit-only', str(directory / 'ledger/manifest.json')]
+            else:
+                audit += ['-audit-plan', str(plan_path), '-ledgers', str(ledger_root)]
             if args.mode == 'simple-files':
-                audit += ['-file-journal', str(directory / 'data/polls' / poll['id'] / 'journal')]
+                audit += ['-file-journal', str(directory / 'data/polls' / poll['id'])]
             else:
                 psql = args.psql or shutil.which('psql') or '/Applications/Postgres.app/Contents/Versions/latest/bin/psql'
                 check(Path(psql).is_file(), 'psql is required to read the isolated journal configuration')
@@ -368,8 +555,8 @@ def owned_profile(args, source, runtime, app, generator, base, directory, attemp
                 audit += ['-kafka-config', str(directory / 'journal-config.json')]
             phase('independent_reader')
             with (directory / 'audit.json').open('x') as output, (directory / 'audit.stderr').open('x') as error:
-                workload = subprocess.Popen(audit, cwd=source, env=gen_env, stdin=subprocess.DEVNULL,
-                                            stdout=output, stderr=error, preexec_fn=child_limits)
+                workload = spawn(audit, cwd=source, env=gen_env, stdin=subprocess.DEVNULL,
+                                            stdout=output, stderr=error)
                 deadline = time.monotonic() + 180
                 while workload.poll() is None:
                     sample()
@@ -382,12 +569,24 @@ def owned_profile(args, source, runtime, app, generator, base, directory, attemp
             check(report['audit'].get('matched_ack_attempts') == report['load']['valid_recorded_ack'] and
                   report['audit'].get('missing_ack_attempts') == 0 and report['audit'].get('unverified_ack_attempts') == 0,
                   'independent reader did not verify every confirmed HTTP attempt')
+            if args.mode == 'postgres-kafka':
+                inspection = report['audit'].get('journal_inspection', {})
+                check(inspection.get('method') == 'kafka-stable-snapshot' and
+                      inspection.get('strict_snapshot_complete') is True and
+                      inspection.get('snapshot_partitions') == args.partitions,
+                      'Kafka audit must certify a complete stable snapshot, not only a CLOSED prefix')
+            if generators > 1:
+                check(report['audit'].get('generators') == generators and report['audit'].get('planned_unique_keys') == args.rate * 60 and
+                      report['audit'].get('planned_attempts') == attempts, 'independent reader did not certify every planned generator range')
+            report['load_coverage'] = {'acknowledged_attempt_fraction': report['load']['valid_recorded_ack'] / attempts,
+                                       'planned_attempts_without_ack': attempts - report['load']['valid_recorded_ack'],
+                                       'all_planned_attempts_acknowledged': report['load']['valid_recorded_ack'] == attempts}
             report['checks'].append('independent_exact_journal_audit')
             report['correct'] = True
         except (Exception, KeyboardInterrupt) as error:
             report['errors'].append({'type': type(error).__name__, 'message': str(error) if isinstance(error, RuntimeError) else 'local profile operation failed; inspect private artifacts'})
         finally:
-            for process in (workload, child):
+            for process in reversed(owned_children):
                 try:
                     stop(process)
                 except (RuntimeError, OSError, subprocess.TimeoutExpired) as error:
@@ -408,28 +607,34 @@ def main():
     p.add_argument('--runtime-root')
     p.add_argument('--server-binary')
     p.add_argument('--load-binary')
+    p.add_argument('--audit-binary', help='current independent reader; defaults to bin/httpbench even with a frozen load binary')
     p.add_argument('--port', type=int, default=8093)
     p.add_argument('--rate', type=int, default=1000)
-    p.add_argument('--workers', type=int, default=256)
+    p.add_argument('--workers', type=int, default=256, help='workers per generator; shared-host budget includes every process')
+    p.add_argument('--generators', type=int, default=1, help='1..4 local processes sharing the total --rate; >1 requires plan-capable binaries, frozen POST-only binaries are unsupported')
     p.add_argument('--queue', type=int, default=4096)
     p.add_argument('--max-lag-ms', type=int, default=100)
     p.add_argument('--repeat-every', type=int, default=0)
     p.add_argument('--max-inflight', type=int, default=4096)
     p.add_argument('--partitions', type=int, default=4)
+    p.add_argument('--file-partitions', type=int, default=1)
     p.add_argument('--batch-votes', type=int)
     p.add_argument('--queue-votes', type=int)
     p.add_argument('--linger-ms', type=int)
     p.add_argument('--app-memory', choices=('2GiB', '3GiB', '4GiB'), default='3GiB')
     p.add_argument('--psql')
     p.add_argument('--journey', action='store_true', help='five sequential cold GETs before each original POST; repeats POST-only; no JS/browser/TLS simulation')
+    p.add_argument('--definition', action='store_true', help='journey uses new cacheable definition endpoint; preserved baseline uses old GET')
     p.add_argument('--cpu-profile', action='store_true', help='separate diagnostic run: profile each owned app startup through shutdown; needs an application built with -cpu-profile')
     a = p.parse_args()
     if not re.fullmatch('[a-z0-9_]{1,80}', a.label):
         p.error('label must contain 1..80 lowercase ASCII letters, digits or underscores')
     if not (1024 < a.port <= 65535 and 1 <= a.rate <= 100_000 and 1 <= a.workers <= 4096 and
-            1 <= a.queue <= 1_000_000 and 1 <= a.max_lag_ms <= 1000 and 0 <= a.repeat_every <= 100_000 and
-            1 <= a.max_inflight <= 100_000 and 1 <= a.partitions <= 32):
+            1 <= a.generators <= 4 and 1 <= a.queue <= 1_000_000 and 1 <= a.max_lag_ms <= 1000 and 0 <= a.repeat_every <= 100_000 and
+            1 <= a.max_inflight <= 100_000 and 1 <= a.partitions <= 256 and 1 <= a.file_partitions <= 256):
         p.error('profile exceeds bounded local limits')
+    if a.definition and not a.journey:
+        p.error('--definition requires --journey')
     if ((a.batch_votes is not None and not 1 <= a.batch_votes <= (131072 if a.mode == 'simple-files' else 4096)) or
         (a.queue_votes is not None and not 1 <= a.queue_votes <= (1048576 if a.mode == 'simple-files' else 8192)) or
         (a.linger_ms is not None and not 1 <= a.linger_ms <= 1000)):

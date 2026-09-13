@@ -1,0 +1,16 @@
+{
+  "profiles": 23,
+  "all_original_profiles_passed": false,
+  "failed_original_profiles": 1,
+  "profiles_audited_after_manual_recovery": 1,
+  "all_journal_audits_passed_including_recovery": true,
+  "planned_attempts": 43337142,
+  "confirmed_attempts": 33879753,
+  "confirmed_attempts_exactly_matched": 33879753,
+  "unverified_confirmed_attempts": 0,
+  "unknown_client_attempts": 22738,
+  "unknown_attempts_found_committed": 14,
+  "missing_ack_attempts": 0,
+  "profiles_with_full_planned_ACK_coverage": 3,
+  "scope": "Includes diagnostic earlier candidates and frozen old app baselines; failed original profiles retain correct=false even if subsequent recovery allowed exact audit. Not a single event or 100M HTTP proof. See per-profile binary hashes."
+}

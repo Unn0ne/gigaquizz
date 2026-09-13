@@ -1,0 +1,61 @@
+{
+  "scope": "terminal writer finalization recovery, no hot Submit change",
+  "checks": [
+    {
+      "command": [
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "./internal/kafkapoll",
+        "./internal/votelog",
+        "./internal/httpapi"
+      ],
+      "exit": 0,
+      "wall_seconds": 4.614
+    },
+    {
+      "command": [
+        "go",
+        "vet",
+        "./internal/kafkapoll",
+        "./internal/votelog",
+        "./internal/httpapi",
+        "./cmd/gigaquizz"
+      ],
+      "exit": 0,
+      "wall_seconds": 0.596
+    },
+    {
+      "command": [
+        "go",
+        "build",
+        "-o",
+        "bin/gigaquizz-recovery",
+        "./cmd/gigaquizz"
+      ],
+      "exit": 0,
+      "wall_seconds": 1.565
+    }
+  ],
+  "real_regression": {
+    "name": "TestTerminalWriterFailureFinalizesWithoutApplicationRestart",
+    "gate": "GIGAQUIZZ_APP_KAFKA_TEST",
+    "race": true,
+    "wall_seconds": 69.334,
+    "result": "PASS",
+    "application_restarts": 0,
+    "durable_acknowledgments": 2,
+    "unique_votes": 2,
+    "fenced_unknown_attempts": 1,
+    "missing_acknowledgments": 0,
+    "strict_snapshot_partitions": 2,
+    "post_closed_boots": 1,
+    "original_choice_and_admission_verified": true,
+    "retired_failure_counter": 1,
+    "failed_writer_gauge_after_finalization": 0,
+    "initial_test_attempt": "functional recovery and strict reader succeeded; failed only because test incorrectly expected all BOOT rather than post-CLOSED BOOT count; corrected and rerun in another isolated poll"
+  },
+  "binary": "bin/gigaquizz-recovery",
+  "sha256": "c81384d94d9c8825b61d439d94d6791c3705356651324b26a0f7391fc90eed78"
+}

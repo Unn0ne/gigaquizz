@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
@@ -51,7 +52,7 @@ func run() (runErr error) {
 	}
 	startup, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
-	store, err := filestore.New(startup, filestore.Config{Directory: cfg.DataDir, MaxUnique: cfg.MaxUnique, BatchSize: cfg.BatchSize, QueueVotes: cfg.QueueVotes, Linger: cfg.Linger})
+	store, err := filestore.New(startup, filestore.Config{Directory: cfg.DataDir, MaxUnique: cfg.MaxUnique, MaxPartitionUnique: cfg.MaxPartitionUnique, Partitions: cfg.Partitions, BatchSize: cfg.BatchSize, QueueVotes: cfg.QueueVotes, Linger: cfg.Linger})
 	if err != nil {
 		return fmt.Errorf("cannot open file storage: %w", err)
 	}
@@ -70,7 +71,14 @@ func run() (runErr error) {
 	defer stop()
 	workerCtx, stopWorker := context.WithCancel(context.Background())
 	workerDone := make(chan struct{})
-	go func() { defer close(workerDone); maintenance(workerCtx, api, store) }()
+	healthGate := &readinessGate{target: api}
+	go func() {
+		defer close(workerDone)
+		readyDone := make(chan struct{})
+		go func() { defer close(readyDone); readiness(workerCtx, healthGate, store, 5*time.Second) }()
+		maintenance(workerCtx, api, store)
+		<-readyDone
+	}()
 	serveDone := make(chan error, 1)
 	go func() { serveDone <- server.Serve(listener) }()
 	slog.Info("gigaquizz started", "url", cfg.PublicURL, "admin", cfg.PublicURL+"/admin")
@@ -84,7 +92,7 @@ func run() (runErr error) {
 		}
 		return nil
 	}
-	api.SetReady(false)
+	healthGate.stop()
 	shutdown, shutdownCancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer shutdownCancel()
 	err = server.Shutdown(shutdown)
@@ -107,17 +115,54 @@ func maintenance(ctx context.Context, api *httpapi.Server, store poll.Repository
 			return
 		case <-tick.C:
 		}
-		work, cancel := context.WithTimeout(ctx, 5*time.Minute)
-		_, err := store.FinalizeDue(work)
-		cancel()
+		_, err := store.FinalizeDue(ctx)
 		ticks++
-		if ticks%5 == 0 {
-			ping, pingCancel := context.WithTimeout(ctx, time.Second)
-			api.SetReady(store.Ping(ping) == nil)
-			pingCancel()
-		}
+
 		if ticks%30 == 0 {
 			slog.Info("service counters", "counters", api.Metrics(), "finalization_healthy", err == nil)
 		}
 	}
+}
+
+// Health checks have their own goroutine; a large historical replay cannot
+// suspend readiness updates for the currently admitting writer.
+func readiness(ctx context.Context, api interface{ SetReady(bool) }, store interface{ Ping(context.Context) error }, interval time.Duration) {
+	tick := time.NewTicker(interval)
+	defer tick.Stop()
+	for {
+		ping, cancel := context.WithTimeout(ctx, time.Second)
+		err := store.Ping(ping)
+		cancel()
+		if ctx.Err() != nil {
+			return
+		}
+		api.SetReady(err == nil)
+		select {
+		case <-ctx.Done():
+			return
+		case <-tick.C:
+		}
+	}
+}
+
+// An in-flight health check cannot re-enable readiness after shutdown starts.
+// This gate does not wait for a possibly blocked Ping or finalization syscall.
+type readinessGate struct {
+	mu      sync.Mutex
+	stopped bool
+	target  interface{ SetReady(bool) }
+}
+
+func (g *readinessGate) SetReady(ready bool) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	if !g.stopped {
+		g.target.SetReady(ready)
+	}
+}
+func (g *readinessGate) stop() {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	g.stopped = true
+	g.target.SetReady(false)
 }

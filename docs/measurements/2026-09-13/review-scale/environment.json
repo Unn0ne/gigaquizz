@@ -1,0 +1,15 @@
+{
+  "date": "2026-09-13",
+  "machine": "Apple M1 Pro",
+  "logical_CPUs": 10,
+  "RAM_GiB": 32,
+  "os": "macOS 26.6.2",
+  "go": "go1.26.1 darwin/arm64",
+  "postgres": "16.3",
+  "kafka": "4.3.1",
+  "brokers": 3,
+  "replication_factor": 3,
+  "min_in_sync_replicas": 2,
+  "scope": "All clients, app, PostgreSQL and Kafka on one laptop. Plain local HTTP and local plaintext Kafka; no CDN/TLS capacity, physical redundancy or 100M HTTP claim. Profiles run sequentially, without parallel builds/tests.",
+  "data_policy": "Only aggregate reports, source hashes and test summaries published. Private plans, seeds, full-ID ledgers, credentials and poll configuration retained outside git."
+}
