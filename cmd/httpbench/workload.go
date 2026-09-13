@@ -36,52 +36,58 @@ type workerStats struct {
 	GET              [journeyStages]getStats
 }
 type workloadReport struct {
-	Failure          string      `json:"failure,omitempty"`
-	Mode             string      `json:"mode"`
-	Complete         bool        `json:"complete"`
-	Cancelled        bool        `json:"cancelled"`
-	UniqueRate       float64     `json:"planned_unique_per_second"`
-	Attempts         uint64      `json:"planned_attempts"`
-	UniqueKeys       uint64      `json:"planned_unique_keys"`
-	RepeatEvery      uint64      `json:"repeat_every"`
-	Workers          int         `json:"workers"`
-	Queue            int         `json:"queue"`
-	MaxLagMS         float64     `json:"max_lag_ms"`
-	DurationSeconds  float64     `json:"scheduled_seconds"`
-	WallSeconds      float64     `json:"wall_seconds_including_drain"`
-	Sent             uint64      `json:"http_post_sent"`
-	ACK              uint64      `json:"valid_recorded_ack"`
-	Unknown          uint64      `json:"unknown"`
-	Closed           uint64      `json:"closed"`
-	NotAdmitted      uint64      `json:"not_admitted"`
-	NotOpen          uint64      `json:"not_open"`
-	Rejected         uint64      `json:"rejected"`
-	Skipped          uint64      `json:"generator_skipped"`
-	JourneyFailed    uint64      `json:"journey_failed"`
-	JourneyStarted   uint64      `json:"journey_started"`
-	JourneyCompleted uint64      `json:"journey_completed_before_post"`
-	GETSent          uint64      `json:"http_get_sent"`
-	GETFailures      uint64      `json:"http_get_failures"`
-	GETBytes         uint64      `json:"http_get_body_bytes"`
-	GETDecodedBytes  uint64      `json:"http_get_decoded_body_bytes"`
-	GETStages        []getReport `json:"http_get_stages,omitempty"`
-	JourneyMeanMS    float64     `json:"journey_mean_ms"`
-	JourneyMaxMS     float64     `json:"journey_max_ms"`
-	InvalidPositive  uint64      `json:"invalid_successful_responses"`
-	LedgerBytes      uint64      `json:"ledger_bytes"`
-	LatencyP50MS     float64     `json:"latency_p50_upper_bound_ms"`
-	LatencyP95MS     float64     `json:"latency_p95_upper_bound_ms"`
-	LatencyP99MS     float64     `json:"latency_p99_upper_bound_ms"`
-	LatencyMaxMS     float64     `json:"latency_max_ms"`
-	LatencyMeanMS    float64     `json:"latency_mean_ms"`
-	SentPerSecond    [60]uint64  `json:"post_sent_per_scheduled_second"`
-	ACKPerSecond     [60]uint64  `json:"ack_received_per_scheduled_second"`
-	Method           string      `json:"method"`
-	LatencyScope     string      `json:"post_latency_scope"`
+	PlanSHA256       string          `json:"plan_sha256,omitempty"`
+	Generator        int             `json:"generator"`
+	Clock            *clockReport    `json:"clock,omitempty"`
+	Transport        transportReport `json:"transport"`
+	Failure          string          `json:"failure,omitempty"`
+	Mode             string          `json:"mode"`
+	Complete         bool            `json:"complete"`
+	Cancelled        bool            `json:"cancelled"`
+	UniqueRate       float64         `json:"planned_unique_per_second"`
+	Attempts         uint64          `json:"planned_attempts"`
+	UniqueKeys       uint64          `json:"planned_unique_keys"`
+	RepeatEvery      uint64          `json:"repeat_every"`
+	Workers          int             `json:"workers"`
+	Queue            int             `json:"queue"`
+	MaxLagMS         float64         `json:"max_lag_ms"`
+	DurationSeconds  float64         `json:"scheduled_seconds"`
+	WallSeconds      float64         `json:"wall_seconds_including_drain"`
+	Sent             uint64          `json:"http_post_sent"`
+	ACK              uint64          `json:"valid_recorded_ack"`
+	Unknown          uint64          `json:"unknown"`
+	Closed           uint64          `json:"closed"`
+	NotAdmitted      uint64          `json:"not_admitted"`
+	NotOpen          uint64          `json:"not_open"`
+	Rejected         uint64          `json:"rejected"`
+	Skipped          uint64          `json:"generator_skipped"`
+	JourneyFailed    uint64          `json:"journey_failed"`
+	JourneyStarted   uint64          `json:"journey_started"`
+	JourneyCompleted uint64          `json:"journey_completed_before_post"`
+	GETSent          uint64          `json:"http_get_sent"`
+	GETFailures      uint64          `json:"http_get_failures"`
+	GETBytes         uint64          `json:"http_get_body_bytes"`
+	GETDecodedBytes  uint64          `json:"http_get_decoded_body_bytes"`
+	GETStages        []getReport     `json:"http_get_stages,omitempty"`
+	JourneyMeanMS    float64         `json:"journey_mean_ms"`
+	JourneyMaxMS     float64         `json:"journey_max_ms"`
+	InvalidPositive  uint64          `json:"invalid_successful_responses"`
+	LedgerBytes      uint64          `json:"ledger_bytes"`
+	LatencyP50MS     float64         `json:"latency_p50_upper_bound_ms"`
+	LatencyP95MS     float64         `json:"latency_p95_upper_bound_ms"`
+	LatencyP99MS     float64         `json:"latency_p99_upper_bound_ms"`
+	LatencyMaxMS     float64         `json:"latency_max_ms"`
+	LatencyMeanMS    float64         `json:"latency_mean_ms"`
+	SentPerSecond    [60]uint64      `json:"post_sent_per_scheduled_second"`
+	ACKPerSecond     [60]uint64      `json:"ack_received_per_scheduled_second"`
+	Method           string          `json:"method"`
+	LatencyScope     string          `json:"post_latency_scope"`
 }
 
 func newClient(workers int, timeout time.Duration) *http.Client {
-	tr := &http.Transport{Proxy: http.ProxyFromEnvironment, DialContext: (&net.Dialer{Timeout: 3 * time.Second, KeepAlive: 30 * time.Second}).DialContext, MaxConnsPerHost: workers, MaxIdleConns: workers, MaxIdleConnsPerHost: workers, IdleConnTimeout: 30 * time.Second, TLSHandshakeTimeout: 5 * time.Second, ResponseHeaderTimeout: timeout, DisableCompression: true, ForceAttemptHTTP2: true}
+	protocols := new(http.Protocols)
+	protocols.SetHTTP1(true)
+	tr := &http.Transport{Protocols: protocols, DialContext: (&net.Dialer{Timeout: 3 * time.Second, KeepAlive: 30 * time.Second}).DialContext, MaxConnsPerHost: workers, MaxIdleConns: workers, MaxIdleConnsPerHost: workers, IdleConnTimeout: 30 * time.Second, TLSHandshakeTimeout: 5 * time.Second, ResponseHeaderTimeout: timeout, DisableCompression: true}
 	return &http.Client{Transport: tr, Timeout: timeout, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
 }
 func validatePoll(c config, p poll.Poll) error {
@@ -114,7 +120,7 @@ func fetchPoll(ctx context.Context, c config, client *http.Client) (poll.Poll, e
 }
 
 func runWorkload(ctx context.Context, c config) (workloadReport, error) {
-	zero := workloadReport{Mode: "http-post"}
+	zero := workloadReport{Mode: "http-post", Generator: c.Generator, Transport: transportPolicy()}
 	if c.Journey {
 		zero.Mode = "http-journey"
 	}
@@ -135,9 +141,9 @@ func runWorkload(ctx context.Context, c config) (workloadReport, error) {
 		zero.Failure = "http_poll_validation_failed"
 		return zero, err
 	}
-	if time.Until(c.Start) < time.Second {
-		zero.Failure = "original_start_too_close_or_past"
-		return zero, errors.New("poll start must remain at least one second in the future")
+	if err := checkStartLead(c, time.Now()); err != nil {
+		zero.Failure = "original_start_outside_ready_interval"
+		return zero, err
 	}
 	m, err := createManifest(c, privateManifest{Poll: p})
 	if err != nil {
@@ -162,18 +168,18 @@ func executeWorkload(ctx context.Context, m privateManifest, client *http.Client
 		}
 		writers[i] = w
 	}
-	// The clock origin keeps a monotonic component. All scheduled offsets derive
-	// from the original immutable wall-clock start, never a sliding start.
-	now := time.Now()
-	start := now.Add(c.Start.Sub(now))
+	var start time.Time // Set before any jobs are sent; the queue synchronizes it.
 	jobs := make(chan attempt, c.Queue)
 	stats := make([]workerStats, c.Workers+1)
 	var workers sync.WaitGroup
+	var ready sync.WaitGroup
+	ready.Add(c.Workers)
 	for i := 0; i < c.Workers; i++ {
 		workers.Add(1)
 		go func(i int) {
 			defer workers.Done()
 			block, _ := aes.NewCipher(m.Seed[:])
+			ready.Done()
 			for a := range jobs {
 				a.Token = tokenFor(block, m.Namespace, c.KeyOffset+a.Key)
 				if ctx.Err() != nil || time.Since(start)-time.Duration(a.ScheduledNS) > c.MaxLag || writers[i].err != nil {
@@ -189,6 +195,38 @@ func executeWorkload(ctx context.Context, m privateManifest, client *http.Client
 			}
 		}(i)
 	}
+	ready.Wait()
+	var clock *clockReport
+	abortBeforeSchedule := func(reason string, cause error) (workloadReport, error) {
+		close(jobs)
+		workers.Wait()
+		for _, w := range writers {
+			_, _ = w.close()
+		}
+		// The initial manifest remains explicitly incomplete: no partial setup
+		// or failed clock check can certify a completed client workload.
+		r := summarize(c, stats, 0, 0)
+		r.Failure, r.Cancelled = reason, ctx.Err() != nil
+		r.PlanSHA256, r.Generator, r.Clock = m.PlanSHA256, c.Generator, clock
+		return r, cause
+	}
+	if c.PlanFile != "" {
+		checked, err := checkServerClock(ctx, c, client)
+		clock = &checked
+		if err != nil {
+			return abortBeforeSchedule("clock_check_failed", err)
+		}
+	}
+	if err := ctx.Err(); err != nil {
+		return abortBeforeSchedule("cancelled_before_schedule", err)
+	}
+	if err := checkStartLead(c, time.Now()); err != nil {
+		return abortBeforeSchedule("original_start_outside_ready_interval", err)
+	}
+	// Keep a monotonic origin derived from the immutable start. The clock
+	// guard certifies readiness; it never shifts the schedule to compensate.
+	now := time.Now()
+	start = now.Add(c.Start.Sub(now))
 	block, _ := aes.NewCipher(m.Seed[:])
 	scheduler := writers[c.Workers]
 	for key := uint64(0); key < c.keys(); key++ {
@@ -248,6 +286,7 @@ func executeWorkload(ctx context.Context, m privateManifest, client *http.Client
 		firstErr = err
 	}
 	r := summarize(c, stats, time.Since(start), totalRecords*ledgerBytes)
+	r.PlanSHA256, r.Generator, r.Clock = m.PlanSHA256, c.Generator, clock
 	r.Complete = firstErr == nil
 	r.Cancelled = ctx.Err() != nil
 	if firstErr != nil {
@@ -399,6 +438,7 @@ func summarize(c config, workers []workerStats, elapsed time.Duration, bytes uin
 		r.LatencyMeanMS = float64(all.LatencyNS) / float64(all.Sent) / 1e6
 	}
 	r.LatencyScope = "POST dispatch through response body read; excludes scheduler and preceding GETs"
+	r.Transport = transportPolicy()
 	if c.Journey {
 		r.Mode = "http-journey"
 		if c.Definition {

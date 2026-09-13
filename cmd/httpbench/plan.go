@@ -59,7 +59,7 @@ func (p distributedPlan) validate() error {
 	var end, attempts uint64
 	first := p.Generators[0]
 	for _, c := range p.Generators {
-		if c.URL != strings.TrimRight(c.URL, "/") || c.validate() != nil || validatePoll(c, p.Poll) != nil || c.KeyOffset != end || c.RepeatEvery != first.RepeatEvery || c.Journey != first.Journey || c.Definition != first.Definition {
+		if c.URL != first.URL || c.URL != strings.TrimRight(c.URL, "/") || c.validate() != nil || validatePoll(c, p.Poll) != nil || c.KeyOffset != end || c.RepeatEvery != first.RepeatEvery || c.Journey != first.Journey || c.Definition != first.Definition {
 			return errors.New("distributed plan ranges must completely and uniquely cover one immutable poll")
 		}
 		end += c.keys()
@@ -175,7 +175,15 @@ func configFromPlan(input config) (config, error) {
 	}
 	c := p.Generators[input.Generator]
 	c.Directory, c.Allow, c.PlanFile, c.Generator = input.Directory, input.Allow, input.PlanFile, input.Generator
+	c.MaxClockError = input.MaxClockError
 	return c, nil
+}
+
+func validatePlanManifest(p distributedPlan, index int, m privateManifest) error {
+	if index < 0 || index >= len(p.Generators) || !sameConfig(m.Config, p.Generators[index]) || !samePoll(m.Poll, p.Poll) || m.Seed != p.Seed || m.Namespace != p.Namespace || m.PlanSHA256 != p.digest() {
+		return errors.New("generator manifest differs from plan")
+	}
+	return nil
 }
 
 func runPlanAudit(ctx context.Context, path, ledgerRoot, fileJournal, kafkaConfig, resultsPath string) (auditReport, error) {
@@ -193,7 +201,7 @@ func runPlanAudit(ctx context.Context, path, ledgerRoot, fileJournal, kafkaConfi
 		return r, errors.New(r.Failure)
 	}
 	inputs := make([]auditInput, 0, len(p.Generators))
-	for i, expected := range p.Generators {
+	for i := range p.Generators {
 		if err := ctx.Err(); err != nil {
 			return r, err
 		}
@@ -209,13 +217,17 @@ func runPlanAudit(ctx context.Context, path, ledgerRoot, fileJournal, kafkaConfi
 			r.Failure = "invalid_generator_manifest"
 			return r, err
 		}
-		if !sameConfig(head.Config, expected) || !samePoll(head.Poll, p.Poll) || head.Seed != p.Seed || head.Namespace != p.Namespace || head.PlanSHA256 != p.digest() {
+		if validatePlanManifest(p, i, head) != nil {
 			r.Failure = "generator_manifest_differs_from_plan"
 			return r, errors.New(r.Failure)
 		}
 		m, states, err := loadLedgerContext(ctx, manifestPath)
 		if err != nil {
 			r.Failure = "invalid_private_ledger"
+			return r, err
+		}
+		if err := validatePlanManifest(p, i, m); err != nil {
+			r.Failure = "generator_manifest_differs_from_plan"
 			return r, err
 		}
 		inputs = append(inputs, auditInput{Manifest: m, States: states})

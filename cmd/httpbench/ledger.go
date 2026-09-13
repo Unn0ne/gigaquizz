@@ -152,6 +152,7 @@ func (w *ledgerWriter) close() (ledgerFile, error) {
 func createManifest(c config, pollData privateManifest) (privateManifest, error) {
 	m := pollData
 	m.Version = 1
+	m.Complete, m.Files = false, nil
 	m.Config = c
 	if c.PlanFile != "" {
 		p, err := loadDistributedPlan(c.PlanFile)
@@ -265,7 +266,7 @@ func checkFileBudget(workers int, soft uint64) error {
 // Inputs are private local artifacts. Reject symlinks, broad permissions,
 // unexpectedly large data and extra JSON values before allocating audit state.
 func readPrivateJSON(path string, dst any, limit int64) error {
-	f, err := os.OpenFile(path, os.O_RDONLY|syscall.O_NOFOLLOW, 0)
+	f, err := os.OpenFile(path, os.O_RDONLY|syscall.O_NOFOLLOW|syscall.O_NONBLOCK, 0)
 	if err != nil {
 		return err
 	}

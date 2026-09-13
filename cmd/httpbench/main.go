@@ -28,24 +28,25 @@ const (
 )
 
 type config struct {
-	URL         string        `json:"url"`
-	PollID      string        `json:"poll_id"`
-	Rate        uint64        `json:"unique_rate"`
-	Unique      uint64        `json:"unique_count,omitempty"`
-	KeyOffset   uint64        `json:"key_offset,omitempty"`
-	Duration    time.Duration `json:"duration_ns"`
-	Start       time.Time     `json:"start_at"`
-	Workers     int           `json:"workers"`
-	Queue       int           `json:"queue"`
-	MaxLag      time.Duration `json:"max_lag_ns"`
-	Timeout     time.Duration `json:"request_timeout_ns"`
-	RepeatEvery uint64        `json:"repeat_every"`
-	Journey     bool          `json:"journey,omitempty"`
-	Definition  bool          `json:"definition,omitempty"`
-	PlanFile    string        `json:"-"`
-	Generator   int           `json:"-"`
-	Directory   string        `json:"-"`
-	Allow       bool          `json:"-"`
+	URL           string        `json:"url"`
+	PollID        string        `json:"poll_id"`
+	Rate          uint64        `json:"unique_rate"`
+	Unique        uint64        `json:"unique_count,omitempty"`
+	KeyOffset     uint64        `json:"key_offset,omitempty"`
+	Duration      time.Duration `json:"duration_ns"`
+	Start         time.Time     `json:"start_at"`
+	Workers       int           `json:"workers"`
+	Queue         int           `json:"queue"`
+	MaxLag        time.Duration `json:"max_lag_ns"`
+	Timeout       time.Duration `json:"request_timeout_ns"`
+	RepeatEvery   uint64        `json:"repeat_every"`
+	Journey       bool          `json:"journey,omitempty"`
+	Definition    bool          `json:"definition,omitempty"`
+	PlanFile      string        `json:"-"`
+	Generator     int           `json:"-"`
+	Directory     string        `json:"-"`
+	Allow         bool          `json:"-"`
+	MaxClockError time.Duration `json:"-"`
 }
 
 func (c config) keys() uint64 {
@@ -119,7 +120,8 @@ type ledgerFile struct {
 
 func main() {
 	var c config
-	var start, audit, fileJournal, kafkaConfig, results, preparePlan, auditPlan, ledgerRoot string
+	var start, audit, fileJournal, kafkaConfig, results, preparePlan, auditPlan, ledgerRoot, inspectPlan string
+	var preflightOnly, verifyLedger bool
 	var totalUnique uint64
 	var generators int
 	flag.StringVar(&c.URL, "url", "", "HTTP(S) origin; no credentials")
@@ -127,6 +129,10 @@ func main() {
 	flag.Uint64Var(&c.Rate, "rate", 1000, "unique IDs per second (additional attempts use -repeat-every)")
 	flag.Uint64Var(&c.Unique, "unique", 0, "exact unique population over the original minute; overrides rate, at most 6M per generator")
 	flag.StringVar(&preparePlan, "prepare-plan", "", "write a new private distributed workload plan; never sends votes")
+	flag.StringVar(&inspectPlan, "inspect-plan", "", "validate a private plan offline; print digest, ranges and resource estimates without identities")
+	flag.BoolVar(&preflightOnly, "preflight-only", false, "with -plan/-generator/-ledger-dir: check resources, poll and clock without POST or creating ledgers")
+	flag.BoolVar(&verifyLedger, "verify-ledger", false, "with -plan/-generator/-ledger-dir: verify a completed client ledger offline; does not inspect application storage")
+	flag.DurationVar(&c.MaxClockError, "max-clock-error", 100*time.Millisecond, "distributed clock error budget including sample RTT, 1ms..1s; never adjusts the poll window")
 	flag.Uint64Var(&totalUnique, "total-unique", 100000000, "exact population for -prepare-plan, at most 120M")
 	flag.IntVar(&generators, "generators", 20, "generator ranges in -prepare-plan, 1..128")
 	flag.StringVar(&c.PlanFile, "plan", "", "private workload plan shared by all generators")
@@ -154,13 +160,17 @@ func main() {
 	var report any
 	var err error
 	modes := 0
-	for _, value := range []string{audit, preparePlan, auditPlan, c.PlanFile} {
+	for _, value := range []string{audit, preparePlan, auditPlan, inspectPlan, c.PlanFile} {
 		if value != "" {
 			modes++
 		}
 	}
-	if flag.NArg() != 0 || modes > 1 {
+	if flag.NArg() != 0 || modes > 1 || (preflightOnly && verifyLedger) || ((preflightOnly || verifyLedger) && c.PlanFile == "") {
 		err = errors.New("unexpected arguments")
+	} else if c.MaxClockError < time.Millisecond || c.MaxClockError > time.Second {
+		err = errors.New("clock error budget must be 1ms..1s")
+	} else if inspectPlan != "" {
+		report, err = inspectDistributedPlan(inspectPlan)
 	} else if preparePlan != "" {
 		c.Start, err = time.Parse(time.RFC3339Nano, start)
 		if err == nil {
@@ -179,10 +189,16 @@ func main() {
 		if err == nil {
 			err = c.validate()
 		}
-		if err == nil && (!c.Allow || c.Directory == "") {
-			err = errors.New("workload requires -allow-high-load and a new -ledger-dir")
+		if err == nil && c.Directory == "" {
+			err = errors.New("a private ledger directory is required")
 		}
-		if err == nil {
+		if err == nil && preflightOnly {
+			report, err = runPreflight(ctx, c)
+		} else if err == nil && verifyLedger {
+			report, err = verifyPlanLedger(ctx, c)
+		} else if err == nil && !c.Allow {
+			err = errors.New("workload requires -allow-high-load and a new -ledger-dir")
+		} else if err == nil {
 			report, err = runWorkload(ctx, c)
 		}
 	}

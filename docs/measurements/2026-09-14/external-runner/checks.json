@@ -1,0 +1,159 @@
+{
+  "go": [
+    {
+      "branch": "simple-files",
+      "check": "vet",
+      "exit_code": 0,
+      "seconds": 0.399441
+    },
+    {
+      "branch": "simple-files",
+      "check": "race",
+      "exit_code": 0,
+      "seconds": 23.126006
+    },
+    {
+      "branch": "simple-files",
+      "check": "linux-amd64-httpbench",
+      "exit_code": 0,
+      "seconds": 0.840956
+    },
+    {
+      "branch": "simple-files",
+      "check": "linux-arm64-httpbench",
+      "exit_code": 0,
+      "seconds": 0.773238
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "vet",
+      "exit_code": 0,
+      "seconds": 0.399998
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "race",
+      "exit_code": 0,
+      "seconds": 17.847813
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "linux-amd64-httpbench",
+      "exit_code": 0,
+      "seconds": 1.1064
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "linux-arm64-httpbench",
+      "exit_code": 0,
+      "seconds": 0.96082
+    }
+  ],
+  "python": [
+    {
+      "branch": "simple-files",
+      "command": "python3 -m unittest discover -s scripts/tests -v",
+      "tests": 53,
+      "exit_code": 0
+    },
+    {
+      "branch": "postgres-kafka",
+      "command": "python3 -m unittest discover -s scripts/tests -v",
+      "tests": 77,
+      "exit_code": 0
+    }
+  ],
+  "linux_application_cross_builds": {
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "branches": [
+      "simple-files",
+      "postgres-kafka"
+    ],
+    "CGO_ENABLED": "0",
+    "all_exit_codes_zero": true
+  },
+  "postgres_integration": "Full race suite used the existing local test PostgreSQL with isolated schemas. Additional opt-in Kafka fault suites were not enabled; real Kafka HTTP rehearsal is reported separately.",
+  "review": "Review before changes, root review plus independent read-only review after both source freezes; no unresolved concrete blocking findings in the changed scope.",
+  "coverage_note": "No UI changes; browser suite was not repeated in this step. No hardware failure or external network capacity claim.",
+  "missing_range_negative_checks": [
+    {
+      "branch": "simple-files",
+      "missing_range_rejected": true,
+      "audit_exit_code": 1,
+      "audit_report": {
+        "mode": "independent-distributed-http-audit",
+        "correct": false,
+        "generators": 0,
+        "planned_unique_keys": 0,
+        "acknowledged_attempt_fraction": 0,
+        "ledger_valid": false,
+        "journal_closed": false,
+        "saved_service_results_matched": false,
+        "failure": "missing_or_unsafe_generator_directory",
+        "planned_attempts": 0,
+        "confirmed_attempts": 0,
+        "matched_ack_attempts": 0,
+        "missing_ack_attempts": 0,
+        "unverified_ack_attempts": 0,
+        "unknown_client_attempts": 0,
+        "journey_failed_client_attempts": 0,
+        "unknown_attempts_found_committed": 0,
+        "journal_attempts": 0,
+        "canonical_unique_keys": 0,
+        "duplicate_logical_attempts": 0,
+        "unexpected_records": 0,
+        "unexpected_physical_copies": 0,
+        "receipt_mismatches": 0,
+        "canonical_choice_counts": [
+          0,
+          0
+        ],
+        "invalid_successful_responses": 0,
+        "compact_state_bytes": 0,
+        "wall_seconds": 0,
+        "method": ""
+      }
+    },
+    {
+      "branch": "postgres-kafka",
+      "missing_range_rejected": true,
+      "audit_exit_code": 1,
+      "audit_report": {
+        "mode": "independent-distributed-http-audit",
+        "correct": false,
+        "generators": 0,
+        "planned_unique_keys": 0,
+        "acknowledged_attempt_fraction": 0,
+        "ledger_valid": false,
+        "journal_closed": false,
+        "saved_service_results_matched": false,
+        "failure": "missing_or_unsafe_generator_directory",
+        "planned_attempts": 0,
+        "confirmed_attempts": 0,
+        "matched_ack_attempts": 0,
+        "missing_ack_attempts": 0,
+        "unverified_ack_attempts": 0,
+        "unknown_client_attempts": 0,
+        "journey_failed_client_attempts": 0,
+        "unknown_attempts_found_committed": 0,
+        "journal_attempts": 0,
+        "canonical_unique_keys": 0,
+        "duplicate_logical_attempts": 0,
+        "unexpected_records": 0,
+        "unexpected_physical_copies": 0,
+        "receipt_mismatches": 0,
+        "canonical_choice_counts": [
+          0,
+          0
+        ],
+        "invalid_successful_responses": 0,
+        "compact_state_bytes": 0,
+        "wall_seconds": 0,
+        "method": ""
+      }
+    }
+  ]
+}
