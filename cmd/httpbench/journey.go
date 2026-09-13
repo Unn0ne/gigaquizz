@@ -177,9 +177,19 @@ func getResource(ctx context.Context, c config, client *http.Client, path string
 	defer func() { s.Bytes += counter.n }()
 	var bodyReader io.Reader = counter
 	encoding := strings.ToLower(strings.TrimSpace(resp.Header.Get("Content-Encoding")))
+	classifyBodyError := func(err error) {
+		// A gzip header/body can fail because its HTTP read timed out, as well
+		// as because the compressed bytes are invalid. Preserve that distinction
+		// before and after decoder initialization (including reused decoders).
+		var ne net.Error
+		if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) || errors.As(err, &ne) || encoding != "gzip" {
+			classifyIO(err)
+		}
+	}
 	if encoding == "gzip" && c.Definition {
 		z, e := decoder.open(counter)
 		if e != nil {
+			classifyBodyError(e)
 			return false
 		}
 		defer decoder.release()
@@ -200,11 +210,10 @@ func getResource(ctx context.Context, c config, client *http.Client, path string
 	if err != nil || closeErr != nil {
 		// A truncated/invalid gzip is a validation failure; an actual deadline or
 		// socket failure is classified separately where the error retains its type.
-		var ne net.Error
-		if errors.Is(err, context.DeadlineExceeded) || errors.As(err, &ne) {
-			classifyIO(err)
-		} else if encoding != "gzip" {
-			classifyIO(err)
+		if err != nil {
+			classifyBodyError(err)
+		} else {
+			classifyIO(closeErr)
 		}
 		return false
 	}

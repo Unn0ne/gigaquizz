@@ -27,9 +27,9 @@
       "sha256": "95be199cafe69ce6ce02dc70f717100f15f62263bedc04fdb2d941a8e09acde9"
     },
     "common.js": {
-      "bytes": 6978,
-      "gzip_bytes": 2642,
-      "sha256": "173e639024a78454b489b7e57d8d16d097375d4d7152c5d4b05c3b35a8487f05"
+      "bytes": 6910,
+      "gzip_bytes": 2618,
+      "sha256": "afb441fd3b0c167862fa3bf7a2a6f5448db666c90bd6fde4c5973741bd398c76"
     },
     "poll.js": {
       "bytes": 17432,
@@ -51,19 +51,19 @@
   },
   "traffic": {
     "page_uncompressed": {
-      "bytes": 4487600000000,
-      "decimal_GB": 4487.6,
-      "mean_Gbit_s": 598.3466666666666
+      "bytes": 4480800000000,
+      "decimal_GB": 4480.8,
+      "mean_Gbit_s": 597.44
     },
     "page_gzip_estimate": {
-      "bytes": 1378100000000,
-      "decimal_GB": 1378.1,
-      "mean_Gbit_s": 183.74666666666667
+      "bytes": 1375700000000,
+      "decimal_GB": 1375.7,
+      "mean_Gbit_s": 183.42666666666665
     },
     "page_gzip_preloaded_over_10_minutes": {
-      "bytes": 1378100000000,
-      "decimal_GB": 1378.1,
-      "mean_Gbit_s": 18.374666666666666
+      "bytes": 1375700000000,
+      "decimal_GB": 1375.7,
+      "mean_Gbit_s": 18.342666666666666
     },
     "question_responses": {
       "bytes": 153600000000,
@@ -96,9 +96,9 @@
       "mean_Gbit_s": 49.152
     },
     "all_egress_gzip_HTTP_estimate": {
-      "bytes": 1849140000000,
-      "decimal_GB": 1849.14,
-      "mean_Gbit_s": 246.552
+      "bytes": 1846740000000,
+      "decimal_GB": 1846.74,
+      "mean_Gbit_s": 246.232
     }
   },
   "full_reload_scenario": {
@@ -108,9 +108,9 @@
     "all_HTTP_requests": 660000000,
     "all_HTTP_RPS": 11000000.0,
     "outgoing_gzip_HTTP_estimate": {
-      "bytes": 2022790000000,
-      "decimal_GB": 2022.79,
-      "mean_Gbit_s": 269.70533333333333
+      "bytes": 2020150000000,
+      "decimal_GB": 2020.15,
+      "mean_Gbit_s": 269.35333333333335
     },
     "incoming_HTTP_estimate": {
       "bytes": 394240000000,

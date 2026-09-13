@@ -21,6 +21,7 @@ import secrets
 import shutil
 import signal
 import socket
+import stat
 import subprocess
 import sys
 import time
@@ -220,6 +221,38 @@ def aggregate_load_reports(loads, attempts, unique):
             combined['mean_latency_ms'] = sum(m.get('mean_latency_ms', 0) * m['sent'] for m in members) / combined['sent'] if combined['sent'] else 0
             result['http_get_stages'].append(combined)
     return result
+
+
+def check_manifest_identity(path, args, poll_id, origin, index, generators):
+    # The summary cannot establish which population the binary really used.
+    # Read only its bounded private header; the separate Go reader validates
+    # every ledger record, digest, timestamp and journal relationship later.
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(fd, 'rb') as source:
+        info = os.fstat(source.fileno())
+        check(stat.S_ISREG(info.st_mode) and stat.S_IMODE(info.st_mode) & 0o077 == 0 and info.st_size <= 2 * 1024**2,
+              'generator manifest is not a bounded private regular file')
+        header = json.loads(source.read(2 * 1024**2 + 1))
+    check(type(header) is dict and header.get('version') == 1 and header.get('complete') is True,
+          'generator manifest is incomplete')
+    config = header.get('config', {})
+    check(type(config) is dict and type(header.get('poll')) is dict and
+          config.get('poll_id') == poll_id and header['poll'].get('id') == poll_id and config.get('url') == origin,
+          'generator manifest targets a different poll or origin')
+    total = args.rate * 60
+    keys = total // generators + (index < total % generators)
+    offset = (total // generators) * index + min(index, total % generators)
+    expected = {'unique_rate': args.rate, 'key_offset': offset, 'duration_ns': 60_000_000_000,
+                'repeat_every': args.repeat_every, 'workers': args.workers, 'queue': args.queue,
+                'max_lag_ns': args.max_lag_ms * 1_000_000}
+    check(all(type(config.get(key, 0)) is int and config.get(key, 0) == value for key, value in expected.items()),
+          'generator manifest range, repeats or resource bounds differ from the requested profile')
+    count = config.get('unique_count', 0)
+    check(type(count) is int and count >= 0 and (count or config['unique_rate'] * 60) == keys and keys > 0,
+          'generator manifest unique population differs from the requested profile')
+    for key in ('journey', 'definition'):
+        check(type(config.get(key, False)) is bool and config.get(key, False) == getattr(args, key, False),
+              'generator manifest HTTP mode differs from the requested profile')
 
 
 def allocated_bytes(root):
@@ -516,6 +549,22 @@ def owned_profile(args, source, runtime, app, generator, base, directory, attemp
             check(report['load'].get('complete') is True and report['load'].get('cancelled') is False,
                   'generator did not finish its full planned window')
             check(report['load'].get('planned_attempts') == attempts, 'generator plan differs from the profile disk/population plan')
+            load = report['load']
+            expected_mode = ('http-journey-definition-gzip' if getattr(args, 'definition', False) else
+                             'http-journey' if getattr(args, 'journey', False) else 'http-post')
+            check(load.get('planned_unique_keys') == args.rate * 60 and
+                  load.get('repeat_every') == args.repeat_every and load.get('scheduled_seconds') == 60 and
+                  load.get('mode') == expected_mode and load.get('workers') == budget['workers_total'] and
+                  load.get('queue') == budget['queue_total'] and load.get('max_lag_ms') == args.max_lag_ms,
+                  'generator population, mode or resource bounds differ from the requested profile')
+            check(all(type(load.get(key, 0)) is int and load.get(key, 0) >= 0 for key in LOAD_SUM_FIELDS) and
+                  sum(load.get(key, 0) for key in OUTCOME_FIELDS) == attempts and
+                  load.get('http_post_sent') == attempts - load.get('generator_skipped', 0) - load.get('journey_failed', 0),
+                  'generator outcomes and POST count do not cover the requested attempts')
+            for i in range(generators):
+                manifest_dir = ledger_root if generators == 1 else ledger_root / ('generator-' + str(i).zfill(3))
+                check_manifest_identity(manifest_dir / 'manifest.json', args, poll['id'], base, i, generators)
+            report['checks'].append('private_generator_manifests_match_requested_profile')
             phase('final_result')
             results_path = '/api/admin/polls/' + poll['id'] + '/results'
             result = wait_final(results_path)
@@ -575,9 +624,8 @@ def owned_profile(args, source, runtime, app, generator, base, directory, attemp
                       inspection.get('strict_snapshot_complete') is True and
                       inspection.get('snapshot_partitions') == args.partitions,
                       'Kafka audit must certify a complete stable snapshot, not only a CLOSED prefix')
-            if generators > 1:
-                check(report['audit'].get('generators') == generators and report['audit'].get('planned_unique_keys') == args.rate * 60 and
-                      report['audit'].get('planned_attempts') == attempts, 'independent reader did not certify every planned generator range')
+            check(report['audit'].get('generators') == generators and report['audit'].get('planned_unique_keys') == args.rate * 60 and
+                  report['audit'].get('planned_attempts') == attempts, 'independent reader did not certify every planned generator range')
             report['load_coverage'] = {'acknowledged_attempt_fraction': report['load']['valid_recorded_ack'] / attempts,
                                        'planned_attempts_without_ack': attempts - report['load']['valid_recorded_ack'],
                                        'all_planned_attempts_acknowledged': report['load']['valid_recorded_ack'] == attempts}

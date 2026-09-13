@@ -3,10 +3,10 @@ package filestore
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"gigaquizz/internal/filelog"
 	"gigaquizz/internal/poll"
@@ -70,7 +70,29 @@ func (s *Store) load(ctx context.Context) error {
 			e.writer = nil
 		}
 		if _, err := os.Lstat(filepath.Join(e.directory, "result.json")); !errors.Is(err, os.ErrNotExist) {
-			return errors.New("premature result for an unfinished poll")
+			if err != nil {
+				return err
+			}
+			// A persisted final can precede the current wall clock's deadline
+			// after rollback. Require all existing CLOSED barriers before using
+			// it: replay never seals an open WAL to justify a premature result.
+			manifest, err := e.replay(ctx, nil)
+			if err != nil {
+				return fmt.Errorf("premature result or invalid CLOSED journal: %w", err)
+			}
+			result, err := readVerifiedResult(e, manifest)
+			if err != nil {
+				return err
+			}
+			if result == nil {
+				return errors.New("stored result disappeared during recovery")
+			}
+			w.Close()
+			e.retainedMetrics = w.Metrics()
+			e.writer = nil
+			e.sealed = &manifest
+			e.closing = true
+			e.result = result
 		}
 	}
 	return nil
@@ -78,7 +100,7 @@ func (s *Store) load(ctx context.Context) error {
 
 func validateDefinition(d definition, id string) error {
 	p := d.Poll
-	if (d.Version != 1 && d.Version != 2) || (d.Version == 1 && d.Partitions != 0) || (d.Version == 2 && (d.Partitions < 2 || d.Partitions > 256)) || p.ID != id || p.FinalizedAt != nil || p.CreatedAt.IsZero() || p.EndsAt.Sub(p.StartsAt) != time.Minute {
+	if (d.Version != 1 && d.Version != 2) || (d.Version == 1 && d.Partitions != 0) || (d.Version == 2 && (d.Partitions < 2 || d.Partitions > 256)) || p.ID != id || p.FinalizedAt != nil || p.CreatedAt.IsZero() || !validJournalWindow(p.StartsAt, p.EndsAt) {
 		return errors.New("invalid immutable poll definition")
 	}
 	input := poll.CreateInput{Question: p.Question, Type: p.Type}

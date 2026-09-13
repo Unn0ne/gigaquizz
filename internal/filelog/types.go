@@ -33,7 +33,8 @@ func (c Config) Partition([16]byte) int32 { return 0 }
 
 func (c Config) validate() error {
 	if c.Directory == "" || c.PollID == [16]byte{} || c.Partitions != 1 ||
-		c.StartsAt.Year() < 1678 || c.EndsAt.Year() > 2261 || c.EndsAt.Sub(c.StartsAt) != time.Minute ||
+		!time.Unix(0, c.StartsAt.UnixNano()).Equal(c.StartsAt) ||
+		!time.Unix(0, c.EndsAt.UnixNano()).Equal(c.EndsAt) || c.EndsAt.Sub(c.StartsAt) != time.Minute ||
 		c.AllowedMask == 0 || c.BatchSize < 1 || c.BatchSize > 131072 ||
 		c.QueuePerPartition < 1 || c.QueuePerPartition > 1048576 ||
 		c.Linger < 0 || c.Linger > time.Second {

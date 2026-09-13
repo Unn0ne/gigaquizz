@@ -114,7 +114,13 @@ func normalizeConfig(c Config) (Config, error) {
 	return c, nil
 }
 
-func New(ctx context.Context, config Config) (_ *Store, err error) {
+func New(ctx context.Context, config Config) (*Store, error) {
+	return newWithClock(ctx, config, time.Now)
+}
+
+// The clock is fixed before recovery and admission begin. This private seam
+// lets restart tests exercise clock rollback without changing the host clock.
+func newWithClock(ctx context.Context, config Config, now func() time.Time) (_ *Store, err error) {
 	c, err := normalizeConfig(config)
 	if err != nil {
 		return nil, err
@@ -164,7 +170,7 @@ func New(ctx context.Context, config Config) (_ *Store, err error) {
 		owner.Close()
 		return nil, errors.New("data directory already has an owner")
 	}
-	s := &Store{c: c, owner: owner, entries: make(map[string]*entry), now: time.Now}
+	s := &Store{c: c, owner: owner, entries: make(map[string]*entry), now: now}
 	defer func() {
 		if err != nil {
 			s.Close()
@@ -257,6 +263,15 @@ func clonePoll(p poll.Poll) poll.Poll {
 	return p
 }
 
+// The WAL stores both schedule endpoints as signed 64-bit nanoseconds. Check
+// the round trip before publishing metadata, including when a minute crosses
+// the upper boundary; calendar years alone cannot express that exact range.
+func validJournalWindow(starts, ends time.Time) bool {
+	return ends.Sub(starts) == time.Minute &&
+		time.Unix(0, starts.UnixNano()).Equal(starts) &&
+		time.Unix(0, ends.UnixNano()).Equal(ends)
+}
+
 func (e *entry) publicPoll() poll.Poll {
 	e.mu.Lock()
 	defer e.mu.Unlock()
@@ -298,10 +313,10 @@ func (s *Store) Create(ctx context.Context, in poll.CreateInput) (poll.Poll, err
 	if in.StartsAt != nil {
 		starts = in.StartsAt.UTC()
 	}
-	if starts.Year() < 1678 || starts.Year() > 2260 {
+	ends := starts.Add(time.Minute)
+	if !validJournalWindow(starts, ends) {
 		return poll.Poll{}, errors.New("invalid poll start date")
 	}
-	ends := starts.Add(time.Minute)
 	s.mu.RLock()
 	for _, e := range s.entries {
 		if e.def.Poll.StartsAt.Before(ends) && e.def.Poll.EndsAt.After(starts) {

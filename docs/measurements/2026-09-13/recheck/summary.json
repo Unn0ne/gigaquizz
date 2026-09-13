@@ -1,0 +1,16 @@
+{
+  "profiles": 4,
+  "all_journal_and_restart_checks_passed": true,
+  "planned_attempts": 4337142,
+  "confirmed_attempts": 4336292,
+  "matched_ack_attempts": 4336292,
+  "missing_ack_attempts": 0,
+  "unknown": 0,
+  "late_rejections": 850,
+  "early_rejections": 0,
+  "busy_rejections": 0,
+  "generator_skipped": 0,
+  "journey_failed": 0,
+  "all_planned_attempts_acknowledged": false,
+  "scope": "Four different minute polls on one laptop; POST and five-GET journey profiles differ. No 100M HTTP or production capacity claim."
+}

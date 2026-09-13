@@ -70,13 +70,16 @@ def fixture_load(keys, offset=0, repeat_every=0, index=0):
 
 class HarnessFixture:
     def __init__(self, directory, interrupt=False, stuck=False, strict=True, generators=1, repeat_every=0,
-                 pending_after_restart=0, changed_after_restart=False, never_final=False, failed_generator=None, audit_generators=None):
+                 pending_after_restart=0, changed_after_restart=False, never_final=False, failed_generator=None, audit_generators=None,
+                 load_overrides=None, audit_overrides=None, manifest_overrides=None):
         self.directory = directory
         self.interrupt, self.stuck, self.strict = interrupt, stuck, strict
         self.generators, self.repeat_every = generators, repeat_every
         self.pending_after_restart, self.changed_after_restart = pending_after_restart, changed_after_restart
         self.never_final, self.failed_generator = never_final, failed_generator
         self.audit_generators = generators if audit_generators is None else audit_generators
+        self.load_overrides, self.audit_overrides = load_overrides or {}, audit_overrides or {}
+        self.manifest_overrides = manifest_overrides or {}
         self.app_starts, self.sleeps = 0, 0
         self.interrupt_after_spawn = None
         self.commands = []
@@ -133,12 +136,23 @@ class HarnessFixture:
             keys = 60 // self.generators + (1 if index < 60 % self.generators else 0)
             offset = (60 // self.generators) * index + min(index, 60 % self.generators)
             value = fixture_load(keys, offset, self.repeat_every, index)
+            value.update(self.load_overrides)
+            ledger = Path(command[command.index('-ledger-dir') + 1])
+            ledger.mkdir(mode=0o700)
+            config = {'poll_id': self.poll['id'], 'url': 'http://127.0.0.1:8093', 'unique_rate': 1,
+                      'unique_count': keys if self.generators > 1 else 0, 'key_offset': offset,
+                      'duration_ns': 60_000_000_000, 'repeat_every': self.repeat_every,
+                      'workers': 2, 'queue': 8, 'max_lag_ns': 100_000_000}
+            config.update(self.manifest_overrides)
+            profile.private_json(ledger / 'manifest.json', {'version': 1, 'complete': True, 'config': config,
+                                                         'poll': {'id': self.poll['id']}})
         elif audit:
             value = {'correct': True, 'planned_attempts': 60 + (60 // self.repeat_every if self.repeat_every else 0),
                      'planned_unique_keys': 60, 'generators': self.audit_generators,
                      'matched_ack_attempts': self.generators, 'missing_ack_attempts': 0,
                      'unverified_ack_attempts': 0, 'saved_service_results_matched': True,
                      'journal_inspection': {'method': 'kafka-stable-snapshot', 'strict_snapshot_complete': self.strict, 'snapshot_partitions': 4}}
+            value.update(self.audit_overrides)
         else:
             return process
         json.dump(value, kwargs['stdout'])
@@ -163,7 +177,8 @@ class HarnessFixture:
 class ProfileTests(unittest.TestCase):
     def execute_fixture(self, repeat_every=0, interrupt=False, stuck=False, extra_env=None,
                         cpu_profile=False, mode='simple-files', strict=True, generators=1, pending_after_restart=0,
-                        changed_after_restart=False, never_final=False, failed_generator=None, audit_generators=None, interrupt_after_spawn=None):
+                        changed_after_restart=False, never_final=False, failed_generator=None, audit_generators=None, interrupt_after_spawn=None,
+                        load_overrides=None, audit_overrides=None, manifest_overrides=None):
         with tempfile.TemporaryDirectory() as temp:
             directory = Path(temp)
             app, generator, psql = directory / 'application', directory / 'generator', directory / 'psql'
@@ -181,7 +196,8 @@ class ProfileTests(unittest.TestCase):
                                       max_inflight=8, partitions=4, batch_votes=None, queue_votes=None,
                                       linger_ms=None, app_memory='3GiB', psql=str(psql), cpu_profile=cpu_profile, generators=generators)
             fixture = HarnessFixture(directory, interrupt, stuck, strict, generators, repeat_every,
-                                     pending_after_restart, changed_after_restart, never_final, failed_generator, audit_generators)
+                                     pending_after_restart, changed_after_restart, never_final, failed_generator, audit_generators,
+                                     load_overrides, audit_overrides, manifest_overrides)
             fixture.interrupt_after_spawn = interrupt_after_spawn
             with ExitStack() as stack:
                 stack.enter_context(patch.object(profile.urllib.request, 'build_opener', return_value=fixture))
@@ -492,6 +508,52 @@ class ProfileTests(unittest.TestCase):
         self.assertNotEqual(code, 0)
         self.assertFalse(report['correct'])
         self.assertTrue(any('every planned generator' in entry['message'] for entry in report['errors']))
+
+    def test_single_generator_cannot_substitute_population_or_workload_at_equal_attempt_count(self):
+        # 30 originals + 30 repeats have the same denominator as the requested
+        # 60 originals, but exercise a different unique population and dedup path.
+        for changed in ({'planned_unique_keys': 30, 'repeat_every': 1},
+                        {'mode': 'http-journey'}, {'scheduled_seconds': 30},
+                        {'workers': 1}, {'queue': 16}, {'max_lag_ms': 1000}):
+            with self.subTest(changed=changed):
+                fixture, code, raised, report = self.execute_fixture(load_overrides=changed)
+                self.assertIsNone(raised)
+                self.assertNotEqual(code, 0)
+                self.assertFalse(report['correct'])
+                self.assertTrue(any('requested profile' in entry['message'] for entry in report['errors']))
+                self.assertFalse(any('-audit-only' in command for command, _ in fixture.commands))
+                self.assertTrue(fixture.processes[0].terminated)
+
+    def test_single_generator_post_count_and_outcomes_must_agree(self):
+        for changed in ({'http_post_sent': 2}, {'generator_skipped': 58}, {'unknown': -1}):
+            with self.subTest(changed=changed):
+                _, code, raised, report = self.execute_fixture(load_overrides=changed)
+                self.assertIsNone(raised)
+                self.assertNotEqual(code, 0)
+                self.assertFalse(report['correct'])
+                self.assertTrue(any('requested attempts' in entry['message'] for entry in report['errors']))
+
+    def test_single_generator_audit_must_certify_the_requested_population_not_only_ack_sum(self):
+        for changed in ({'planned_unique_keys': 30}, {'planned_attempts': 59}, {'generators': 2}):
+            with self.subTest(changed=changed):
+                _, code, raised, report = self.execute_fixture(audit_overrides=changed)
+                self.assertIsNone(raised)
+                self.assertNotEqual(code, 0)
+                self.assertFalse(report['correct'])
+                self.assertTrue(any('every planned generator' in entry['message'] for entry in report['errors']))
+
+    def test_private_manifest_must_match_even_when_summary_claims_the_requested_population(self):
+        cases = ({'unique_count': 30, 'repeat_every': 1}, {'unique_count': -1}, {'unique_rate': 0},
+                 {'key_offset': 1}, {'repeat_every': 1}, {'journey': True}, {'duration_ns': 30_000_000_000},
+                 {'url': 'http://127.0.0.1:1'}, {'poll_id': '10000000-0000-0000-0000-000000000099'})
+        for changed in cases:
+            with self.subTest(changed=changed):
+                fixture, code, raised, report = self.execute_fixture(manifest_overrides=changed)
+                self.assertIsNone(raised)
+                self.assertNotEqual(code, 0)
+                self.assertFalse(report['correct'])
+                self.assertTrue(any('generator manifest' in entry['message'] for entry in report['errors']))
+                self.assertFalse(any('-audit-only' in command for command, _ in fixture.commands))
 
     def test_restart_waits_for_async_finalization_then_compares_exact_saved_result(self):
         fixture, code, _, report = self.execute_fixture(pending_after_restart=2)

@@ -1,0 +1,10 @@
+{
+  "simple-files": {
+    "base_commit": "53c8e45ff2ce8bed5e50acdc4b4f42132230a616",
+    "app_sha256": "614af5bb13ba1af8a546c33eabf43f15d9763aa398434e1baa1174137c2e9d22"
+  },
+  "postgres-kafka": {
+    "base_commit": "478e2ec2cef259fb73dc3378fb357b8061f22b6b",
+    "app_sha256": "a91504a58138eeede8e9698f99dfe372ffdd8902bb6c62928eee59a90386ae13"
+  }
+}
