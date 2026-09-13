@@ -24,3 +24,5 @@ make dev
 Обе версии прошли проверки голосования в браузере, повторных ответов и восстановления после принудительной остановки. [Что именно проверено](https://github.com/Unn0ne/gigaquizz/blob/simple-files/docs/branch-verification.md).
 
 Цель проекта — 100 млн участников за минуту. Файловый модуль уже прошёл отдельный тест со 100 млн записей; весь сайт на такой нагрузке ещё не проверен. [Тест ядра на 102 млн](https://github.com/Unn0ne/gigaquizz/blob/simple-files/docs/qr-load-results.md), [настоящий HTTP и сравнение веток](https://github.com/Unn0ne/gigaquizz/blob/simple-files/docs/http-results.md), [расчёт нагрузки](https://github.com/Unn0ne/gigaquizz/blob/simple-files/docs/http-capacity.md).
+
+[Ревью кода и новые HTTP-тесты обеих веток](https://github.com/Unn0ne/gigaquizz/blob/simple-files/docs/review-scale.md).
