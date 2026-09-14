@@ -9,29 +9,13 @@
 Собирайте из чистого проверенного коммита нужной ветки с Go версии из `go.mod` или новее. Приложение и reader должны принадлежать одной ветке. Сборка выполняется до измерений. Команды ниже создают новый каталог и не включают конфиги, пароли или данные:
 
 ```sh
-test -z "$(git -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain)"
 umask 077
 mkdir -p -m 700 "$PWD/.local"
 RELEASE="$PWD/.local/external-release-$(date -u +%Y%m%dT%H%M%SZ)"
-mkdir -m 700 "$RELEASE"
-git rev-parse HEAD > "$RELEASE/source-commit.txt"
-git branch --show-current > "$RELEASE/source-branch.txt"
-go version > "$RELEASE/go-version.txt"
-for arch in amd64 arm64; do
-  mkdir -m 700 "$RELEASE/linux-$arch"
-  CGO_ENABLED=0 GOOS=linux GOARCH="$arch" go build -trimpath -o "$RELEASE/linux-$arch/gigaquizz" ./cmd/gigaquizz
-  CGO_ENABLED=0 GOOS=linux GOARCH="$arch" go build -trimpath -o "$RELEASE/linux-$arch/httpbench" ./cmd/httpbench
-done
-cp scripts/run_http_generators.py "$RELEASE/run_http_generators.py"
-python3 - "$RELEASE" <<'PY'
-import hashlib, pathlib, sys
-root = pathlib.Path(sys.argv[1])
-paths = sorted(p for p in root.rglob('*') if p.is_file())
-with (root / 'SHA256SUMS').open('x') as out:
-    for p in paths:
-        out.write(hashlib.sha256(p.read_bytes()).hexdigest() + '  ' + str(p.relative_to(root)) + '\n')
-PY
+python3 scripts/build_release.py --output "$RELEASE"
 ```
+
+Команда требует Python 3.8+, Git и Go на машине сборки, собирает Linux amd64/arm64 и останавливается при первой ошибке. По умолчанию требуется чистое рабочее дерево; `--allow-dirty` разрешён для проверочной сборки и явно отмечается в происхождении исходников. Неполный каталог сохраняется, но `release-report.json` не получает `complete: true`. Комплект включает бинарники, runner, `env.example`, самостоятельную инструкцию `RUNNING.md`, `source.json` и SHA-256. Исходники и окружение Go проверяются при сборке; пользовательские конфиги и данные не копируются.
 
 Перенесите release удобным согласованным способом. На каждой машине проверьте `sha256sum -c SHA256SUMS` в каталоге release и выберите бинарники под её архитектуру. `CGO_ENABLED=0` устраняет зависимость этих бинарников от локальной libc; это не заменяет запуск smoke на целевом Linux. Приложению Go/Python во время работы не нужны; host runner требует Python 3 на Linux. Kafka/PostgreSQL при выборе соответствующей ветки готовятся отдельно по [launch.md](launch.md).
 
@@ -39,16 +23,22 @@ PY
 
 ## 2. Запустить приложение и проверить доступность
 
-Создайте отдельный приватный env-файл по `.env.example`. Значения ниже — шаблон: замените `PRIVATE_IP` реальным адресом частного интерфейса. Файл не исполняется как shell; подстановки `$VAR` внутри него не работают.
+Создайте отдельный приватный env-файл по `env.example` из release (в исходниках это `.env.example`). Значения ниже — шаблон: замените `PRIVATE_IP` реальным адресом частного интерфейса. Файл не исполняется как shell; подстановки `$VAR` внутри него не работают.
 
 | Настройка | simple-files | postgres-kafka |
 |---|---|---|
 | `HTTP_ADDR` | `PRIVATE_IP:8091` | `PRIVATE_IP:8092` |
 | `PUBLIC_URL` | `http://PRIVATE_IP:8091` | `http://PRIVATE_IP:8092` |
-| Постоянные данные | Абсолютный `DATA_DIR` на локальном диске | Отдельная `GIGAQUIZZ_SCHEMA`, подготовленные PostgreSQL и Kafka |
+| Постоянные данные | Абсолютный `DATA_DIR` на локальном диске, например `/var/lib/gigaquizz/data`, с доступным для записи родителем | Отдельная `GIGAQUIZZ_SCHEMA`, подготовленные PostgreSQL и Kafka |
 | Авторизация | Случайный ASCII `ADMIN_PASSWORD`, минимум 16 байт, без `CHANGE_ME` | То же |
 | Голосование | `FILE_PARTITIONS`, `FILE_BATCH_VOTES`, `FILE_QUEUE_VOTES`, `FILE_GROUP_LINGER` | `KAFKA_PARTITIONS`, `KAFKA_BATCH_VOTES`, `KAFKA_QUEUE_VOTES`, `KAFKA_LINGER_MS` |
 | Общие лимиты | `MAX_INFLIGHT`, `MAX_UNIQUE_VOTERS`, `MAX_PARTITION_UNIQUE_VOTERS` | То же, плюс инвентарь `MAX_STORED_POLLS` |
+
+`DATA_DIR` и все его родители должны задаваться физическим путём без символических ссылок. На macOS, например, используйте `/private/var/...`, если `/var` является ссылкой.
+
+Files при первом создании хранилища готовит временный каталог рядом с `DATA_DIR`. Если service manager создаёт принадлежащий сервису `/var/lib/gigaquizz`, используйте внутри него `/var/lib/gigaquizz/data`; запись в `/var/lib` самому сервису не требуется.
+
+PostgreSQL подключается напрямую к primary или через session pooling. Transaction/statement pooling несовместимы с advisory lock владельца: приложению нужна постоянная backend-сессия.
 
 Для Kafka на этом же Linux-сервере broker/PG listeners можно оставить loopback; внешним генераторам нужен только HTTP. Если брокеры расположены отдельно, требуются доступные advertised addresses, `KAFKA_ALLOW_REMOTE_BROKERS=true` и отдельно настроенные TLS/SASL. Этот runbook не проверяет Kafka TLS/SASL или PostgreSQL failover.
 
@@ -60,7 +50,7 @@ PY
 ./release/linux-amd64/gigaquizz -env /absolute/private/service.env
 ```
 
-Путь и архитектуру замените своими. Всегда указывайте `-env`: прямой бинарник по умолчанию читает `.env`, а `make dev` использует имя своей ветки. Окружение процесса имеет приоритет над файлом. В другом терминале задайте origin через интерактивный ввод, затем проверьте доступность:
+Путь и архитектуру замените своими. Всегда указывайте `-env`: прямой бинарник по умолчанию читает `.env`, а `make dev` использует имя своей ветки. Отсутствующий явно заданный `-env` теперь останавливает запуск; без этого флага неявный `.env` остаётся необязательным для конфигурации через окружение. Окружение процесса имеет приоритет над файлом. В другом терминале задайте origin через интерактивный ввод, затем проверьте доступность:
 
 ```sh
 printf 'HTTP(S) origin приложения: '
@@ -69,7 +59,7 @@ curl --fail --connect-timeout 5 --max-time 10 "$HTTP_ORIGIN/healthz"
 curl --fail --connect-timeout 5 --max-time 10 "$HTTP_ORIGIN/readyz"
 ```
 
-`HTTP_ORIGIN` здесь и ниже — полный HTTP(S) origin выбранного сервиса. `/healthz` проверяет процесс, `/readyz` — последнее состояние хранилища. Остановить собственное приложение можно Ctrl+C в его foreground-терминале либо SIGTERM его проверенному PID. Дождитесь выхода и закрытия писателей перед новым запуском; не запускайте вторую копию поверх того же DATA_DIR/схемы.
+`HTTP_ORIGIN` здесь и ниже — полный HTTP(S) origin выбранного сервиса. `/healthz` проверяет процесс, `/readyz` — последнее состояние хранилища. Kafka-ветка при старте до обращения к PostgreSQL и затем при проверке готовности запрашивает только метаданные брокера — даже при пустой схеме или готовых итогах. Ответ хотя бы одного брокера проверяет соединение/аутентификацию, но не доступность всех реплик, ISR или права на создание тем и транзакции; их проверяет настоящий smoke. Kafka требуется и для холодного запуска с ранее готовыми итогами. Остановить собственное приложение можно Ctrl+C в его foreground-терминале либо SIGTERM его проверенному PID. Дождитесь выхода и закрытия писателей перед новым запуском; не запускайте вторую копию поверх того же DATA_DIR/схемы.
 
 У PG-ветки потеря выделенной owner-сессии необратимо закрывает работу писателей, но процесс может остаться жив. Одного `systemd Restart=on-failure` недостаточно: требуется наблюдение за readiness и осознанный штатный stop/start после проверки PG ownership. Перезапуск использует прежний журнал и время; новая минута не начинается. Отказ Kafka writer во время минуты не означает автоматический failover: после закрытия контроллер умеет восстановить финализацию того же журнала. Плановые restart/fault checks выполняйте отдельно от измерения скорости.
 

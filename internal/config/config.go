@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -24,16 +25,21 @@ type Config struct {
 	Linger             time.Duration
 }
 
-// LoadEnv never evaluates shell syntax or replaces an existing environment value.
+// LoadEnv reads a required regular file without evaluating shell syntax or
+// replacing an existing environment value. Symlinked secret files are allowed.
 func LoadEnv(path string) error {
-	f, err := os.Open(path)
-	if errors.Is(err, os.ErrNotExist) {
-		return nil
-	}
+	f, err := os.OpenFile(path, os.O_RDONLY|syscall.O_NONBLOCK, 0)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
+	info, err := f.Stat()
+	if err != nil {
+		return err
+	}
+	if !info.Mode().IsRegular() {
+		return errors.New("environment file must be a regular file")
+	}
 	s := bufio.NewScanner(f)
 	for s.Scan() {
 		line := strings.TrimSpace(s.Text())
