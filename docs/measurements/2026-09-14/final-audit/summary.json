@@ -1,0 +1,46 @@
+{
+  "scope": "One Apple M1 Pro, 10 logical CPUs, 32GiB RAM, macOS 26.6.2. Standalone release outside checkout, empty working directories, minimal environment. Two generator runner processes and one app use the physical interface IPv4 on the same Mac. HTTP/1.1 without TLS. Not a separate-host or capacity test.",
+  "profiles": [
+    {
+      "branch": "simple-files",
+      "planned_unique_keys": 60000,
+      "planned_post_attempts": 68571,
+      "http_get_sent": 300000,
+      "http_get_failures": 0,
+      "acknowledged_post_attempts": 68571,
+      "closed": 0,
+      "unknown": 0,
+      "generator_skipped": 0,
+      "unique_in_final_result": 60000,
+      "matched_ack_attempts": 68571,
+      "missing_ack_attempts": 0,
+      "unverified_ack_attempts": 0,
+      "saved_result_unchanged_after_restart": true
+    },
+    {
+      "branch": "postgres-kafka",
+      "planned_unique_keys": 60000,
+      "planned_post_attempts": 68571,
+      "http_get_sent": 300000,
+      "http_get_failures": 0,
+      "acknowledged_post_attempts": 68569,
+      "closed": 2,
+      "unknown": 0,
+      "generator_skipped": 0,
+      "unique_in_final_result": 59998,
+      "matched_ack_attempts": 68569,
+      "missing_ack_attempts": 0,
+      "unverified_ack_attempts": 0,
+      "saved_result_unchanged_after_restart": true
+    }
+  ],
+  "totals": {
+    "planned_post_attempts": 137142,
+    "acknowledged_post_attempts": 137140,
+    "closed": 2,
+    "http_get_sent": 600000,
+    "missing_ack_attempts": 0,
+    "unverified_ack_attempts": 0
+  },
+  "external_1700000_post_s_verified": false
+}

@@ -44,7 +44,13 @@ func run() (runErr error) {
 			runErr = errors.Join(runErr, err)
 		}
 	}()
-	if err := config.LoadEnv(*envFile); err != nil {
+	explicitEnv := false
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == "env" {
+			explicitEnv = true
+		}
+	})
+	if err := config.LoadEnv(*envFile); err != nil && (explicitEnv || !errors.Is(err, os.ErrNotExist)) {
 		return errors.New("cannot load environment file")
 	}
 	cfg, err := config.Load()

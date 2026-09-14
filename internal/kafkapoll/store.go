@@ -22,6 +22,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/twmb/franz-go/pkg/kgo"
 )
 
 var ErrOwnership = errors.New("application controller ownership lost; restart required")
@@ -84,6 +85,9 @@ func (o *Options) defaults() error {
 	if o.DatabaseURL == "" || len(o.Brokers) == 0 || o.Partitions < 1 || o.Partitions > 256 || o.BatchSize < 1 || o.BatchSize > 4096 || o.QueuePerPartition < 1 || o.QueuePerPartition > 8192 || o.Linger < time.Millisecond || o.Linger > time.Second || o.PreparationLead < 5*time.Second || o.PreparationLead > time.Minute || o.MaxUnique < 1 || o.MaxUnique > 120_000_000 || o.MaxPolls < 1 || o.MaxPolls > 100_000 {
 		return errors.New("invalid Kafka application configuration")
 	}
+	if err := votelog.ValidateBrokers(o.Brokers, o.AllowRemoteBrokers); err != nil {
+		return err
+	}
 	o.Brokers = append([]string(nil), o.Brokers...)
 	return nil
 }
@@ -112,6 +116,7 @@ type Store struct {
 	retiredMetrics      map[string]uint64
 	pool                *pgxpool.Pool
 	guard               *postgres.DurabilityGuard
+	kafkaProbe          *kgo.Client
 	owner               *pgx.Conn
 	ownerMu             sync.Mutex
 	ownerStarted        time.Time
@@ -224,6 +229,14 @@ func New(ctx context.Context, options Options) (_ *Store, err error) {
 			s.Close()
 		}
 	}()
+	s.kafkaProbe, err = votelog.NewClient(votelog.Config{Brokers: options.Brokers, Security: options.Security},
+		kgo.DialTimeout(time.Second), kgo.RequestTimeoutOverhead(time.Second))
+	if err != nil {
+		return nil, errors.New("invalid Kafka client security configuration")
+	}
+	if err = s.checkKafkaReady(ctx); err != nil {
+		return nil, err
+	}
 	s.guard, err = postgres.NewDurabilityGuard(options.Durability)
 	if err != nil {
 		return nil, errors.New("metadata database durability check failed")
@@ -349,6 +362,9 @@ func (s *Store) Close() {
 		if s.pool != nil {
 			s.pool.Close()
 		}
+		if s.kafkaProbe != nil {
+			s.kafkaProbe.Close()
+		}
 	})
 }
 
@@ -359,14 +375,7 @@ func (s *Store) Ping(ctx context.Context) error {
 	if err := s.waitDurable(ctx); err != nil {
 		return err
 	}
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	for _, e := range s.polls {
-		if e.poll.FinalizedAt == nil && (e.writer == nil || e.writer.Metrics()["failed_writers"] > 0) {
-			return errors.New("a pending poll journal is unavailable")
-		}
-	}
-	return nil
+	return s.checkKafkaReady(ctx)
 }
 
 func parseID(id string) ([16]byte, error) {

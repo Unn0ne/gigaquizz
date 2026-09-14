@@ -6,7 +6,6 @@ Keep the runner alive (for example in a persistent terminal when using SSH).
 Collect every host's generator-NNN directory for the separate Go audit-plan.
 """
 import argparse
-from contextlib import ExitStack
 from datetime import datetime, timezone
 from functools import partial
 import hashlib
@@ -244,26 +243,32 @@ class Supervisor:
     def __init__(self, output, report, environment):
         self.output, self.report, self.environment = output, report, environment
         self.children = []
-        self.streams = ExitStack()
         self.rss_limit = RSS_PER_PROCESS
 
     def spawn(self, command, role, index=None, open_files=256, filename=None):
         filename = filename or role
         handles = []
-        for suffix in ('.json', '.stderr'):
-            fd = os.open(self.output / (filename + suffix), os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
-            handles.append(self.streams.enter_context(os.fdopen(fd, 'wb')))
-        out, err = handles
-        old = signal.pthread_sigmask(signal.SIG_BLOCK, INTERRUPTS)
         try:
-            process = subprocess.Popen(command, env=self.environment, stdin=subprocess.DEVNULL,
-                                       stdout=out, stderr=err, start_new_session=True,
-                                       preexec_fn=partial(child_setup, open_files, old))
-            child = {'process': process, 'role': role, 'generator': index,
-                     'report_file': filename + '.json', 'exit_code': None}
-            self.children.append(child)
+            for suffix in ('.json', '.stderr'):
+                fd = os.open(self.output / (filename + suffix), os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+                handles.append(os.fdopen(fd, 'wb'))
+            out, err = handles
+            old = signal.pthread_sigmask(signal.SIG_BLOCK, INTERRUPTS)
+            try:
+                process = subprocess.Popen(command, env=self.environment, stdin=subprocess.DEVNULL,
+                                           stdout=out, stderr=err, start_new_session=True,
+                                           preexec_fn=partial(child_setup, open_files, old))
+                child = {'process': process, 'role': role, 'generator': index,
+                         'report_file': filename + '.json', 'exit_code': None}
+                self.children.append(child)
+            finally:
+                signal.pthread_sigmask(signal.SIG_SETMASK, old)
         finally:
-            signal.pthread_sigmask(signal.SIG_SETMASK, old)
+            # Popen has duplicated these into the child. Keeping the parent's
+            # copies until final cleanup exhausts low parent FD limits when
+            # many otherwise sequential preflight/verification helpers run.
+            for handle in handles:
+                handle.close()
         return child
 
     def active(self):
@@ -345,10 +350,6 @@ class Supervisor:
                 child['exit_code'] = child['process'].wait(timeout=max(.001, deadline - time.monotonic()))
             except (OSError, subprocess.TimeoutExpired):
                 errors.append('owned child could not be reaped within its bound')
-        try:
-            self.streams.close()
-        except OSError:
-            errors.append('owned output stream could not be closed')
         return errors
 
 

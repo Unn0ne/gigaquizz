@@ -7,7 +7,10 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
+
+	"gigaquizz/internal/votelog"
 )
 
 type Config struct {
@@ -34,16 +37,21 @@ type Config struct {
 	PreparationLead                                                       time.Duration
 }
 
-// LoadEnv never evaluates shell syntax or replaces an existing environment value.
+// LoadEnv reads a required regular file without evaluating shell syntax or
+// replacing an existing environment value. Symlinked secret files are allowed.
 func LoadEnv(path string) error {
-	f, err := os.Open(path)
-	if errors.Is(err, os.ErrNotExist) {
-		return nil
-	}
+	f, err := os.OpenFile(path, os.O_RDONLY|syscall.O_NONBLOCK, 0)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
+	info, err := f.Stat()
+	if err != nil {
+		return err
+	}
+	if !info.Mode().IsRegular() {
+		return errors.New("environment file must be a regular file")
+	}
 	s := bufio.NewScanner(f)
 	for s.Scan() {
 		line := strings.TrimSpace(s.Text())
@@ -159,6 +167,9 @@ func Load() (Config, error) {
 	}
 	for i := range c.KafkaBrokers {
 		c.KafkaBrokers[i] = strings.TrimSpace(c.KafkaBrokers[i])
+	}
+	if err := votelog.ValidateBrokers(c.KafkaBrokers, c.KafkaAllowRemote); err != nil {
+		return c, errors.New("invalid KAFKA_BROKERS or remote broker policy")
 	}
 	return c, nil
 }

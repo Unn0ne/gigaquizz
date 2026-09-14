@@ -63,20 +63,27 @@ func (c Config) validate() error {
 	if _, err := c.ownedPartitions(); err != nil {
 		return err
 	}
+	return ValidateBrokers(c.Brokers, c.AllowRemoteBrokers)
+}
+
+// ValidateBrokers checks seed address syntax and the explicit remote-network
+// policy without connecting or resolving DNS. Discovered advertised listeners
+// still belong to the configured Kafka cluster and must be trusted separately.
+func ValidateBrokers(brokers []string, allowRemote bool) error {
 	maxBrokers := 3
-	if c.AllowRemoteBrokers {
+	if allowRemote {
 		maxBrokers = 16
 	}
-	if len(c.Brokers) < 1 || len(c.Brokers) > maxBrokers {
+	if len(brokers) < 1 || len(brokers) > maxBrokers {
 		return ErrInvalid
 	}
-	for _, address := range c.Brokers {
+	for _, address := range brokers {
 		host, port, err := net.SplitHostPort(address)
 		n, portErr := strconv.Atoi(port)
 		if err != nil || portErr != nil || n < 1 || n > 65535 || host == "" || strings.ContainsAny(host, " \t\r\n/\\") {
 			return errors.New("invalid Kafka broker address")
 		}
-		if c.AllowRemoteBrokers {
+		if allowRemote {
 			continue
 		}
 		ip := net.ParseIP(host)

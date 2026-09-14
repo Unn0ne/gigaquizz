@@ -299,6 +299,37 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(supervisor.cleanup(), [])
             self.assertTrue(process.terminated)
 
+    def test_many_sequential_helpers_do_not_retain_parent_descriptors(self):
+        with tempfile.TemporaryDirectory() as directory:
+            supervisor = runner.Supervisor(Path(directory), dict(phase='test', samples=[]), {})
+            passed = []
+            def start(_command, **kwargs):
+                # File objects passed to Popen are usable at spawn time. They
+                # must be closed in the parent before the next helper starts.
+                self.assertTrue(all(stream.closed for stream in passed))
+                self.assertFalse(kwargs['stdout'].closed)
+                self.assertFalse(kwargs['stderr'].closed)
+                passed.extend((kwargs['stdout'], kwargs['stderr']))
+                return Process(90000 + len(passed))
+            with patch.object(runner.subprocess, 'Popen', side_effect=start):
+                for index in range(100):
+                    supervisor.spawn(['fixture'], 'helper', index, filename=f'helper-{index:03d}')
+            self.assertTrue(all(stream.closed for stream in passed))
+            self.assertEqual(supervisor.cleanup(), [])
+
+    def test_failed_spawn_closes_parent_descriptors(self):
+        with tempfile.TemporaryDirectory() as directory:
+            supervisor = runner.Supervisor(Path(directory), dict(phase='test', samples=[]), {})
+            passed = []
+            def fail(_command, **kwargs):
+                passed.extend((kwargs['stdout'], kwargs['stderr']))
+                raise OSError('fixture failed exec')
+            with patch.object(runner.subprocess, 'Popen', side_effect=fail):
+                with self.assertRaises(OSError):
+                    supervisor.spawn(['fixture'], 'helper')
+            self.assertTrue(all(stream.closed for stream in passed))
+            self.assertEqual(supervisor.children, [])
+
     def test_cli_indices_and_new_private_output(self):
         self.assertEqual(runner.indices('2,0'), [0, 2])
         for value in ('', '0,0', '-1', '01', '128', '0, 1'):

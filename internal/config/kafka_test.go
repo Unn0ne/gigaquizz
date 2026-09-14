@@ -9,8 +9,35 @@ func kafkaConfigEnv(t *testing.T) {
 	t.Helper()
 	t.Setenv("DATABASE_URL", "postgres://unit-test-only")
 	t.Setenv("ADMIN_PASSWORD", "unit-test-only-password")
+	t.Setenv("KAFKA_BROKERS", "")
 	for _, key := range []string{"MAX_PARTITION_UNIQUE_VOTERS", "KAFKA_TLS", "KAFKA_TLS_CA_FILE", "KAFKA_TLS_CERT_FILE", "KAFKA_TLS_KEY_FILE", "KAFKA_TLS_SERVER_NAME", "KAFKA_SASL_MECHANISM", "KAFKA_SASL_USERNAME", "KAFKA_SASL_PASSWORD", "MAX_INFLIGHT", "DURABILITY_REQUIRED_STANDBYS", "DURABILITY_STANDBY_NAMES", "KAFKA_PARTITIONS", "KAFKA_BATCH_VOTES", "KAFKA_QUEUE_VOTES", "KAFKA_LINGER_MS", "MAX_UNIQUE_VOTERS", "MAX_STORED_POLLS", "POLL_PREPARATION_SECONDS", "KAFKA_ALLOW_REMOTE_BROKERS"} {
 		t.Setenv(key, "")
+	}
+}
+
+func TestKafkaBrokerConfigurationRejectedBeforeStartup(t *testing.T) {
+	for _, test := range []struct {
+		brokers, remote string
+		valid           bool
+	}{
+		{"127.0.0.1:19092,[::1]:19093", "false", true},
+		{"broker.example:9093", "false", false},
+		{"broker.example:9093", "true", true},
+		{"127.0.0.1:0", "false", false},
+		{"127.0.0.1:65536", "false", false},
+		{"127.0.0.1:19092,", "false", false},
+		{"https://broker.example:9093", "true", false},
+		{"broker.example", "true", false},
+	} {
+		t.Run(test.brokers+"/"+test.remote, func(t *testing.T) {
+			kafkaConfigEnv(t)
+			t.Setenv("KAFKA_BROKERS", test.brokers)
+			t.Setenv("KAFKA_ALLOW_REMOTE_BROKERS", test.remote)
+			_, err := Load()
+			if (err == nil) != test.valid {
+				t.Fatal("incorrect seed address/policy validation", err)
+			}
+		})
 	}
 }
 

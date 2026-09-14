@@ -1,0 +1,136 @@
+{
+  "final_checks": [
+    {
+      "branch": "simple-files",
+      "check": "vet",
+      "exit_code": 0,
+      "seconds": 0.495778,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "branch": "simple-files",
+      "check": "race",
+      "exit_code": 0,
+      "seconds": 25.332029,
+      "log_sha256": "dd660d0e8b0e9ee7cd4a6c4eade96aab081f896c0deb8e4af1496ab8166f802f"
+    },
+    {
+      "branch": "simple-files",
+      "check": "python",
+      "exit_code": 0,
+      "seconds": 0.71942,
+      "log_sha256": "8a445f3ef020b1bab0e755b2748df20c6994864535df6b30f35e7216e06d8e7e",
+      "tests": 64
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "vet",
+      "exit_code": 0,
+      "seconds": 0.49835,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "race",
+      "exit_code": 0,
+      "seconds": 15.984253,
+      "log_sha256": "d2145a6eb65ad7063bd89f84f02372bf83cb38e99800d5d8fae0bb0f0536b70d"
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "python",
+      "exit_code": 0,
+      "seconds": 2.28561,
+      "log_sha256": "95c7626dbc814c728fa0c60142eb3243ff81873c20f882d4a6cd8c7448c937d9",
+      "tests": 88
+    }
+  ],
+  "startup_negative_checks": [
+    {
+      "branch": "simple-files",
+      "check": "explicit_missing_env_fails_before_storage",
+      "passed": true,
+      "exit_code": 1
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "explicit_missing_env_fails_before_storage",
+      "passed": true,
+      "exit_code": 1
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "offline_kafka_refuses_startup_before_pg_schema",
+      "passed": true,
+      "exit_code": 1,
+      "seconds": 0.019221374997869134,
+      "schema_created": false
+    }
+  ],
+  "embedded_private_fixture_checks": [
+    {
+      "branch": "simple-files",
+      "ignored_env_present_during_compilation": true,
+      "private_asset_absent_from_embed": true,
+      "exit_code": 0
+    },
+    {
+      "branch": "postgres-kafka",
+      "ignored_env_present_during_compilation": true,
+      "private_asset_absent_from_embed": true,
+      "exit_code": 0
+    }
+  ],
+  "initial_suite": [
+    {
+      "branch": "simple-files",
+      "check": "vet",
+      "exit_code": 0,
+      "seconds": 0.4629
+    },
+    {
+      "branch": "simple-files",
+      "check": "race",
+      "exit_code": 0,
+      "seconds": 23.384104
+    },
+    {
+      "branch": "simple-files",
+      "check": "python",
+      "exit_code": 0,
+      "seconds": 0.84186
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "vet",
+      "exit_code": 0,
+      "seconds": 0.702495
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "race",
+      "exit_code": 1,
+      "seconds": 16.086548
+    }
+  ],
+  "corrected_test_issues": [
+    "The first PG full race run reached DATABASE_URL validation before the invalid-password sentinel. The test now supplies a dummy database URL; no production change was necessary.",
+    "The first offline-Kafka executable check expected an internal error string suppressed by main. It now checks the public startup failure plus exit/time bounds and no schema creation.",
+    "The initial embedded-asset reference test treated a cache-busting query as part of the filename. It now uses URL.Path; private fixture was excluded in both branches."
+  ],
+  "preliminary_rehearsal_fixtures": [
+    {
+      "problem": "macOS temporary path used a symlinked parent",
+      "resolution": "canonical physical path; store correctly refused initial startup",
+      "voting_attempts": 0
+    },
+    {
+      "problem": "route-selected VPN IP was unreachable from local generator",
+      "resolution": "explicit reachable physical interface IPv4; bounded connectivity check",
+      "voting_attempts": 0
+    }
+  ],
+  "postgres_integration": "Full race suite uses real local PostgreSQL with isolated test schemas. Opt-in Kafka failure suites were not repeated; both real HTTP rehearsals and offline-Kafka startup check are separate.",
+  "runtime_scope": "Darwin binaries executed. Linux amd64/arm64 cross-built only. No external TLS/SASL, physical-host failure or 1.7M HTTP/s test.",
+  "browser_scope": "Embedded asset contents unchanged; HTTP assets, admin authentication, lifecycle and restart tested. Browser JS execution suite was not repeated."
+}
