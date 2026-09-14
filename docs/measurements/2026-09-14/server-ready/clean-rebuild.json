@@ -1,0 +1,42 @@
+{
+  "complete": true,
+  "branches": {
+    "simple-files": {
+      "commit": "5305f5c31814d7b5133b5a85da6aea81c4d33ab0",
+      "source_tree_sha256": "7c5737ae34f56dc72932e9458c6f75cbde43155519df9c3348cdadd2940ffb3f",
+      "binaries_match_review": true,
+      "binary_sha256": {
+        "darwin-arm64/gigaquizz": "f67412e2627c8432140d44ccdbed5f8e53a85d78d3defd5417a5b76886f68a7f",
+        "darwin-arm64/httpbench": "8708d9f6ffe7288e8a863c8125c015a0fcce3dbe70117aba48d081fd4badc09b",
+        "linux-arm64/gigaquizz": "49eb1442634689d34cc6589552f7476353a27727a349902c1dd43fc9f4604b30",
+        "linux-arm64/httpbench": "f1f82b8832d8b84ca3cf2bfe4a05a2b58eb81381a89f0f611fef3c9fa246ec05",
+        "linux-amd64/gigaquizz": "68b4d84d7d62a2f2244b9b77b3d3d4758b2f4f48a89236ccc5a49db8c81eb4f3",
+        "linux-amd64/httpbench": "9e8158af51fd63cba95ed2106bd8d49511d45975cb877b290b27146c09178e95"
+      },
+      "complete": true,
+      "dirty": false,
+      "release_checksums_sha256": "06a5d72b3733a25ebb2ab01fb1350c3c7dcd2999f4b2de5032b09d6aaf6025a0",
+      "deployment_profile_and_unit_match_review": true,
+      "deployment_guide": "Final guide adds quantitative capacity limits and historical-result readiness clarification; executable code unchanged."
+    },
+    "postgres-kafka": {
+      "commit": "c250869e127819e3ac5a75eceb23d9aea9705218",
+      "source_tree_sha256": "a28c84bfc845fad75659423a4a15f7a80063a3978b60d44eac8da850fa498941",
+      "binaries_match_review": true,
+      "binary_sha256": {
+        "darwin-arm64/gigaquizz": "12cb158ca0b73cf14111067bd98f6d5ae6c2bcbf122c0468b1e7a92501300de4",
+        "darwin-arm64/httpbench": "6236e76da13e8743cbc94919751073fbff387517ba7a23e199750767bae18dec",
+        "linux-arm64/gigaquizz": "b36dd2ecbc6c06b6c3a9eb96f86480ffa27f723df4ae5a6739b4ccb56a20216a",
+        "linux-arm64/httpbench": "c47e71b44f3c36a1347797eba395373a5842b15c4af253f3d0445b2912751577",
+        "linux-amd64/gigaquizz": "122d1c2ef2399a2f86d6e1250a9407b12df7ec84790826f1984c2574338166a9",
+        "linux-amd64/httpbench": "9595d1c84fe6cc8dee740d7c9fac5b0449f8acf1369e89fbc0aa489b877f82b3"
+      },
+      "complete": true,
+      "dirty": false,
+      "release_checksums_sha256": "f892ac0e9e6bac9d476114a3fce988128b369643a7764cfcb7c87aca6c5d0746",
+      "deployment_profile_and_unit_match_review": true,
+      "deployment_guide": "Final guide adds quantitative capacity limits and historical-result readiness clarification; executable code unchanged."
+    }
+  },
+  "scope": "Clean builds of committed code; comparison with the exact review binaries exercised by the HTTP/migration and Linux checks. A following evidence-only commit records this proof."
+}
