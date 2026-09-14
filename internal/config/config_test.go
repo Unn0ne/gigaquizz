@@ -60,3 +60,12 @@ func TestZeroLingerAndPartitionDefaults(t *testing.T) {
 		t.Fatalf("partition limits: %+v %v", c, err)
 	}
 }
+
+func TestPartitionBoundCannotExceedTotal(t *testing.T) {
+	minimalEnv(t)
+	t.Setenv("MAX_UNIQUE_VOTERS", "1")
+	t.Setenv("MAX_PARTITION_UNIQUE_VOTERS", "120000000")
+	if _, err := Load(); err == nil {
+		t.Fatal("inconsistent partition bound accepted")
+	}
+}

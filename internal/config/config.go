@@ -72,6 +72,9 @@ func Load() (Config, error) {
 	if len(c.AdminPassword) < 16 || strings.Contains(c.AdminPassword, "CHANGE_ME") {
 		return c, errors.New("set a unique ADMIN_PASSWORD of at least 16 characters")
 	}
+	if err := validateListener(c.Addr); err != nil {
+		return c, err
+	}
 	for _, field := range []struct {
 		name     string
 		dst      *int
@@ -106,6 +109,9 @@ func Load() (Config, error) {
 	}
 	if c.MaxPartitionUnique == 0 {
 		c.MaxPartitionUnique = c.MaxUnique
+	}
+	if c.MaxPartitionUnique > c.MaxUnique {
+		return c, errors.New("partition unique bound exceeds total unique bound")
 	}
 	if raw := os.Getenv("FILE_GROUP_LINGER"); raw != "" {
 		d, err := time.ParseDuration(raw)

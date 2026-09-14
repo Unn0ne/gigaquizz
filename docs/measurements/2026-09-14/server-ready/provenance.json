@@ -1,0 +1,198 @@
+{
+  "simple-files": {
+    "review_build": {
+      "complete": true,
+      "started_at": "2026-09-14T17:19:19.839614+00:00",
+      "targets": [
+        "darwin/arm64",
+        "linux/arm64",
+        "linux/amd64"
+      ],
+      "allow_dirty": true,
+      "errors": [],
+      "source": {
+        "commit": "f49199d11f6e583482e60deddbe1c5ea36755caf",
+        "branch": "simple-files",
+        "dirty": true,
+        "status_sha256": "8d7232e3bedce343e4147e09833790a20bc9b07e4ded14212af520449e779f83",
+        "source_tree_sha256": "6d87c1aa5c83092a54120c827056d0e8c88095572ab2835cdf5964c9f4e5cde7",
+        "source_files": 482
+      },
+      "backend": "simple-files",
+      "go_version": "go version go1.26.1 darwin/arm64",
+      "build_flags": [
+        "-trimpath",
+        "-mod=readonly",
+        "-buildvcs=false"
+      ],
+      "build_environment": {
+        "CGO_ENABLED": "0",
+        "GOFLAGS": "",
+        "GOENV": "off",
+        "GOWORK": "off",
+        "GOEXPERIMENT": "",
+        "GOAMD64": "v1",
+        "GOARM64": "v8.0"
+      },
+      "files": {
+        "RUNNING.md": "d2f76f40a3ec6ce46a2483856f6d53292591f23a0ee53da160ded6bfce97d751",
+        "SERVER-DEPLOYMENT.md": "3f43ae3e8730c024e6f240952c7bbe202dad89e5baaaf4ed97b74f1ea8c480b0",
+        "build-logs/darwin-arm64-gigaquizz.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "build-logs/darwin-arm64-httpbench.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "build-logs/linux-amd64-gigaquizz.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "build-logs/linux-amd64-httpbench.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "build-logs/linux-arm64-gigaquizz.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "build-logs/linux-arm64-httpbench.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "darwin-arm64/gigaquizz": "f67412e2627c8432140d44ccdbed5f8e53a85d78d3defd5417a5b76886f68a7f",
+        "darwin-arm64/httpbench": "8708d9f6ffe7288e8a863c8125c015a0fcce3dbe70117aba48d081fd4badc09b",
+        "deploy/gigaquizz.service": "4a1ce1eec144e86fc746a9e28d23117617de3d610389cdca527795d017de6657",
+        "deploy/server.env.example": "a2025b768cbf7f31698d8903fe920c6525a73ea3a08be2822dfe118a5e118ff9",
+        "env.example": "2dc88d19833697eab9afa0765b754fb92b365444913806638eea3b720401f94d",
+        "linux-amd64/gigaquizz": "68b4d84d7d62a2f2244b9b77b3d3d4758b2f4f48a89236ccc5a49db8c81eb4f3",
+        "linux-amd64/httpbench": "9e8158af51fd63cba95ed2106bd8d49511d45975cb877b290b27146c09178e95",
+        "linux-arm64/gigaquizz": "49eb1442634689d34cc6589552f7476353a27727a349902c1dd43fc9f4604b30",
+        "linux-arm64/httpbench": "f1f82b8832d8b84ca3cf2bfe4a05a2b58eb81381a89f0f611fef3c9fa246ec05",
+        "run_http_generators.py": "ab4871a21963e8327db0144bec338348251eda969c0a4e81474d1dfbfadc5fed",
+        "source.json": "eb16612675ed9230083672e76037303e0a29ab9738f9ec72847b3e2e4ef6ed34"
+      },
+      "checksums_sha256": "0df54204a3b9667fb60563b0fff5dca51379cf0a8577f035bcd2b35574e969da",
+      "finished_at": "2026-09-14T17:19:22.970076+00:00"
+    },
+    "review_sources": {
+      "commit": "f49199d11f6e583482e60deddbe1c5ea36755caf",
+      "branch": "simple-files",
+      "dirty": true,
+      "status_sha256": "8d7232e3bedce343e4147e09833790a20bc9b07e4ded14212af520449e779f83",
+      "source_tree_sha256": "6d87c1aa5c83092a54120c827056d0e8c88095572ab2835cdf5964c9f4e5cde7",
+      "source_files": 482,
+      "allow_dirty": true,
+      "backend": "simple-files",
+      "go_version": "go version go1.26.1 darwin/arm64",
+      "targets": [
+        "darwin/arm64",
+        "linux/arm64",
+        "linux/amd64"
+      ],
+      "build_flags": [
+        "-trimpath",
+        "-mod=readonly",
+        "-buildvcs=false"
+      ],
+      "build_environment": {
+        "CGO_ENABLED": "0",
+        "GOFLAGS": "",
+        "GOENV": "off",
+        "GOWORK": "off",
+        "GOEXPERIMENT": "",
+        "GOAMD64": "v1",
+        "GOARM64": "v8.0"
+      }
+    },
+    "exercised_targets": [
+      "darwin/arm64",
+      "linux/arm64"
+    ],
+    "cross_built_only_targets": [
+      "linux/amd64"
+    ],
+    "linux_scope": "Both configuration checks; full HTTP lifecycle for simple-files only"
+  },
+  "postgres-kafka": {
+    "review_build": {
+      "complete": true,
+      "started_at": "2026-09-14T17:19:16.125593+00:00",
+      "targets": [
+        "darwin/arm64",
+        "linux/arm64",
+        "linux/amd64"
+      ],
+      "allow_dirty": true,
+      "errors": [],
+      "source": {
+        "commit": "cd0b917e9e63d226e8c5cc19b5add181b9c6dc96",
+        "branch": "postgres-kafka",
+        "dirty": true,
+        "status_sha256": "3dd6be740b8216fc625d9437bb2562894f79ea26913487960ea9838c2c0e6091",
+        "source_tree_sha256": "9225903960ff9720a2b4316821586479697c18fd511eb20ecfa8ba560e6d8522",
+        "source_files": 549
+      },
+      "backend": "postgres-kafka",
+      "go_version": "go version go1.26.1 darwin/arm64",
+      "build_flags": [
+        "-trimpath",
+        "-mod=readonly",
+        "-buildvcs=false"
+      ],
+      "build_environment": {
+        "CGO_ENABLED": "0",
+        "GOFLAGS": "",
+        "GOENV": "off",
+        "GOWORK": "off",
+        "GOEXPERIMENT": "",
+        "GOAMD64": "v1",
+        "GOARM64": "v8.0"
+      },
+      "files": {
+        "RUNNING.md": "ae22f7c2021f2089013b2060930aece878d2249f6e23472d8bd4633ef4bccbab",
+        "SERVER-DEPLOYMENT.md": "3f43ae3e8730c024e6f240952c7bbe202dad89e5baaaf4ed97b74f1ea8c480b0",
+        "build-logs/darwin-arm64-gigaquizz.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "build-logs/darwin-arm64-httpbench.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "build-logs/linux-amd64-gigaquizz.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "build-logs/linux-amd64-httpbench.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "build-logs/linux-arm64-gigaquizz.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "build-logs/linux-arm64-httpbench.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "darwin-arm64/gigaquizz": "12cb158ca0b73cf14111067bd98f6d5ae6c2bcbf122c0468b1e7a92501300de4",
+        "darwin-arm64/httpbench": "6236e76da13e8743cbc94919751073fbff387517ba7a23e199750767bae18dec",
+        "deploy/gigaquizz.service": "4a1ce1eec144e86fc746a9e28d23117617de3d610389cdca527795d017de6657",
+        "deploy/server.env.example": "d5159ee7d963f5841cacc7d8366a5732f1a1dcc0cfe46f431b1770d026ebcea4",
+        "env.example": "6e3dc7a03d03f16694b223a7c01d1667db0269d10e0a253dd35b8895751cdf95",
+        "linux-amd64/gigaquizz": "122d1c2ef2399a2f86d6e1250a9407b12df7ec84790826f1984c2574338166a9",
+        "linux-amd64/httpbench": "9595d1c84fe6cc8dee740d7c9fac5b0449f8acf1369e89fbc0aa489b877f82b3",
+        "linux-arm64/gigaquizz": "b36dd2ecbc6c06b6c3a9eb96f86480ffa27f723df4ae5a6739b4ccb56a20216a",
+        "linux-arm64/httpbench": "c47e71b44f3c36a1347797eba395373a5842b15c4af253f3d0445b2912751577",
+        "run_http_generators.py": "ab4871a21963e8327db0144bec338348251eda969c0a4e81474d1dfbfadc5fed",
+        "source.json": "4d6224414a19f04595a9a23da9685a9e0effa9369ce73b895b00170f160076c3"
+      },
+      "checksums_sha256": "419cb40fcc3b2e28809623d29c4d4b9a4444b83db1f7a50668546f74b56e3082",
+      "finished_at": "2026-09-14T17:19:22.662029+00:00"
+    },
+    "review_sources": {
+      "commit": "cd0b917e9e63d226e8c5cc19b5add181b9c6dc96",
+      "branch": "postgres-kafka",
+      "dirty": true,
+      "status_sha256": "3dd6be740b8216fc625d9437bb2562894f79ea26913487960ea9838c2c0e6091",
+      "source_tree_sha256": "9225903960ff9720a2b4316821586479697c18fd511eb20ecfa8ba560e6d8522",
+      "source_files": 549,
+      "allow_dirty": true,
+      "backend": "postgres-kafka",
+      "go_version": "go version go1.26.1 darwin/arm64",
+      "targets": [
+        "darwin/arm64",
+        "linux/arm64",
+        "linux/amd64"
+      ],
+      "build_flags": [
+        "-trimpath",
+        "-mod=readonly",
+        "-buildvcs=false"
+      ],
+      "build_environment": {
+        "CGO_ENABLED": "0",
+        "GOFLAGS": "",
+        "GOENV": "off",
+        "GOWORK": "off",
+        "GOEXPERIMENT": "",
+        "GOAMD64": "v1",
+        "GOARM64": "v8.0"
+      }
+    },
+    "exercised_targets": [
+      "darwin/arm64",
+      "linux/arm64"
+    ],
+    "cross_built_only_targets": [
+      "linux/amd64"
+    ],
+    "linux_scope": "Both configuration checks; full HTTP lifecycle for simple-files only"
+  }
+}

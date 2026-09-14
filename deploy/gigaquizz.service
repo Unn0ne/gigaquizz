@@ -1,0 +1,33 @@
+[Unit]
+Description=Gigaquizz single application owner
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=gigaquizz
+Group=gigaquizz
+UMask=0077
+WorkingDirectory=/var/lib/gigaquizz
+StateDirectory=gigaquizz
+StateDirectoryMode=0700
+ExecStartPre=/opt/gigaquizz/gigaquizz -env /etc/gigaquizz/service.env -check-config
+ExecStart=/opt/gigaquizz/gigaquizz -env /etc/gigaquizz/service.env
+Restart=no
+KillSignal=SIGTERM
+KillMode=control-group
+TimeoutStartSec=360s
+# HTTP drain currently has its own 20s bound; leave time for storage close.
+TimeoutStopSec=90s
+LimitNOFILE=262144
+TasksMax=8192
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/gigaquizz
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=gigaquizz
+
+[Install]
+WantedBy=multi-user.target

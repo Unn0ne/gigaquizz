@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -20,6 +21,7 @@ import (
 	"gigaquizz/internal/filestore"
 	"gigaquizz/internal/httpapi"
 	"gigaquizz/internal/poll"
+	"gigaquizz/internal/runtimeconfig"
 	"gigaquizz/internal/web"
 )
 
@@ -33,7 +35,11 @@ func main() {
 func run() (runErr error) {
 	envFile := flag.String("env", ".env", "configuration file")
 	cpuProfile := flag.String("cpu-profile", "", "write CPU profile to a new private local file (includes startup and shutdown)")
+	checkConfig := flag.Bool("check-config", false, "validate configuration and report effective runtime settings without opening storage or listeners")
 	flag.Parse()
+	if *checkConfig && *cpuProfile != "" {
+		return errors.New("check-config cannot create a CPU profile")
+	}
 	stopProfile, err := startCPUProfile(*cpuProfile)
 	if err != nil {
 		return err
@@ -56,6 +62,30 @@ func run() (runErr error) {
 	if err != nil {
 		return err
 	}
+	apiConfig, err := httpapi.ValidateConfig(httpapi.Config{AdminPassword: cfg.AdminPassword, PublicURL: cfg.PublicURL, MaxInflight: cfg.MaxInflight, OperationTimeout: 10 * time.Second})
+	if err != nil {
+		return err
+	}
+	cfg.PublicURL = apiConfig.PublicURL
+	runtimeSettings, err := runtimeconfig.Load()
+	if err != nil {
+		return err
+	}
+	runtimeSettings.Apply()
+	if *checkConfig {
+		return json.NewEncoder(os.Stdout).Encode(map[string]any{
+			"mode": "configuration-check", "backend": "simple-files",
+			"scope":   "configuration and runtime only; no listener, storage, network or capacity verification",
+			"runtime": runtimeconfig.Current(), "max_inflight": cfg.MaxInflight,
+			"new_poll_partitions": cfg.Partitions, "new_poll_batch_votes": cfg.BatchSize, "new_poll_queue_per_partition": cfg.QueueVotes,
+			"max_unique_voters": cfg.MaxUnique, "max_partition_unique_voters": cfg.MaxPartitionUnique,
+		})
+	}
+	listener, err := net.Listen("tcp", cfg.Addr)
+	if err != nil {
+		return fmt.Errorf("cannot listen on %s: %w", cfg.Addr, err)
+	}
+	defer listener.Close()
 	startup, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 	store, err := filestore.New(startup, filestore.Config{Directory: cfg.DataDir, MaxUnique: cfg.MaxUnique, MaxPartitionUnique: cfg.MaxPartitionUnique, Partitions: cfg.Partitions, BatchSize: cfg.BatchSize, QueueVotes: cfg.QueueVotes, Linger: cfg.Linger})
@@ -63,16 +93,12 @@ func run() (runErr error) {
 		return fmt.Errorf("cannot open file storage: %w", err)
 	}
 	defer store.Close()
-	api, err := httpapi.New(store, store, web.Files, httpapi.Config{AdminPassword: cfg.AdminPassword, PublicURL: cfg.PublicURL, MaxInflight: cfg.MaxInflight, OperationTimeout: 10 * time.Second})
+	api, err := httpapi.New(store, store, web.Files, apiConfig)
 	if err != nil {
 		return err
 	}
 	api.SetReady(true)
 	server := &http.Server{Addr: cfg.Addr, Handler: api.Handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 8 * time.Second, WriteTimeout: 15 * time.Second, IdleTimeout: 30 * time.Second, MaxHeaderBytes: 8192, ErrorLog: log.New(io.Discard, "", 0)}
-	listener, err := net.Listen("tcp", cfg.Addr)
-	if err != nil {
-		return fmt.Errorf("cannot listen on %s: %w", cfg.Addr, err)
-	}
 	signals, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	workerCtx, stopWorker := context.WithCancel(context.Background())
@@ -87,10 +113,11 @@ func run() (runErr error) {
 	}()
 	serveDone := make(chan error, 1)
 	go func() { serveDone <- server.Serve(listener) }()
-	slog.Info("gigaquizz started", "url", cfg.PublicURL, "admin", cfg.PublicURL+"/admin")
+	slog.Info("gigaquizz started", "url", cfg.PublicURL, "admin", cfg.PublicURL+"/admin", "runtime", runtimeconfig.Current())
 	select {
 	case <-signals.Done():
 	case serveErr := <-serveDone:
+		healthGate.stop()
 		stopWorker()
 		<-workerDone
 		if !errors.Is(serveErr, http.ErrServerClosed) {

@@ -1,0 +1,61 @@
+{
+  "suites": [
+    {
+      "branch": "simple-files",
+      "check": "vet",
+      "exit_code": 0,
+      "seconds": 0.549087,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "branch": "simple-files",
+      "check": "race",
+      "exit_code": 0,
+      "seconds": 30.608452,
+      "log_sha256": "4494160adeef0cf1b793f55ceb8b44e126bf4d204f2336653c50584042be55c6"
+    },
+    {
+      "branch": "simple-files",
+      "check": "python",
+      "exit_code": 0,
+      "seconds": 0.761606,
+      "log_sha256": "a34c368b6109f1f2a2e24d7bc2fcbae5a5761b7652f2b3919b5d3af661604d74",
+      "tests": 66
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "vet",
+      "exit_code": 0,
+      "seconds": 0.692277,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "race",
+      "exit_code": 0,
+      "seconds": 25.042856,
+      "log_sha256": "0153020e2b81823f100078596fedeb4acca48d8df7da946289348ba4b99ae344"
+    },
+    {
+      "branch": "postgres-kafka",
+      "check": "python",
+      "exit_code": 0,
+      "seconds": 2.779546,
+      "log_sha256": "7d96eaf8f76d2a6a33e24956366d808fd970b42ec0a08cc074a95ff34102912a",
+      "tests": 90
+    }
+  ],
+  "final_files_cmd_race": {
+    "passed": true,
+    "log_sha256": "29eba0732126895c31573606bd276c3633f0e91eee62e863aa67848bbb3df7af"
+  },
+  "linux_fixture_correction": "First smoke compared a historical result immediately after readiness and saw pending. Corrected the fixture to await final; no production change.",
+  "scope": "Real local PostgreSQL integration; opt-in Kafka fault suites, browser JavaScript, execution under systemd PID1, TLS/SASL and external-host capacity were not repeated or established.",
+  "systemd_verify": {
+    "exit_code": 0,
+    "systemd": "systemd 255 (255.4-1ubuntu8.15)",
+    "scope": "Offline verification of original unit in isolated staging root with real Ubuntu VM base unit files and actual Linux arm64 application. No unit installed in VM, no service started.",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unit_sha256": "4a1ce1eec144e86fc746a9e28d23117617de3d610389cdca527795d017de6657"
+  }
+}
