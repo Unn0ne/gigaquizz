@@ -55,28 +55,39 @@ type Server struct {
 	assets              map[string]*representation
 }
 
-func New(votes PublicRepository, admin AdminRepository, files fs.FS, cfg Config) (*Server, error) {
+// ValidateConfig normalizes HTTP settings without opening storage or listeners.
+// The executable uses the same checks before any startup side effects.
+func ValidateConfig(cfg Config) (Config, error) {
 	origin, err := canonicalOrigin(cfg.PublicURL, false)
 	if err != nil {
-		return nil, err
+		return cfg, errors.New("invalid PUBLIC_URL: " + err.Error())
 	}
+	cfg.PublicURL = origin
 	if len(cfg.AdminPassword) < 16 {
-		return nil, errors.New("ADMIN_PASSWORD must contain at least 16 bytes")
+		return cfg, errors.New("ADMIN_PASSWORD must contain at least 16 bytes")
 	}
 	if cfg.MaxInflight < 1 || cfg.OperationTimeout <= 0 {
-		return nil, errors.New("invalid concurrency or timeout configuration")
+		return cfg, errors.New("invalid concurrency or timeout configuration")
 	}
 	if cfg.DefinitionCacheEntries == 0 {
 		cfg.DefinitionCacheEntries = 128
 	}
 	if cfg.DefinitionCacheEntries < 1 || cfg.DefinitionCacheEntries > 1024 {
-		return nil, errors.New("invalid definition cache bound")
+		return cfg, errors.New("invalid definition cache bound")
+	}
+	return cfg, nil
+}
+
+func New(votes PublicRepository, admin AdminRepository, files fs.FS, cfg Config) (*Server, error) {
+	cfg, err := ValidateConfig(cfg)
+	if err != nil {
+		return nil, err
 	}
 	assets, err := prepareAssets(files)
 	if err != nil {
 		return nil, err
 	}
-	return &Server{votes: votes, admin: admin, origin: origin, auth: newAuth(cfg.AdminPassword, strings.HasPrefix(origin, "https://")), inflight: make(chan struct{}, cfg.MaxInflight), readInflight: make(chan struct{}, 16), adminInflight: make(chan struct{}, 8), timeout: cfg.OperationTimeout, definitions: newDefinitionCache(cfg.DefinitionCacheEntries), assets: assets}, nil
+	return &Server{votes: votes, admin: admin, origin: cfg.PublicURL, auth: newAuth(cfg.AdminPassword, strings.HasPrefix(cfg.PublicURL, "https://")), inflight: make(chan struct{}, cfg.MaxInflight), readInflight: make(chan struct{}, 16), adminInflight: make(chan struct{}, 8), timeout: cfg.OperationTimeout, definitions: newDefinitionCache(cfg.DefinitionCacheEntries), assets: assets}, nil
 }
 
 func (s *Server) SetReady(ready bool) { s.ready.Store(ready) }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -19,6 +20,7 @@ import (
 	"gigaquizz/internal/httpapi"
 	"gigaquizz/internal/kafkapoll"
 	"gigaquizz/internal/postgres"
+	"gigaquizz/internal/runtimeconfig"
 	"gigaquizz/internal/votelog"
 	"gigaquizz/internal/web"
 )
@@ -34,7 +36,11 @@ func run() (runErr error) {
 	envFile := flag.String("env", ".env", "configuration file")
 	cpuProfile := flag.String("cpu-profile", "", "write CPU profile to a new private local file (includes startup and shutdown)")
 	migrateOnly := flag.Bool("migrate-only", false, "apply migrations and exit")
+	checkConfig := flag.Bool("check-config", false, "validate configuration and report effective runtime settings without opening storage or listeners")
 	flag.Parse()
+	if *checkConfig && *cpuProfile != "" {
+		return errors.New("check-config cannot create a CPU profile")
+	}
 	stopProfile, err := startCPUProfile(*cpuProfile)
 	if err != nil {
 		return err
@@ -57,9 +63,42 @@ func run() (runErr error) {
 	if err != nil {
 		return err
 	}
+	apiConfig, err := httpapi.ValidateConfig(httpapi.Config{AdminPassword: cfg.AdminPassword, PublicURL: cfg.PublicURL, MaxInflight: cfg.MaxInflight, OperationTimeout: 10 * time.Second})
+	if err != nil {
+		return err
+	}
+	cfg.PublicURL = apiConfig.PublicURL
+	runtimeSettings, err := runtimeconfig.Load()
+	if err != nil {
+		return err
+	}
+	if *checkConfig && *migrateOnly {
+		return errors.New("check-config cannot apply migrations")
+	}
+	var security *votelog.ClientSecurity
+	if !*migrateOnly {
+		security, err = votelog.BuildSecurity(votelog.SecurityOptions{TLS: cfg.KafkaTLS, CAFile: cfg.KafkaTLSCAFile, CertFile: cfg.KafkaTLSCertFile, KeyFile: cfg.KafkaTLSKeyFile, ServerName: cfg.KafkaTLSServerName, SASLMechanism: cfg.KafkaSASLMechanism, Username: cfg.KafkaSASLUsername, Password: cfg.KafkaSASLPassword})
+		if err != nil {
+			return err
+		}
+	}
+	durability := postgres.DurabilityOptions{RequiredStandbys: cfg.RequiredStandbys, StandbyNames: cfg.StandbyNames}
+	storeOptions, err := kafkapoll.ValidateOptions(kafkapoll.Options{DatabaseURL: cfg.DatabaseURL, Schema: cfg.DatabaseSchema, Brokers: cfg.KafkaBrokers, AllowRemoteBrokers: cfg.KafkaAllowRemote, Partitions: cfg.KafkaPartitions, BatchSize: cfg.KafkaBatchVotes, QueuePerPartition: cfg.KafkaQueueVotes, Linger: cfg.KafkaLinger, Security: security, MaxPartitionUnique: cfg.MaxPartitionUnique, MaxUnique: cfg.MaxUnique, MaxPolls: cfg.MaxPolls, PreparationLead: cfg.PreparationLead, Durability: durability})
+	if err != nil {
+		return err
+	}
+	runtimeSettings.Apply()
+	if *checkConfig {
+		return json.NewEncoder(os.Stdout).Encode(map[string]any{
+			"mode": "configuration-check", "backend": "postgres-kafka",
+			"scope":   "configuration and runtime only; no listener, storage, network or capacity verification",
+			"runtime": runtimeconfig.Current(), "max_inflight": cfg.MaxInflight,
+			"new_poll_partitions": cfg.KafkaPartitions, "new_poll_batch_votes": cfg.KafkaBatchVotes, "new_poll_queue_per_partition": cfg.KafkaQueueVotes,
+			"max_unique_voters": cfg.MaxUnique, "max_partition_unique_voters": cfg.MaxPartitionUnique,
+		})
+	}
 	startup, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
-	durability := postgres.DurabilityOptions{RequiredStandbys: cfg.RequiredStandbys, StandbyNames: cfg.StandbyNames}
 	if *migrateOnly {
 		if err := kafkapoll.Migrate(startup, cfg.DatabaseURL, cfg.DatabaseSchema); err != nil {
 			return errors.New("metadata migration failed (connection details suppressed)")
@@ -67,36 +106,41 @@ func run() (runErr error) {
 		slog.Info("migrations applied")
 		return nil
 	}
-	security, err := votelog.BuildSecurity(votelog.SecurityOptions{TLS: cfg.KafkaTLS, CAFile: cfg.KafkaTLSCAFile, CertFile: cfg.KafkaTLSCertFile, KeyFile: cfg.KafkaTLSKeyFile, ServerName: cfg.KafkaTLSServerName, SASLMechanism: cfg.KafkaSASLMechanism, Username: cfg.KafkaSASLUsername, Password: cfg.KafkaSASLPassword})
+	listener, err := net.Listen("tcp", cfg.Addr)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot listen on %s: %w", cfg.Addr, err)
 	}
-	store, err := kafkapoll.New(startup, kafkapoll.Options{DatabaseURL: cfg.DatabaseURL, Schema: cfg.DatabaseSchema, Brokers: cfg.KafkaBrokers, AllowRemoteBrokers: cfg.KafkaAllowRemote, Partitions: cfg.KafkaPartitions, BatchSize: cfg.KafkaBatchVotes, QueuePerPartition: cfg.KafkaQueueVotes, Linger: cfg.KafkaLinger, Security: security, MaxPartitionUnique: cfg.MaxPartitionUnique, MaxUnique: cfg.MaxUnique, MaxPolls: cfg.MaxPolls, PreparationLead: cfg.PreparationLead, Durability: durability})
+	defer listener.Close()
+	store, err := kafkapoll.New(startup, storeOptions)
 	if err != nil {
 		return errors.New("cannot initialize PostgreSQL/Kafka controller (check broker readiness and exclusive schema ownership)")
 	}
 	defer store.Close()
-	api, err := httpapi.New(store, store, web.Files, httpapi.Config{AdminPassword: cfg.AdminPassword, PublicURL: cfg.PublicURL, MaxInflight: cfg.MaxInflight, OperationTimeout: 10 * time.Second})
+	api, err := httpapi.New(store, store, web.Files, apiConfig)
 	if err != nil {
 		return err
 	}
 	api.SetReady(true)
 	server := &http.Server{Addr: cfg.Addr, Handler: api.Handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 8 * time.Second, WriteTimeout: 15 * time.Second, IdleTimeout: 30 * time.Second, MaxHeaderBytes: 8192, ErrorLog: log.New(io.Discard, "", 0)}
-	listener, err := net.Listen("tcp", cfg.Addr)
-	if err != nil {
-		return fmt.Errorf("cannot listen on %s: %w", cfg.Addr, err)
-	}
 	signals, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	workerCtx, stopWorker := context.WithCancel(context.Background())
 	workerDone := make(chan struct{})
-	go func() { defer close(workerDone); maintenance(workerCtx, api, store) }()
+	healthGate := &readinessGate{target: api}
+	go func() {
+		defer close(workerDone)
+		healthDone := make(chan struct{})
+		go func() { defer close(healthDone); readiness(workerCtx, healthGate, store, time.Second) }()
+		maintenance(workerCtx, api, store)
+		<-healthDone
+	}()
 	serveDone := make(chan error, 1)
 	go func() { serveDone <- server.Serve(listener) }()
-	slog.Info("gigaquizz started", "url", cfg.PublicURL, "admin", cfg.PublicURL+"/admin")
+	slog.Info("gigaquizz started", "url", cfg.PublicURL, "admin", cfg.PublicURL+"/admin", "runtime", runtimeconfig.Current())
 	select {
 	case <-signals.Done():
 	case serveErr := <-serveDone:
+		healthGate.stop()
 		stopWorker()
 		<-workerDone
 		if !errors.Is(serveErr, http.ErrServerClosed) {
@@ -104,7 +148,7 @@ func run() (runErr error) {
 		}
 		return nil
 	}
-	api.SetReady(false)
+	healthGate.stop()
 	shutdown, shutdownCancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer shutdownCancel()
 	err = server.Shutdown(shutdown)
@@ -118,23 +162,6 @@ func run() (runErr error) {
 }
 
 func maintenance(ctx context.Context, api *httpapi.Server, store *kafkapoll.Store) {
-	healthDone := make(chan struct{})
-	go func() {
-		defer close(healthDone)
-		tick := time.NewTicker(time.Second)
-		defer tick.Stop()
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-tick.C:
-			}
-			ping, cancel := context.WithTimeout(ctx, time.Second)
-			api.SetReady(store.Ping(ping) == nil)
-			cancel()
-		}
-	}()
-	defer func() { <-healthDone }()
 	tick := time.NewTicker(time.Second)
 	defer tick.Stop()
 	var ticks int

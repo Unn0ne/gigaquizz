@@ -188,9 +188,9 @@ func TestInvalidBrokersRejectedBeforeDatabaseInitialization(t *testing.T) {
 		if expected == nil {
 			t.Fatal("fixture must be invalid")
 		}
-		// Invalid DB and nil context make progression beyond pure option
-		// validation fail. No metadata schema or network client may be created.
-		_, err := New(nil, Options{DatabaseURL: "invalid database configuration", Brokers: brokers})
+		// Invalid DB makes progression beyond pure option validation fail.
+		// No metadata schema or network client may be created.
+		_, err := New(context.Background(), Options{DatabaseURL: "invalid database configuration", Brokers: brokers})
 		if err == nil || err.Error() != expected.Error() {
 			t.Fatal("broker syntax not rejected first", err)
 		}

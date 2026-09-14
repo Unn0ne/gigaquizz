@@ -1,5 +1,6 @@
 """Release assembly fixtures; no Go build, service, or workload is executed."""
 import argparse
+import configparser
 from contextlib import ExitStack, redirect_stdout
 from copy import deepcopy
 import hashlib
@@ -26,6 +27,11 @@ class Fixture:
         self.root.mkdir()
         (self.root / 'scripts').mkdir()
         (self.root / 'scripts/run_http_generators.py').write_text('# fixture runner\n')
+        (self.root / 'deploy').mkdir()
+        (self.root / 'deploy/gigaquizz.service').write_text('[Service]\nExecStart=/opt/gigaquizz/gigaquizz\n')
+        (self.root / 'deploy/server.env.example').write_text('# candidate profile fixture\nGOMEMLIMIT=96GiB\n')
+        (self.root / 'docs').mkdir()
+        (self.root / 'docs/server-deployment.md').write_text('# Standalone server fixture instructions\n')
         (self.root / '.env.example').write_text('ADMIN_PASSWORD=CHANGE_ME\n' +
                                               ('KAFKA_BROKERS=127.0.0.1:19092\n' if backend == 'postgres-kafka' else 'DATA_DIR=.local/files\n'))
         (self.root / '.env').write_text('DO_NOT_COPY_PRIVATE_SECRET')
@@ -76,7 +82,8 @@ class ReleaseTests(unittest.TestCase):
             self.assertTrue(summary['complete'])
             self.assertEqual(fixture.builds, 4)
             expected = {'linux-amd64/gigaquizz', 'linux-amd64/httpbench', 'linux-arm64/gigaquizz',
-                        'linux-arm64/httpbench', 'env.example', 'RUNNING.md', 'run_http_generators.py', 'source.json'}
+                        'linux-arm64/httpbench', 'env.example', 'RUNNING.md', 'run_http_generators.py', 'source.json',
+                        'deploy/gigaquizz.service', 'deploy/server.env.example', 'SERVER-DEPLOYMENT.md'}
             self.assertTrue(expected <= set(report['files']))
             self.assertFalse((fixture.output / '.env').exists())
             self.assertFalse((fixture.output / '.local').exists())
@@ -86,6 +93,10 @@ class ReleaseTests(unittest.TestCase):
                 self.assertEqual(digest, hashlib.sha256((fixture.output / relative).read_bytes()).hexdigest())
             self.assertEqual(fixture.output.stat().st_mode & 0o777, 0o700)
             self.assertEqual((fixture.output / 'env.example').stat().st_mode & 0o777, 0o600)
+            for source, destination in (('deploy/gigaquizz.service', 'deploy/gigaquizz.service'),
+                                        ('deploy/server.env.example', 'deploy/server.env.example'),
+                                        ('docs/server-deployment.md', 'SERVER-DEPLOYMENT.md')):
+                self.assertEqual((fixture.root / source).read_bytes(), (fixture.output / destination).read_bytes())
 
     def test_build_arguments_are_separate_and_override_ambient_go_flags(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -142,6 +153,53 @@ class ReleaseTests(unittest.TestCase):
             self.assertEqual(code, 1)
             self.assertFalse(report['complete'])
             self.assertFalse((fixture.output / 'SHA256SUMS').exists())
+
+    def test_missing_server_profile_or_instruction_rejects_before_go_build(self):
+        for relative in ('deploy/gigaquizz.service', 'deploy/server.env.example', 'docs/server-deployment.md'):
+            with self.subTest(asset=relative), tempfile.TemporaryDirectory() as directory:
+                fixture = Fixture(directory)
+                (fixture.root / relative).unlink()
+                code, report, _ = fixture.run()
+                self.assertEqual(code, 1)
+                self.assertFalse(report['complete'])
+                self.assertEqual(fixture.commands, [])
+                self.assertFalse((fixture.output / 'SHA256SUMS').exists())
+
+    def test_deployment_unit_uses_readable_app_env_and_one_owner_with_writable_parent(self):
+        unit = configparser.ConfigParser(interpolation=None)
+        unit.optionxform = str
+        unit.read(ROOT / 'deploy/gigaquizz.service')
+        service = unit['Service']
+        self.assertEqual(service['User'], 'gigaquizz')
+        self.assertEqual(service['Group'], 'gigaquizz')
+        self.assertEqual(service['ExecStart'], '/opt/gigaquizz/gigaquizz -env /etc/gigaquizz/service.env')
+        self.assertEqual(service['ExecStartPre'], service['ExecStart'] + ' -check-config')
+        self.assertNotIn('EnvironmentFile', service)
+        self.assertEqual(service['Restart'], 'no')
+        self.assertNotIn('WatchdogSec', service)
+        self.assertEqual(service['StateDirectory'], 'gigaquizz')
+        self.assertEqual(service['StateDirectoryMode'], '0700')
+        self.assertEqual(service['WorkingDirectory'], '/var/lib/gigaquizz')
+        self.assertEqual(service['ReadWritePaths'], '/var/lib/gigaquizz')
+        self.assertGreater(int(service['TimeoutStopSec'].rstrip('s')), 20)
+        self.assertEqual(service['LimitNOFILE'], '262144')
+        settings = {}
+        for line in (ROOT / 'deploy/server.env.example').read_text().splitlines():
+            if line and not line.startswith('#'):
+                key, value = line.split('=', 1)
+                self.assertNotIn(key, settings)
+                settings[key] = value
+        self.assertNotIn('GOMAXPROCS', settings)
+        self.assertEqual(settings['GOMEMLIMIT'], '96GiB')
+        self.assertEqual(settings['MAX_INFLIGHT'], '65536')
+        self.assertEqual(settings['MAX_UNIQUE_VOTERS'], '120000000')
+        self.assertEqual(settings['MAX_PARTITION_UNIQUE_VOTERS'], '8000000')
+        prefix = 'FILE' if 'DATA_DIR' in settings else 'KAFKA'
+        self.assertEqual(int(settings[prefix + '_PARTITIONS']) * int(settings[prefix + '_QUEUE_VOTES']), 262144)
+        if prefix == 'FILE':
+            self.assertEqual(settings['DATA_DIR'], service['WorkingDirectory'] + '/data')
+        else:
+            self.assertEqual(settings['POLL_PREPARATION_SECONDS'], '60')
 
     def test_existing_output_and_symlink_parent_are_not_modified(self):
         for symlink in (False, True):

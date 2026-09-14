@@ -44,6 +44,7 @@ func ledgerBytes(c config) uint64 {
 }
 
 const maximumWALBytes uint64 = 4 << 30
+
 // Retain the previous 100M runs alongside the September 12 rerun. The
 // independent 4GiB per-run bound and 8GiB free-space reserve are unchanged.
 const maximumRetainedWALBytes uint64 = 12 << 30

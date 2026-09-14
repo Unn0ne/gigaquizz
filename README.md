@@ -25,4 +25,4 @@ make dev
 
 Цель проекта — 100 млн участников за минуту. Полный сайт на такой нагрузке ещё не проверен; доступны [тест ядра на 102 млн](docs/qr-load-results.md), [нагрузка через настоящий HTTP](docs/http-results.md) и [расчёт серверов и трафика](docs/http-capacity.md).
 
-[Финальный аудит и комплектность](docs/final-audit.md), [сборка и запуск на отдельном сервере](docs/external-http.md).
+[Запуск и перенос на мощный сервер](docs/server-deployment.md), [результат ревью и проверки переноса](docs/server-readiness-review.md), [внешнее нагрузочное тестирование](docs/external-http.md).

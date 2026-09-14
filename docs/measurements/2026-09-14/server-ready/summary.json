@@ -1,0 +1,46 @@
+{
+  "scope": "One Apple M1 Pro, 10 logical CPUs, 32GiB RAM, macOS 26.6.2. Native Darwin HTTP rehearsals sequentially; owned Linux arm64 containers for compatibility, using existing 6CPU/12GiB VM. No external capacity proof.",
+  "profiles": [
+    {
+      "branch": "simple-files",
+      "planned_unique_keys": 60000,
+      "planned_post_attempts": 68571,
+      "acknowledged_post_attempts": 68571,
+      "closed": 0,
+      "not_admitted": 0,
+      "unknown": 0,
+      "generator_skipped": 0,
+      "http_get_sent": 300000,
+      "http_get_failures": 0,
+      "unique_in_final_result": 60000,
+      "matched_ack_attempts": 68571,
+      "missing_ack_attempts": 0,
+      "unverified_ack_attempts": 0,
+      "same_binary_after_move": true,
+      "saved_result_equal_after_move": true,
+      "old_topology_partitions": 32,
+      "new_poll_partitions_after_move": 64
+    },
+    {
+      "branch": "postgres-kafka",
+      "planned_unique_keys": 60000,
+      "planned_post_attempts": 68571,
+      "acknowledged_post_attempts": 68217,
+      "closed": 3,
+      "not_admitted": 0,
+      "unknown": 0,
+      "generator_skipped": 294,
+      "http_get_sent": 298661,
+      "http_get_failures": 38,
+      "unique_in_final_result": 59694,
+      "matched_ack_attempts": 68217,
+      "missing_ack_attempts": 0,
+      "unverified_ack_attempts": 0,
+      "same_binary_after_move": true,
+      "saved_result_equal_after_move": true,
+      "old_topology_partitions": 32,
+      "new_poll_partitions_after_move": 64
+    }
+  ],
+  "external_1700000_post_s_verified": false
+}

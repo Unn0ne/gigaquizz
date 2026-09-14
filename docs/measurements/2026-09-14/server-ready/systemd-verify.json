@@ -1,0 +1,7 @@
+{
+  "exit_code": 0,
+  "systemd": "systemd 255 (255.4-1ubuntu8.15)",
+  "scope": "Offline verification of original unit in isolated staging root with real Ubuntu VM base unit files and actual Linux arm64 application. No unit installed in VM, no service started.",
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "unit_sha256": "4a1ce1eec144e86fc746a9e28d23117617de3d610389cdca527795d017de6657"
+}

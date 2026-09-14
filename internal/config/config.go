@@ -88,6 +88,9 @@ func Load() (Config, error) {
 	if len(c.AdminPassword) < 16 || strings.Contains(c.AdminPassword, "CHANGE_ME") {
 		return c, errors.New("set a unique ADMIN_PASSWORD of at least 16 characters")
 	}
+	if err := validateListener(c.Addr); err != nil {
+		return c, err
+	}
 	if raw := os.Getenv("MAX_INFLIGHT"); raw != "" {
 		n, err := strconv.Atoi(raw)
 		if err != nil || n < 1 || n > 100000 {
@@ -162,6 +165,9 @@ func Load() (Config, error) {
 	c.KafkaSASLMechanism = os.Getenv("KAFKA_SASL_MECHANISM")
 	c.KafkaSASLUsername = os.Getenv("KAFKA_SASL_USERNAME")
 	c.KafkaSASLPassword = os.Getenv("KAFKA_SASL_PASSWORD")
+	if c.MaxPartitionUnique == 0 {
+		c.MaxPartitionUnique = c.MaxUnique
+	}
 	if c.MaxPartitionUnique > c.MaxUnique {
 		return c, errors.New("partition unique bound exceeds total unique bound")
 	}

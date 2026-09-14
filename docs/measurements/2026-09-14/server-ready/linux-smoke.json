@@ -1,0 +1,54 @@
+{
+  "correct": true,
+  "checks": [
+    "both_linux_binaries_apply_file_runtime_with_no_storage_or_network",
+    "linux_nonroot_http_create_and_three_recorded_attempts",
+    "three_ack_attempts_deduplicate_to_one_final_vote",
+    "linux_sigterm_exit_zero",
+    "linux_restart_preserves_result_invalidates_session_and_rejects_late_vote"
+  ],
+  "dry_checks": {
+    "simple-files": {
+      "backend": "simple-files",
+      "max_inflight": 65536,
+      "max_partition_unique_voters": 8000000,
+      "max_unique_voters": 120000000,
+      "mode": "configuration-check",
+      "new_poll_batch_votes": 4096,
+      "new_poll_partitions": 32,
+      "new_poll_queue_per_partition": 8192,
+      "runtime": {
+        "go_version": "go1.26.1",
+        "os": "linux",
+        "arch": "arm64",
+        "gomaxprocs": 2,
+        "gomemlimit_bytes": 268435456,
+        "gogc": "100"
+      },
+      "scope": "configuration and runtime only; no listener, storage, network or capacity verification"
+    },
+    "postgres-kafka": {
+      "backend": "postgres-kafka",
+      "max_inflight": 65536,
+      "max_partition_unique_voters": 8000000,
+      "max_unique_voters": 120000000,
+      "mode": "configuration-check",
+      "new_poll_batch_votes": 1024,
+      "new_poll_partitions": 32,
+      "new_poll_queue_per_partition": 8192,
+      "runtime": {
+        "go_version": "go1.26.1",
+        "os": "linux",
+        "arch": "arm64",
+        "gomaxprocs": 2,
+        "gomemlimit_bytes": 268435456,
+        "gogc": "100"
+      },
+      "scope": "configuration and runtime only; no listener, storage, network or capacity verification"
+    }
+  },
+  "errors": [],
+  "scope": "Linux arm64 in existing 6-CPU/12GiB Docker VM on same Mac; existing image, non-root UID, read-only container root, host bind-mounted data. Functional compatibility only. No systemd, native Linux block-storage durability or performance claim.",
+  "application_sha256": "49eb1442634689d34cc6589552f7476353a27727a349902c1dd43fc9f4604b30",
+  "final_exit_code": 0
+}

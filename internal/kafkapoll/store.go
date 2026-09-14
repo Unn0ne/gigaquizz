@@ -214,8 +214,26 @@ func Migrate(ctx context.Context, databaseURL, schema string) error {
 	return migrate(ctx, p, schema)
 }
 
+// ValidateOptions checks and normalizes configuration without connecting to
+// PostgreSQL/Kafka or creating a schema. Credential files may be read by parsers.
+func ValidateOptions(options Options) (Options, error) {
+	if err := options.defaults(); err != nil {
+		return options, err
+	}
+	if _, err := poolConfig(options.DatabaseURL); err != nil {
+		return options, err
+	}
+	if _, err := postgres.NewDurabilityGuard(options.Durability); err != nil {
+		return options, errors.New("invalid metadata durability configuration")
+	}
+	return options, nil
+}
+
 func New(ctx context.Context, options Options) (_ *Store, err error) {
-	if err = options.defaults(); err != nil {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	if options, err = ValidateOptions(options); err != nil {
 		return nil, err
 	}
 	s := &Store{opts: options, polls: make(map[string]*entry), heartbeatDone: make(chan struct{})}
@@ -300,6 +318,15 @@ func (s *Store) checkOwner(ctx context.Context) error {
 	}
 	s.ownerMu.Lock()
 	defer s.ownerMu.Unlock()
+	// A caller can expire while another owner query holds the mutex. A query
+	// with an already canceled context performs no ownership check; its error
+	// must not permanently retire this otherwise healthy controller.
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if s.closed.Load() || s.ctx.Err() != nil {
+		return ErrOwnership
+	}
 	var started time.Time
 	var recovery bool
 	err := s.owner.QueryRow(ctx, "SELECT pg_postmaster_start_time(), pg_is_in_recovery()").Scan(&started, &recovery)

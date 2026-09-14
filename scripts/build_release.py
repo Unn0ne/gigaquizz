@@ -143,6 +143,10 @@ Dirty-сборка предназначена для ревью/локально
 её не воспроизводит. Сборка с CGO_ENABLED=0 и -trimpath — не тест целевой ОС
 и не доказательство производительности. Build logs остаются приватными.
 
+Для одного Linux-сервера есть SERVER-DEPLOYMENT.md, deploy/gigaquizz.service
+и deploy/server.env.example: стартовый профиль 64 vCPU/128 GiB, не обещание RPS.
+Unit запускает один app owner, без автоматического restart/захвата хранилища.
+
 ## Один сервер приложения
 
 1. Создайте приватный каталог конфигурации, выполните `umask 077`, скопируйте
@@ -157,8 +161,11 @@ Dirty-сборка предназначена для ревью/локально
 4. Запустите foreground или своим service manager (замените цель и env-путь):
 
 ```sh
+./{target}/gigaquizz -env /absolute/private/service.env -check-config
 ./{target}/gigaquizz -env /absolute/private/service.env
 ```
+
+-check-config проверяет значения без сети/хранилища/создания данных, не readiness.
 
 {storage}
 Серверу не нужны Go, Python, Node.js или CDN ассетов: страницы/скрипты/QR встроены.
@@ -252,6 +259,11 @@ def build(args, root=ROOT):
         example = (root / '.env.example').read_bytes()
         backend = 'postgres-kafka' if b'KAFKA_BROKERS=' in example else 'simple-files'
         report['backend'] = backend
+        assets = {'env.example': example,
+                  'run_http_generators.py': (root / 'scripts/run_http_generators.py').read_bytes(),
+                  'deploy/gigaquizz.service': (root / 'deploy/gigaquizz.service').read_bytes(),
+                  'deploy/server.env.example': (root / 'deploy/server.env.example').read_bytes(),
+                  'SERVER-DEPLOYMENT.md': (root / 'docs/server-deployment.md').read_bytes()}
         build_environment = dict(CGO_ENABLED='0', GOFLAGS='', GOENV='off', GOWORK='off', GOEXPERIMENT='',
                                  GOAMD64='v1', GOARM64='v8.0')
         env = dict(os.environ, **build_environment)
@@ -282,15 +294,16 @@ def build(args, root=ROOT):
                 check(stat.S_ISREG(info.st_mode) and info.st_size > 0 and info.st_mode & 0o111, 'Go build omitted a usable binary')
                 binary.chmod(0o700)
                 expected.append(binary.relative_to(output).as_posix())
-        private_write(output / 'env.example', example)
-        private_write(output / 'run_http_generators.py', (root / 'scripts/run_http_generators.py').read_bytes())
+        (output / 'deploy').mkdir(mode=0o700)
+        for name, contents in assets.items():
+            private_write(output / name, contents)
         private_write(output / 'RUNNING.md', running_text(backend, targets))
         after = source_snapshot(root, output)
         check(before == after, 'source tree changed during build; partial release is not complete')
         metadata = dict(before, allow_dirty=args.allow_dirty, backend=backend, go_version=report['go_version'],
                         targets=targets, build_flags=report['build_flags'], build_environment=report['build_environment'])
         private_write(output / 'source.json', json.dumps(metadata, indent=2) + '\n')
-        expected += ['env.example', 'run_http_generators.py', 'RUNNING.md', 'source.json']
+        expected += [*assets, 'RUNNING.md', 'source.json']
         files = sorted(p for p in output.rglob('*') if p.is_file())
         inventory = {p.relative_to(output).as_posix(): sha_file(p) for p in files}
         check(all(name in inventory for name in expected), 'release inventory is incomplete')
