@@ -1,0 +1,157 @@
+{
+  "date": "2026-09-17",
+  "kind": "theoretical hardware sizing with explicit assumptions, not a capacity certification",
+  "assumptions": {
+    "unique_voters": 100000000,
+    "seconds": 60,
+    "extra_attempt_fraction_for_budget": 0.2,
+    "target_utilization": 0.7,
+    "partitions": 32,
+    "files_max_batch": 4096,
+    "kafka_max_batch": 1024,
+    "linger_seconds": 0.002,
+    "max_inflight": 65536,
+    "post_bytes_each_direction_including_transport_assumption": 1024,
+    "cache_and_connection_model": "CDN/edge caches public GETs, handles browser TLS/connections, forwards uncached voting POST through a bounded reused connection pool; not implemented or measured by this sizing"
+  },
+  "scenarios": [
+    {
+      "extra_attempt_fraction": 0,
+      "attempts": 100000000,
+      "post_rps": 1666666.6666666667,
+      "useful_vote_bytes": 2800000000,
+      "file_bytes_at_nominal_linger": 2838403840,
+      "file_write_MB_s": 47.30673066666667,
+      "kafka_frame_values_bytes": 2876800000,
+      "kafka_RF3_values_bytes": 8630400000,
+      "kafka_values_per_broker_MB_s": 47.946666666666665,
+      "http_Gbit_s_each_direction": 13.653333333333334,
+      "inflight_mean_slot_ceiling_ms": 39.3216,
+      "kafka_full_batch_cycle_ceiling_ms": 19.6608
+    },
+    {
+      "extra_attempt_fraction": 0.2,
+      "attempts": 120000000,
+      "post_rps": 2000000.0,
+      "useful_vote_bytes": 3360000000,
+      "file_bytes_at_nominal_linger": 3398403840,
+      "file_write_MB_s": 56.640064,
+      "kafka_frame_values_bytes": 3436800000,
+      "kafka_RF3_values_bytes": 10310400000,
+      "kafka_values_per_broker_MB_s": 57.28,
+      "http_Gbit_s_each_direction": 16.384,
+      "inflight_mean_slot_ceiling_ms": 32.768,
+      "kafka_full_batch_cycle_ceiling_ms": 16.384
+    }
+  ],
+  "cpu_sensitivity": [
+    {
+      "cpu_microseconds_per_attempt": 10,
+      "cores_at_2M_and_70percent": 28.571428571428573,
+      "rounded_up": 29
+    },
+    {
+      "cpu_microseconds_per_attempt": 20,
+      "cores_at_2M_and_70percent": 57.142857142857146,
+      "rounded_up": 58
+    },
+    {
+      "cpu_microseconds_per_attempt": 40,
+      "cores_at_2M_and_70percent": 114.28571428571429,
+      "rounded_up": 115
+    },
+    {
+      "cpu_microseconds_per_attempt": 60,
+      "cores_at_2M_and_70percent": 171.42857142857144,
+      "rounded_up": 172
+    }
+  ],
+  "historical_cpu_calibration": [
+    {
+      "branch": "simple-files",
+      "source": "docs/measurements/2026-09-13/review-scale/r13_files_post_100000_p8_w2048_g2.json",
+      "mean_application_cores": 3.6407970140038732,
+      "ack_per_scheduled_second": 88654.66666666667,
+      "approx_CPU_microseconds_per_ACK": 41.067178422687356,
+      "conditional_cores_at_2M_70percent": 117.33479549339245,
+      "note": "Historical Darwin CPU sample interval approximately59s divided by whole60s ACK rate, not exact per-request profiling. Mixed workload and hardware; no guaranteed scaling or vCPU equivalence."
+    },
+    {
+      "branch": "postgres-kafka",
+      "source": "docs/measurements/2026-09-13/review-scale/r13_kafka_post_50000_p16_g2.json",
+      "mean_application_cores": 1.9324869901112998,
+      "ack_per_scheduled_second": 45475.933333333334,
+      "approx_CPU_microseconds_per_ACK": 42.494718600856274,
+      "conditional_cores_at_2M_70percent": 121.41348171673222,
+      "note": "Historical Darwin CPU sample interval approximately59s divided by whole60s ACK rate, not exact per-request profiling. Mixed workload and hardware; no guaranteed scaling or vCPU equivalence."
+    },
+    {
+      "branch": "postgres-kafka",
+      "source": "docs/measurements/2026-09-13/review-scale/r13_kafka_post_20000_p16.json",
+      "mean_application_cores": 1.206754531877627,
+      "ack_per_scheduled_second": 19999.866666666665,
+      "approx_CPU_microseconds_per_ACK": 60.33812884807367,
+      "conditional_cores_at_2M_70percent": 172.39465385163908,
+      "note": "Historical Darwin CPU sample interval approximately59s divided by whole60s ACK rate, not exact per-request profiling. Mixed workload and hardware; no guaranteed scaling or vCPU equivalence."
+    }
+  ],
+  "kafka_transaction_CPU_sensitivity": [
+    {
+      "average_votes_per_transaction": 128,
+      "transactions_s": 15625.0,
+      "assumed_cluster_CPU_ms_per_transaction": 6,
+      "cluster_cores_at_70percent": 133.92857142857144,
+      "per_broker_if_balanced": 44.642857142857146
+    },
+    {
+      "average_votes_per_transaction": 512,
+      "transactions_s": 3906.25,
+      "assumed_cluster_CPU_ms_per_transaction": 6,
+      "cluster_cores_at_70percent": 33.48214285714286,
+      "per_broker_if_balanced": 11.160714285714286
+    },
+    {
+      "average_votes_per_transaction": 1024,
+      "transactions_s": 1953.125,
+      "assumed_cluster_CPU_ms_per_transaction": 6,
+      "cluster_cores_at_70percent": 16.74107142857143,
+      "per_broker_if_balanced": 5.580357142857143
+    }
+  ],
+  "memory_assumptions": {
+    "unique_per_partition_uniform": 3125000.0,
+    "raw_token_bytes_one_partition": 50000000.0,
+    "working_aggregation_GiB_budget_at_partition_bound_8M": 1,
+    "max_pooled_origin_connections_assumed": 200000,
+    "active_handler_memory_KiB_assumed_range": [
+      32,
+      64
+    ],
+    "connection_memory_KiB_assumed_range": [
+      16,
+      32
+    ],
+    "application_RAM_GiB_planning_budget": 32,
+    "kafka_per_broker_RAM_GiB_planning_budget": 16,
+    "kafka_RAM_components_GiB": {
+      "JVM_heap": 4,
+      "page_cache_one_event": 6,
+      "OS_native_and_headroom": 6
+    },
+    "note": "Budgets, not measured peaks or hard bounds. OS sockets and allocator/GC behaviour must be measured."
+  },
+  "edge": {
+    "measured_GET_body_bytes_per_cold_journey": 16465.0,
+    "calculated_GET_body_Gbit_s_at_100M_per_minute": 219.53333333333333,
+    "GET_requests_s_cold": 8333333.333333333,
+    "POST_plus_GET_s_with_20percent_retries": 10333333.333333334,
+    "connections_if_one_browser_each_and_30s_idle": 50000000.0,
+    "note": "One measured question/page, gzip body bytes only. Headers/POST/TLS/reloads/fallback requests additional. Connection count is a scenario, not measured behaviour."
+  },
+  "shared_app_NIC": {
+    "PG_HTTP_plus_producer_payload_egress_Gbit_s": 16.84224,
+    "PG_required_line_rate_Gbit_s_at_70percent_before_Kafka_protocol": 24.06034285714286,
+    "note": "Assumes same NIC for POST responses and producer traffic; Kafka native headers/control extra."
+  },
+  "controller_RAM_GiB_planning_budget": 8
+}
